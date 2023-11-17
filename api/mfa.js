@@ -29,7 +29,7 @@ module.exports = {
         //then we need to store the encrypted keys in the data based, so update the user, maybe using cookies
         //here we are checking to see if the user is logged into a valid session and updating the user's info
         if(results != undefined){
-          await db.collection('Users').updateOne({"id":user},
+          await db.collection('Users').updateOne({"id":user.id},
                                                  {$push: {"base32Secret": base32Encrypted, "qrCode": tokenEncrypted}});
         }
       })

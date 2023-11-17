@@ -1,10 +1,9 @@
-const alpaca = require('../api/alpaca/api');
+const alpaca = require('../external/alpaca/api');
 
 module.exports = {
-    method: "POST",
     route: "/api/place-order",
     authenticate: true,
-    api: async function(req, res, user) {
+    post: async function(req, res, user) {
         const scope = req.body.scope;
         if(scope.indexOf("F") != -1) {
             // TODO: Handle a fund order

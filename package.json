@@ -14,6 +14,7 @@
   "private": true,
   "dependencies": {
     "aes-js": "^3.1.2",
+    "@sendgrid/mail": "^7.7.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -21,6 +22,7 @@
     "next": "^14.0.2",
     "qrcode": "^1.5.3",
     "react": "^18.2.0",
+    "uuid": "^9.0.1",
     "react-dom": "^18.2.0",
     "speakeasy": "^2.0.0"
   }

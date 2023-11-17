@@ -1,6 +1,5 @@
 const express = require('express');
 const next = require('next');
-const path = require('path');
 const url = require('url');
 
 const authenticate = require('./util/authenticate');
@@ -22,31 +21,51 @@ nextApp.prepare()
     server.use(cookieParser());
     server.use(express.json());
 
-    fs.readdirSync("./api").forEach(function(file) {
-      file = "./api/" + file;
-      if(fs.lstatSync(file).isFile()) {
-        const path = require(file);
-        if(path.route) {
-          const method = path.method.toLowerCase();
-          const handler = (callback) => {
-            if(method == "get") server.get(path.route, callback);
-            else if(method == "post") server.post(path.route, callback);
-          };
+    // Listen for an endpoint defined in a file
+    const addEndpoint = function(file) {
+      const path = require(file);
 
-          handler(async (req, res) => {
+      // Verify a route is defined
+      if(path.route) {
+        const handler = (callback) => {
+          return async function(req, res) {
             if(path.authenticate) {
-              const user = await authenticate.login(req.cookies.user, req.cookies.session);
-              if(user) {
-                return path.api(req, res, user);
-              } else {
+              // API requires authentication
+              const user = await authenticate.login(req.cookies.username,
+                                                    req.cookies.session);
+              if(user) callback(req, res, user);
+              else {
+                // Authentication failed, return error response
                 res.status(403);
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify({error: "forbidden"}));
               }
-            } else return path.api(req, res);
-          });
-        }
+            } else callback(req, res);
+          };
+        };
+
+        if(path.get) server.get(path.route, handler(path.get));
+        if(path.post) server.post(path.route, handler(path.post));
       }
+    }
+
+    // Add endpoints or recursively walk directory
+    const walkDirectory = function(file) {
+      const stat = fs.lstatSync(file);
+
+      if(stat.isFile()) addEndpoint(file);
+      else if(stat.isDirectory()) {
+        const dir = file;
+        fs.readdirSync(dir).forEach((file) => { 
+          walkDirectory(dir + "/" + file);
+        });
+      }
+    }
+
+    // Walk through the API directory, adding endpoints as necessary
+    fs.readdirSync("./api").forEach(function(file) {
+      file = "./api/" + file;
+      walkDirectory(file);
     });
   
     server.get('*', async (req, res) => {

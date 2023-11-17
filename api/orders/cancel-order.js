@@ -1,10 +1,9 @@
-const alpaca = require('../api/alpaca/api');
+const alpaca = require('../external/alpaca/api');
 
 module.exports = {
-    method: "POST",
     route: "/api/cancel-order",
     authenticate: true,
-    api: async function(req, res, user) {
+    post: async function(req, res, user) {
         res.setHeader('Content-Type', 'application/json');
 
         if(!req.body.order) {
