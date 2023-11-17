@@ -6,6 +6,7 @@ const sendgrid = require('../external/sendgrid/api')
 module.exports = {
     route: '/api/verify',
     authenticate: true,
+    unverified: true,
     post: async function(req, res, user) {
         if(user.emailVerified === true) {
             res.status(401).json({error: "email has already been verified"});

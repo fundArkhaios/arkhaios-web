@@ -8,7 +8,6 @@ module.exports = {
         let result = null;
         
         await db.connect(async (db) => {
-            console.log(email);
             result = await db.collection('Users')
             .findOne({email: email, session: session});
 
@@ -20,14 +19,5 @@ module.exports = {
         });
 
         return result;
-    },
-
-    /* Return the user assuming login was successful, and if they have successfully
-       been assigned a brokerage user account (e.g., passed the KYC process)
-    */
-    kyc: async function(email, session) {
-        let user = login(email, session);
-        if(user && user.brokerageID) return user;
-        else return null;
     }
 };

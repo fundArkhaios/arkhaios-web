@@ -24,18 +24,30 @@ function route(server) {
       const handler = (callback) => {
         return async function(req, res) {
           try {
-            if(path.authenticate) {
-              // API requires authentication
-              const user = await authenticate.login(req.cookies.email,
-                                                    req.cookies.session);
-              if(user) callback(req, res, user);
-              else {
-                // Authentication failed, return error response
-                res.status(403);
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({error: "forbidden"}));
-              }
-            } else callback(req, res);
+            // API may require authentication
+            const user = await authenticate.login(req.cookies.email,
+                                                  req.cookies.session);
+
+            let forbidden = false;
+            let userValid = user ? true : false;
+            
+            if(path.kyc) { // Does the user need to be KYC verified?
+              if(user.brokerageID) callback(req, res, user);
+              else forbidden = true;
+            } else if(userValid == path.authenticate) {
+              if(path.authenticate) {
+                if(path.unverified || user.emailVerified) {
+                  callback(req, res, user);
+                } else forbidden = true;
+              } else callback(req, res);
+            } else forbidden = true;
+
+            if(forbidden) {
+              // Authentication failed, return error response
+              res.status(403);
+              res.setHeader('Content-Type', 'application/json');
+              res.send(JSON.stringify({error: "forbidden"}));
+            }
           } catch(e) {
             res.send(501).json({error: "server error"});
           }

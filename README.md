@@ -21,3 +21,14 @@
 ## Contributing
 * **IMPORTANT**: Do not add any .env files or secrets to the repo!
 * Any new features should be developed on a separate branch. Do not push to main; create a new pull request.
+
+## Routing
+* Each api route is defined in a separate file within the `/api` directory. The files must export a `get` or `post` function depending on the HTTP request performed. The required module exports are as follows:
+    - `route`: the relative path of the api url
+    - `authenticate`: whether the api requires user authentication
+    - `unverified`: whether the api can be accessed without email/mfa verification. By default, all api's with `authenticate` assume verification is required.
+    - `kyc`: whether the api requires KYC acceptance, e.g., whether the user can perform trading operations
+    - `post`: an optional POST function for the route
+    - `get`: an optional GET function for the route
+
+Each `post` and `get` function take up to three parameters: `req`, `res`, `user`; the request, response, and user object respectively. Only if `authenticate` is set to true will a `post` or `get` function be passed a user object.
