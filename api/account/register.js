@@ -19,7 +19,8 @@ module.exports = {
 
         const user = {
             username: login, password: hash, email: email,
-            created: Date.now(), session: session, sessionExpiry: Date.now() + sessionExpiry
+            created: Date.now(), session: session, sessionExpiry: Date.now() + sessionExpiry,
+            emailVerified: false
         };
 
         try {
@@ -39,7 +40,7 @@ module.exports = {
         if(error === '') {
             sendgrid.sendCode(email);
             res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true });
-            res.cookie('username', login, { maxAge: sessionExpiry, httpOnly: true });
+            res.cookie('email', email, { maxAge: sessionExpiry, httpOnly: true });
 
             var ret = { session: session, error: error };
             res.status(201).json(ret);

@@ -16,7 +16,7 @@ module.exports = {
                     const expiry = Date.now() + (1000 * 60 * 20);
 
                     await db.collection('Users').updateOne({"email" : email},
-                        {$set:{verificationCode: key, verifcationExpiry: expiry}});
+                        {$set:{verificationCode: key, verificationExpiry: expiry}});
 
                     await sendgrid.send({
                         to: email,

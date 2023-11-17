@@ -59,5 +59,9 @@ module.exports = {
 
 	cancel_order: async function(account, order) {
 		return get("/v1/trading/accounts/" + account + "/orders/" + order);
+	},
+
+	get_portfolio: async function(account, period, timeframe) {
+		return get(`/v1/trading/accounts/${account}/account/portfolio/history?period=${period}&timeframe=${timeframe}`);
 	}
 }
