@@ -1,3 +1,12 @@
+import Login from './login/login';	
+
+import './globals.css';
+import './../output.css';
+
 export default function Page() {
-	return (<div>Hello</div>);
-}
+	return (
+		<body>
+			<Login/>
+		</body>
+	);
+}	

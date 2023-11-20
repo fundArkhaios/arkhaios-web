@@ -62,5 +62,9 @@ module.exports = {
 
 	get_documents: async function(account) {
 		return get("/v1/accounts/" + account + "/documents");
+	},
+
+	get_portfolio: async function(account, period, timeframe) {
+		return get(`/v1/trading/accounts/${account}/account/portfolio/history?period=${period}&timeframe=${timeframe}`);
 	}
 }

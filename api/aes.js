@@ -2,7 +2,7 @@ const aesjs = require('aes-js');
 
 key = []
 for(let i = 0; i < 32; ++i) {
-  key[i] = i;
+  key[i] = i; 
 }
 
 module.exports = {
