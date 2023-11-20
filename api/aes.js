@@ -1,9 +1,5 @@
 const aesjs = require('aes-js');
-
-key = []
-for(let i = 0; i < 32; ++i) {
-  key[i] = i;
-}
+const key = (process.env.AES_KEY);
 
 module.exports = {
   forward: async function(plain){
