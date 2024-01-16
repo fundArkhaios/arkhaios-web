@@ -9,7 +9,7 @@ module.exports = {
         
         await db.connect(async (db) => {
             result = await db.collection('Users')
-            .findOne({email: email, session: session});
+            .findOne({email: email, sessionToken: session});
 
             // Check if the session token has expired
             if(result && (!result.sessionExpiry || Date.now() >= result.sessionExpiry)) {

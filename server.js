@@ -32,7 +32,7 @@ function route(server) {
             let userValid = user ? true : false;
             
             if(path.kyc) { // Does the user need to be KYC verified?
-              if(user.brokerageID) callback(req, res, user);
+              if(user?.brokerageID) callback(req, res, user);
               else forbidden = true;
             } else if(userValid == path.authenticate) {
               if(path.authenticate) {

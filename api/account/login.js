@@ -29,8 +29,8 @@ module.exports = {
                             },
                             {
                                 $set: {
-                                    session: session,
-                                    sessionExpiry: sessionExpiry
+                                    sessionToken: session,
+                                    sessionExpiry: Date.now() + sessionExpiry
                                 }
                             }
                         );

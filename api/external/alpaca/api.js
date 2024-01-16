@@ -37,7 +37,11 @@ module.exports = {
 	},
 
 	get_assets: async function() {
-		return get("/v1/accounts");
+		return get("/v1/assets?status=active");
+	},
+
+	get_asset: async function(id) {
+		return get("/v1/asset/" + id);
 	},
 
 	account_status: async function(id) {
