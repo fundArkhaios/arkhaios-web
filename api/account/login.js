@@ -16,12 +16,15 @@ module.exports = {
             const session = uuidv4();
             const sessionExpiry = 1000 * 3600 * 5; // By default, expire in 5 hours
 
+            let mfa = false;
+
             await db.connect(async (db) => {
                 try {
                     const result = await db.collection('Users').
                     findOne({ email: email, password: hash });
 
                     if (result) {
+                        mfa = result.mfaVerified;
                         await db.collection('Users').updateOne(
                             {
                                 "email": email,
@@ -46,7 +49,7 @@ module.exports = {
                 res.cookie('email', email, { maxAge: sessionExpiry, httpOnly: true });
                 res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true });
 
-                var ret = { token: session, error: error };
+                var ret = { token: session, error: error, mfa: mfa };
                 res.status(200).json(ret);
             }
         } catch (e) { res.status(401).json({error: 'server error'}); }
