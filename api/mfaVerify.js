@@ -15,9 +15,9 @@ module.exports = {
                                               encoding: 'base32',
                                               token: usrToken});
 
-        if(!verified)
-            res.status(401).json({token: verified, err: "Incorrect Token"});
+        if(verified)
+            res.status(200).json({token: verified});
 
-        res.status(200).json({token: verified});
+        res.status(401).json({token: verified, err: "Something went wrong."});
     }
 }
