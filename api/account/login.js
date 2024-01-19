@@ -12,15 +12,15 @@ module.exports = {
             const { email, password } = req.body;
 
             var hash = createHash('sha256').update(password).digest('hex');
-
+            console.log(hash);
             const session = uuidv4();
             const sessionExpiry = 1000 * 3600 * 5; // By default, expire in 5 hours
 
             await db.connect(async (db) => {
                 try {
-                    const result = await db.collection('Users').
-                    findOne({ email: email, password: hash });
-
+                    const result = await db.collection('Users').findOne({ email: email, password: hash });
+                    console.log(result);
+                    
                     if (result) {
                         await db.collection('Users').updateOne(
                             {
@@ -49,6 +49,6 @@ module.exports = {
                 var ret = { token: session, error: error };
                 res.status(200).json(ret);
             }
-        } catch (e) { res.status(401).json({error: 'server error'}); }
+        } catch (e) { res.sendStatus(401).json({error: 'server error'}); }
     }
 }

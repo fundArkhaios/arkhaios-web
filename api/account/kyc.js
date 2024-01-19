@@ -1,5 +1,8 @@
 const alpaca = require('../external/alpaca/api');
 const db = require('../../util/db');
+const authenticate = require('../../util/authenticate');
+const cookieParser = require('cookie-parser');
+
 
 function verifyFields(data, email) {
     if(data.country !== "USA") {
@@ -49,6 +52,9 @@ module.exports = {
     route: "/api/kyc",
     authenticate: true,
     post: async function(req, res, user) {
+
+        // const cookies = cookieParser();
+
         const error = verifyFields(req.body, user.email);
         if(error) {
             res.status(422).json({error: error});

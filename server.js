@@ -25,12 +25,23 @@ function route(server) {
         return async function(req, res) {
           try {
             // API may require authentication
+
+            console.log(req.cookies.email, req.cookies.session);
+
             const user = await authenticate.login(req.cookies.email,
                                                   req.cookies.session);
 
+
+
+            // console.log(user);
             let forbidden = false;
             let userValid = user ? true : false;
             
+            
+            
+            console.log("server.js obj " + user);
+            
+
             if(path.kyc) { // Does the user need to be KYC verified?
               if(user?.brokerageID) callback(req, res, user);
               else forbidden = true;
@@ -44,12 +55,13 @@ function route(server) {
 
             if(forbidden) {
               // Authentication failed, return error response
-              res.status(403);
               res.setHeader('Content-Type', 'application/json');
+              res.status(403);
               res.send(JSON.stringify({error: "forbidden"}));
             }
           } catch(e) {
-            res.send(501).json({error: "server error"});
+            res.status(501);
+            res.send(JSON.stringify({error: "server error"}));
           }
         };
       };

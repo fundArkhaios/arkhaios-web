@@ -3,7 +3,9 @@ import Link from 'next/link'
 
 export default function Login() {
 
-	async function login() {
+
+	async function login(event) {
+		event.preventDefault();
 		await fetch("/api/login", {
             method: 'POST',
             mode: 'cors',
@@ -11,20 +13,21 @@ export default function Login() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "login": document.getElementById("email").value,
+                "email": document.getElementById("email").value,
                 "password": document.getElementById("password").value
             })
         }).then(async response => {
             const data = await response.json();
 
-            if(data["message"] == 'Success') {
-                //router.push('/');
+            if(data.error == "") {
+                // router.push('/');
                 window.location.href = "/home";
             } else {
-                setError("Invalid username or password.");
+                throw new Error ("Invalid username or password.");
             }
         }).catch(error => {
-            setError("A server error has occurred.");
+			console.log(error);
+            throw new Error ("A server error has occurred.");
         });
 	}
 
@@ -61,7 +64,7 @@ export default function Login() {
 					<img src="rectangle-logo.png" alt="Login"/>
 				</figure>
 				
-				<form className="flex flex-col justify-center gap-4 px-10 py-10 lg:px-16">
+				<form id="loginForm" onSubmit={login} className="flex flex-col justify-center gap-4 px-10 py-10 lg:px-16">
 					
 					<div className="form-control">
 						<label className="label" htmlFor="input1"><span className="label-text">Email</span></label>
@@ -92,13 +95,12 @@ export default function Login() {
 							<input name="remember-me" type="checkbox" className="toggle toggle-xs" />
 							Remember me
 						</label>
-						<div className="label">
-							<a className="link-hover link label-text-alt" href="recovery.html">Forgot password?</a>
-						</div>
+						<Link href="/recovery" className="link-hover link label-text-alt">Forgot password?</Link>
 					</div>
 					
-					
-					<button onClick={login} className="btn btn-neutral" type="submit">Login</button>
+					<button className="btn btn-neutral" type="submit" id="submit">
+						Login
+					</button>
 					
 					
 					

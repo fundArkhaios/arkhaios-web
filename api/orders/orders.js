@@ -7,7 +7,7 @@ module.exports = {
         res.setHeader('Content-Type', 'application/json');
 
         const response = await alpaca.get_orders(user.brokerageID);
-
+        
         res.send(JSON.stringify({response}));
     }
 }
