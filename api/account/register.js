@@ -58,7 +58,7 @@ module.exports = {
                     if((await db.collection('Users').findOne({"email":email})) != null) {
                         error = "Email is already in use."
                         throw new Error('Email is already in use.')
-                    }
+                    }   
                     
                     while (await db.collection('Users').findOne({username: username}) != null) {
                         console.log("Attempting new username Generation")
@@ -69,6 +69,7 @@ module.exports = {
                         const result = await db.collection('Users').insertOne(newUser)
                         if (result.acknowledged === false) {
                             console.log('Insert operation was not acknowledged by the server');
+                            res.status(500)
                         } else {
                             console.log('Insert operation was successful');
                             status = "Success";
@@ -84,8 +85,9 @@ module.exports = {
             if(status === 'Success') {
                 sendgrid.sendCode(email);
                 
-                res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true });
+                res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true , sameSite: 'strict'});
                 res.cookie('username', username, { maxAge: sessionExpiry, httpOnly: true });
+                res.cookie('email', email, {maxAge: sessionExpiry, httpOnly: true});
 
                 var ret = { session: session, status: status };
 
