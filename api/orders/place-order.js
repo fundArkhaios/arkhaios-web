@@ -1,10 +1,9 @@
-const alpaca = require('../api/alpaca/api');
+const alpaca = require('../external/alpaca/api');
 
 module.exports = {
-    method: "POST",
     route: "/api/place-order",
-    authenticate: true,
-    api: async function(req, res, user) {
+    kyc: true,
+    post: async function(req, res, user) {
         const scope = req.body.scope;
         if(scope.indexOf("F") != -1) {
             // TODO: Handle a fund order
@@ -25,7 +24,7 @@ module.exports = {
                 data.qty = req.body.qty;
             } else data.notional = req.body.qty;
 
-            const response = await alpaca.create_order(user.account, data);
+            const response = await alpaca.create_order(user.brokerageID, data);
 
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(response));

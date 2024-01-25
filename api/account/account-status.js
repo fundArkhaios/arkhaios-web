@@ -1,11 +1,10 @@
-const alpaca = require('../api/alpaca/api');
+const alpaca = require('../external/alpaca/api');
 
 module.exports = {
-    method: "GET",
     route: "/api/account-status",
     authenticate: true,
-    api: async function(req, res, user) {
-        const data = await alpaca.account_status(user.account);
+    get: async function(req, res, user) {
+        const data = await alpaca.account_status(user.brokerageID);
       
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(data));

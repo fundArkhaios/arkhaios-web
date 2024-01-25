@@ -1,4 +1,3 @@
-
 const endpoint = "https://broker-api.sandbox.alpaca.markets/"
 
 async function get(path) {
@@ -9,9 +8,9 @@ async function get(path) {
 			"Authorization": "Basic " + btoa(process.env.KEY_ID + ":" + process.env.SECRET)
 		}
 	});
-	
+
 	const data = await response.json();
-	return data
+	return data;
 }
 
 async function post(path, body) {
@@ -25,7 +24,7 @@ async function post(path, body) {
 	});
 
 	const data = await response.json();
-	return data
+	return data;
 }
 
 module.exports = {
@@ -33,13 +32,17 @@ module.exports = {
 		return get("/v1/accounts");
 	},
 
-    create_account: async function(payload) {
+	create_account: async function(payload) {
 		return post("/v1/accounts", payload);
-    },
+	},
 
-    get_assets: async function() {
-        return get("/v1/accounts");
-    },
+	get_assets: async function() {
+		return get("/v1/assets?status=active");
+	},
+
+	get_asset: async function(id) {
+		return get("/v1/asset/" + id);
+	},
 
 	account_status: async function(id) {
 		return get("/v1/accounts/" + id);
@@ -59,5 +62,15 @@ module.exports = {
 
 	cancel_order: async function(account, order) {
 		return get("/v1/trading/accounts/" + account + "/orders/" + order);
-	}
+	},
+
+	get_documents: async function(account) {
+		return get("/v1/accounts/" + account + "/documents");
+	},
+
+	get_portfolio: async function(account, period, timeframe) {
+		return get(`/v1/trading/accounts/${account}/account/portfolio/history?period=${period}&timeframe=${timeframe}`);
+	},
+
+	
 }
