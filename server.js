@@ -25,9 +25,6 @@ function route(server) {
         return async function(req, res) {
           try {
             // API may require authentication
-
-            console.log(req.cookies.email, req.cookies.session);
-
             const user = await authenticate.login(req.cookies.email,
                                                   req.cookies.session);
 
@@ -37,11 +34,6 @@ function route(server) {
             let forbidden = false;
             let userValid = user ? true : false;
             
-            
-            
-            console.log("server.js obj " + user);
-            
-
             if(path.kyc) { // Does the user need to be KYC verified?
               if(user?.brokerageID) callback(req, res, user);
               else forbidden = true;

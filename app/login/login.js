@@ -1,28 +1,42 @@
 'use client'
 import Link from 'next/link'
+import { useState } from 'react';
 
 export default function Login() {
-
+	const [mfaRequired, setMfaRequired] = useState(false);
+    const [emailState, setEmail] = useState("");
+    const [passwordState, setPassword] = useState("");
 
 	async function login(event) {
 		event.preventDefault();
+		
+		const mfa = document.getElementById("mfa")?.value;
+		const email = mfa ? emailState : document.getElementById("email").value;
+		const password = mfa ? passwordState : document.getElementById("password").value;
+
+		let payload = { "email": email, "password": password };
+		if(mfa) payload.mfa = mfa;
+
 		await fetch("/api/login", {
             method: 'POST',
             mode: 'cors',
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-                "email": document.getElementById("email").value,
-                "password": document.getElementById("password").value
-            })
+            body: JSON.stringify(payload)
         }).then(async response => {
             const data = await response.json();
 
-            if(data.error == "") {
+            if(data.status == "success") {
                 // router.push('/');
                 window.location.href = "/home";
             } else {
+				if(data?.data["mfa"] == true) {
+					setEmail(email);
+					setPassword(password);
+					setMfaRequired(true);
+				};
+
                 throw new Error ("Invalid username or password.");
             }
         }).catch(error => {
@@ -31,9 +45,51 @@ export default function Login() {
         });
 	}
 
+	const form = mfaRequired ? <>
+		<div className="form-control">
+			<label className="label" htmlFor="input1"><span className="label-text">Authenticator Code</span></label>
+			<input
+				type="text"
+				placeholder="code"
+				className="input input-bordered [&:user-invalid]:input-warning [&:user-valid]:input-success"
+				required
+				id="mfa" />
+		</div>
+	</> : <>
+		<div className="form-control">
+			<label className="label" htmlFor="input1"><span className="label-text">Email</span></label>
+			<input
+				type="email"
+				placeholder="email"
+				className="input input-bordered [&:user-invalid]:input-warning [&:user-valid]:input-success"
+				required
+				id="email" />
+		</div>
+		
+		
+		<div className="form-control">
+			<label className="label" htmlFor="input2"><span className="label-text">Password</span></label>
+			<input
+				type="password"
+				id="password"
+				placeholder="password"
+				className="input input-bordered [&:user-invalid]:input-warning [&:user-valid]:input-success"
+				required 
+				minLength="6"
+				/>
+		</div>
+		
+		
+		<div className="flex items-center justify-between gap-3">
+			<label className="flex cursor-pointer gap-3 text-xs">
+				<input name="remember-me" type="checkbox" className="toggle toggle-xs" />
+				Remember me
+			</label>
+			<Link href="/recovery" className="link-hover link label-text-alt">Forgot password?</Link>
+		</div>
+	</>
 
     return (
-
 		<div className="flex min-h-screen items-center justify-center bg-base-200">
 		<div className="m-4 min-h-[50vh] w-full max-w-sm lg:max-w-4xl">
 			
@@ -66,37 +122,7 @@ export default function Login() {
 				
 				<form id="loginForm" onSubmit={login} className="flex flex-col justify-center gap-4 px-10 py-10 lg:px-16">
 					
-					<div className="form-control">
-						<label className="label" htmlFor="input1"><span className="label-text">Email</span></label>
-						<input
-							type="email"
-							placeholder="email"
-							className="input input-bordered [&:user-invalid]:input-warning [&:user-valid]:input-success"
-							required
-							id="email" />
-					</div>
-					
-					
-					<div className="form-control">
-						<label className="label" htmlFor="input2"><span className="label-text">Password</span></label>
-						<input
-							type="password"
-							id="password"
-							placeholder="password"
-							className="input input-bordered [&:user-invalid]:input-warning [&:user-valid]:input-success"
-							required 
-							minLength="6"
-							/>
-					</div>
-					
-					
-					<div className="flex items-center justify-between gap-3">
-						<label className="flex cursor-pointer gap-3 text-xs">
-							<input name="remember-me" type="checkbox" className="toggle toggle-xs" />
-							Remember me
-						</label>
-						<Link href="/recovery" className="link-hover link label-text-alt">Forgot password?</Link>
-					</div>
+					{form}
 					
 					<button className="btn btn-neutral" type="submit" id="submit">
 						Login
