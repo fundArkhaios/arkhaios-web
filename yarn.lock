@@ -765,7 +765,17 @@ jiti@^1.19.1:
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-4.0.0.tgz"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-lightweight-charts@^4.1.2:
+kafkajs@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.npmjs.org/kafkajs/-/kafkajs-2.2.4.tgz"
+  integrity sha512-j/YeapB1vfPT2iOIUn/vxdyKEuhuY2PxMBvf5JWux6iSaukAccrMtXEY/Lb7OvavDhOWME589bpLrEdnVHjfjA==
+
+lightweight-charts-react-wrapper@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/lightweight-charts-react-wrapper/-/lightweight-charts-react-wrapper-2.1.0.tgz"
+  integrity sha512-DNKmZ9tj9GUyss2x5lil0xfSwHeiit0LUcbjpcuBWSmzg5lqKTQWFuLebtePh/VC2x2YXren2aaDj5wQwzuhMw==
+
+lightweight-charts@^4.1.2, lightweight-charts@>=4.0.0:
   version "4.1.2"
   resolved "https://registry.npmjs.org/lightweight-charts/-/lightweight-charts-4.1.2.tgz"
   integrity sha512-8wm2AF0tOXR5jdiH4nJqvO8HcX1wW5+qeAJp6qi3goizj0+qUCLXi062d+6dGe9VpgjdM9e2KHcPGdmzQVjHtQ==
@@ -1136,7 +1146,7 @@ react-dom@^18.2.0, react-dom@18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
-react@^18.2.0, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@18.2.0:
+react@^18.2.0, "react@>= 16.8.0 || 17.x.x || ^18.0.0-0", react@>=16.8.0, react@18.2.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
@@ -1399,7 +1409,7 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.npmjs.org/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
-tslib@^2.4.0:
+tslib@*, tslib@^2.4.0:
   version "2.6.2"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==

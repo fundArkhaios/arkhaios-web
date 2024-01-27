@@ -2,7 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-body {}
+
+
+html, body, div {
+  font-family: beaufort-pro, serif;
+  font-style: heavy;
+  font-weight: 500;
+}
+
+
+body {
+  background-color: #18181B;
+}
 
 a:hover {
 	@apply no-underline;
@@ -23,7 +34,7 @@ a:hover {
 }
 
 input {
-	@apply block pl-0 p-3 pr-10 w-full text-sm text-gray-900 bg-gray-50 outline-none border-b-2 border-gray-300 focus:border-gray-500;
+	@apply block pl-0 p-3 pr-10 w-full text-sm text-gray-900 outline-none border-b-2 border-gray-300 focus:border-gray-500;
 }
 
 input:focus {
@@ -76,7 +87,7 @@ body {
 }
 
 .body-darkmode {
- background-color: #475569;
+ background-color: #00193b;
 }
 
 
@@ -270,8 +281,6 @@ section span {
     width: 110px;
 }
 
-
-
 .switcher {
 	display: flex;
 	align-items: center;
@@ -308,4 +317,3 @@ section span {
 .switcher-active-item:hover {
 	background-color: #e1eff9;
 }
-

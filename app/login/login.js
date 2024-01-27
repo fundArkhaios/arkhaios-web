@@ -33,8 +33,7 @@ export default function Login() {
 
 
     return (
-
-		<div className="flex min-h-screen items-center justify-center bg-base-200">
+		<div className="flex min-h-screen items-center justify-center bg-base-200 ">
 		<div className="m-4 min-h-[50vh] w-full max-w-sm lg:max-w-4xl">
 			
 			<div className="flex items-center justify-center gap-2 p-8">
@@ -112,6 +111,7 @@ export default function Login() {
 			</main>	
 		</div>
 	</div>
+
 
     );
 }

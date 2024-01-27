@@ -17,7 +17,7 @@ export const RecoveryContextProvider = ( {children} ) => {
     const [emailError, setEmailError] = useState(false);
     const [recoveryCodeError, setRecoveryCodeError] = useState(false);
     const [passwordRecoveryError, setPasswordRecoveryError] = useState(false);
-    console.log(email);
+    
     // Success Pop-up
     const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
 
@@ -105,7 +105,7 @@ export const RecoveryContextProvider = ( {children} ) => {
             })
         }).then(async response => {
             const data = await response.json();
-            console.log(data);
+
             if (data.status == "success") {
                 setTimeout(setPasswordResetSuccess(true), 3000);
                 window.location.href = '/';
@@ -124,7 +124,6 @@ export const RecoveryContextProvider = ( {children} ) => {
 
     function verifyRecoveryPassword() {
         setSamePassword(document.getElementById("recoveryPassword").value);
-        console.log(samePassword);
     }
 
     const renderPasswordResetSuccess = () => {

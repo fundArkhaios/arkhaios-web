@@ -26,20 +26,19 @@ function route(server) {
           try {
             // API may require authentication
 
-            console.log(req.cookies.email, req.cookies.session);
+            // console.log(req.cookies.email, req.cookies.session);
 
             const user = await authenticate.login(req.cookies.email,
                                                   req.cookies.session);
 
 
 
-            // console.log(user);
+            
             let forbidden = false;
             let userValid = user ? true : false;
             
             
             
-            console.log("server.js obj " + user);
             
 
             if(path.kyc) { // Does the user need to be KYC verified?
@@ -99,7 +98,7 @@ nextApp.prepare()
     server.use(express.json());
 
     route(server);
-  
+
     server.get('*', async (req, res) => {
       const parsed = url.parse(req.url, true);
       await nextHandler(req, res, parsed);

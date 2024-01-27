@@ -1,19 +1,14 @@
-'use client'
-
-import UserChart from "./userChart";
-import Header from "../header"
+// import UserChart from "./userChart";
+import Header from "../header.js"
 import './userChart'
+import MainChart from './mainChart.js'
+
 export default function Home() {
 
     return(
 
-        <main>
-            <body>
-            <Header/>
-             Main Page
-                <UserChart/>
-            </body>
-            
+        <main>            
+            <MainChart/>
         </main>
 
     );
