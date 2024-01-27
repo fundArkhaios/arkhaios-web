@@ -28,9 +28,7 @@ function route(server) {
             const user = await authenticate.login(req.cookies.email,
                                                   req.cookies.session);
 
-
-
-            // console.log(user);
+            
             let forbidden = false;
             let userValid = user ? true : false;
             
@@ -91,7 +89,7 @@ nextApp.prepare()
     server.use(express.json());
 
     route(server);
-  
+
     server.get('*', async (req, res) => {
       const parsed = url.parse(req.url, true);
       await nextHandler(req, res, parsed);
