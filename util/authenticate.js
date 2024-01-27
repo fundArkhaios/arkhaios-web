@@ -12,11 +12,9 @@ module.exports = {
             // Check if the session token has expired
             if(result && (Date.now() >= result.sessionExpiry)) {
                 // Nullify authentication; session expired
-                console.log("Expired")
                 result = null;
             }
         });
-        
 
         return result;
     }

@@ -6,7 +6,10 @@ module.exports = {
     get: async function(req, res, user) {
         res.setHeader('Content-Type', 'application/json');
 
-        const response = await alpaca.get_orders(user.brokerageID);
+        let status = "all";
+        if(req.body.status) status = req.body.status;
+
+        const response = await alpaca.get_orders(user.brokerageID, status);
         
         res.send(JSON.stringify({response}));
     }
