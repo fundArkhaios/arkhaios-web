@@ -10,7 +10,7 @@ export default async function Page() {
 
     const user = await authenticate.login(email, session);
 
-
+    // Testing
     return (
     <main className = "text-center py-10 px-10">
         <p className = "text-5xl font-bold text-white place-self-center py-2">{user.firstName + " " + user.lastName}</p>
