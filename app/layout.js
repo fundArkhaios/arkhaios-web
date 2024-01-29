@@ -39,8 +39,6 @@ export default async function RootLayout({ children }) {
       }
     }
 
-
-
   const renderAuthenticatedContent = () => (
     <div className="">
       <nav className="border-b-2 relative group">  
@@ -50,7 +48,7 @@ export default async function RootLayout({ children }) {
     </div>
   );
 
-const renderUnauthenticatedContent = () => (<>{children}</>);
+  const renderUnauthenticatedContent = () => (<>{children}</>);
 
  return (
   <html lang="en">
