@@ -23,7 +23,6 @@ module.exports = {
             let base32Encrypted = user.base32Secret;
 
             let base32 = await aes.backward(base32Encrypted);
-            console.log("32 dec: " + base32);
 
             let verified = speakeasy.totp.verify({secret: base32,
                                                 encoding: 'base32',
@@ -54,12 +53,9 @@ module.exports = {
           var base32Encrypted = await aes.forward(base32Plain);
           var tokenEncrypted = await aes.forward(token);
           
-          console.log("32 enc: " + base32Plain);
-          
           //we are going to store the secret key in the database for safety
           //try connecting to the database
           await db.connect(async (db) => {
-            console.log("update: " + base32Plain)
             //then we need to store the encrypted keys in the data based, so update the user, maybe using cookies
             //here we are checking to see if the user is logged into a valid session and updating the user's info
             await db.collection('Users').updateOne(user,
@@ -80,7 +76,6 @@ module.exports = {
       } catch(e) {
         error = e.toString();
         
-        console.log(error);
         res.status(401).json({status: RESPONSE_TYPE.SERVER_ERROR, message: "server error"});
       }
     } else {
