@@ -20,7 +20,7 @@ const configs = {
         client_user_id: usr.salt,
     },
     client_name: 'Arkhaios',
-    products: '',
+    products: ['auth'],
     language: 'en',
 };
 
