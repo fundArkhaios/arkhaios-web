@@ -1,5 +1,5 @@
 const aesjs = require('aes-js');
-const key = (process.env.AES_KEY);
+const key = (process.env.AES_KEY).split(" ").map(i => parseInt(i, 10));
 
 module.exports = {
   forward: async function(plain){
