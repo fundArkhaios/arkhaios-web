@@ -35,9 +35,12 @@ module.exports = {
             var session = uuidv4(); // Generate session token
             const sessionExpiry = 1000 * 3600 * 5; // By default, expire in 5 hours
 
+            var id = uuidv4();
+
             let creationTime = Date.now(); 
             
             const newUser = {
+                id: id,
                 firstName: firstName,
                 lastName: lastName, 
                 username: username,
