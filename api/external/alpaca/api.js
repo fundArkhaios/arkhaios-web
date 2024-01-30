@@ -1,15 +1,19 @@
-const endpoint = "https://broker-api.sandbox.alpaca.markets/"
+const endpoint = "https://broker-api.sandbox.alpaca.markets"
 
-async function get(path) {
+async function get(path, options) {
 	const response = await fetch(endpoint + path, {
 		method: "GET",
 		headers: {
-			"Accept": "application/json",
+			"Accept": options?.response == "buffer" ? "" : "application/json",
 			"Authorization": "Basic " + btoa(process.env.KEY_ID + ":" + process.env.SECRET)
 		}
 	});
 
-	const data = await response.json();
+	let data = response;
+	if(options?.response == "buffer") {
+		data = data.arrayBuffer();
+	}  else data = data.json();
+
 	return data;
 }
 
@@ -62,18 +66,18 @@ module.exports = {
 		return get("/v1/accounts/" + id);
 	},
 
-	enable_crypto: async function(id, data) {
+	enable_crypto: async function(id, ip) {
 		data = {
 			"agreements": [
 				{
 				"agreement": "crypto_agreement",
 				"signed_at": "2023-01-01T18:13:44Z",
-				"ip_address": "185.13.21.99"
+				"ip_address": ip
 				}
 			]
 		};
 
-		return patch("/v1/accounts/" + id, data);
+		return patch("/v1/accounts/" + id);
 	},
 
 	sandbox_deposit: async function(id, amount) {
@@ -103,6 +107,7 @@ module.exports = {
 		return get("/v1/accounts/" + id + "/transfers");
 	},
 
+
 	create_order: async function(account, order) {
 		return post("/v1/trading/accounts/" + account + "/orders", order);
 	},
@@ -125,6 +130,10 @@ module.exports = {
 
 	get_documents: async function(account) {
 		return get("/v1/accounts/" + account + "/documents");
+	},
+
+	get_document: async function(account, document) {
+		return get("/v1/accounts/" + account + "/documents/" + document + "/download", { "response": "buffer"});
 	},
 
 	get_portfolio: async function(account, period, timeframe) {

@@ -44,7 +44,7 @@ module.exports = {
         } else {
           //this is a secret object that is generated from the speakeasy library
           //returns a couple of values: ascii, hex, base32, and otpath_url
-          var secret = speakeasy.generateSecret();
+          var secret = speakeasy.generateSecret({name: "Arkhaios - " + user.email});
           var token = secret.otpauth_url;
 
           var base32Plain = secret.base32;
