@@ -27,7 +27,7 @@ module.exports = {
                     const user = await db.collection('Users').
                     findOne({ email: email });
 
-                    let hash = hash(user.password, user.salt, user.iter);
+                    let { hash, salt, iter } = hash(user.password, user.salt, user.iter);
                     
                     if (user.password == hash) {
                         let authenticate = false;
