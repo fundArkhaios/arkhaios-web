@@ -1,5 +1,6 @@
 const db = require('../../util/db');
 const { createHash } = require('crypto');
+const { hash } = require('../hashAlgo.js');
 
 
 module.exports =  {
@@ -12,7 +13,7 @@ module.exports =  {
 
             // JSON Response
             var message = "";
-            var status = ""
+            var status = "";
             //
 
 
@@ -20,7 +21,8 @@ module.exports =  {
             console.log("Email: " + email);
             console.log("Password: " + password);
 
-            var hashPass = createHash('sha256').update(password).digest('hex'); // Hash Password with SHA256
+            //var hashPass = createHash('sha256').update(password).digest('hex'); // Hash Password with SHA256
+            var { hashPass, salt, iter } = hash(password, '', 0);
 
             try {
 
@@ -29,7 +31,10 @@ module.exports =  {
                     const result = await db.collection('Users').updateOne(
                         {email: email},
                         {
-                            $set: { password: hashPass }
+                            $set: { password: hashPass,
+                                    salt: salt,
+                                    iter: iter
+                                  }
                         }
                     );
                 
