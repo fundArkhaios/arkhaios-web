@@ -2,8 +2,9 @@ const db = require('../../util/db');
 const { v4: uuidv4 } = require('uuid');
 const { createHash } = require('crypto');
 const speakeasy = require('speakeasy');
-const aes = require('../aes.js');
-const RESPONSE_TYPE = require('../response_type.js');
+const aes = require('../aes');
+const RESPONSE_TYPE = require('../response_type');
+const { hash } = require('../hashAlgo');
 
 module.exports = {
     route: "/api/login",
@@ -17,16 +18,18 @@ module.exports = {
 
             const { email, password } = req.body;
 
-            var hash = createHash('sha256').update(password).digest('hex');
+            //var hash = createHash('sha256').update(password).digest('hex');
             
             const sessionExpiry = 1000 * 3600 * 5; // By default, sessions expire in 5 hours
 
             await db.connect(async (db) => {
                 try {
                     const user = await db.collection('Users').
-                    findOne({ email: email, password: hash });
+                    findOne({ email: email });
 
-                    if (user) {
+                    let hash = hash(user.password, user.salt, user.iter);
+                    
+                    if (user.password == hash) {
                         let authenticate = false;
 
                         if(user.mfaVerified) {
