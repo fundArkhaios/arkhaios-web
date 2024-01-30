@@ -10,7 +10,7 @@ module.exports = {
         res.status(201).json(tokenResponse.data);
     },
 
-    exchangePublicToken: async function(publicAccessToken, usr){
+    exchangePublicToken: async function(req, res, publicAccessToken, user){
         var response = await client.itemPublicTokenExchange({
             public_token: publicAccessToken,
         });
@@ -21,10 +21,10 @@ module.exports = {
         //store the permanent access token in the database, ENCRYPTED
         try{
             await db.connect(async (db) => {
-                let results = await db.collection('Users').findOne({usr});
+                let results = await db.collection('Users').findOne({user});
 
                 if(results){
-                    await db.collection('Users').updateOne({usr}, 
+                    await db.collection('Users').updateOne({user}, 
                         {$push: {"plaidAccess": encryptPlaid}});
                 }
             });
