@@ -15,6 +15,8 @@ module.exports = {
             public_token: publicAccessToken,
         });
 
+        var error = "";
+        
         var permAccessToken = response.data.access_token;
         var encryptPlaid = aes.forward(permAccessToken);
 
@@ -30,7 +32,7 @@ module.exports = {
             });
         }
         catch(e){
-            var error = e.toString();
+            error = e.toString();
         }
 
         if(!error)
