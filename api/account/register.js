@@ -29,7 +29,7 @@ module.exports = {
             
             const { firstName, lastName, email, password } = req.body;
             
-            var hashPass = hash(password, '', 0); // Hash password with SHA256
+            var { hashPass, salt, iter } = hash(password, '', 0); // Hash password with SHA256
             var username = generateUsername(); // Generate username Ex: Fast-Red-Elephant-281
 
             var session = uuidv4(); // Generate session token
@@ -45,7 +45,9 @@ module.exports = {
                 lastName: lastName, 
                 username: username,
                 email: email,
-                password: hashPass, 
+                password: hashPass,
+                salt: salt, 
+                iter: iter,
                 emailVerified: false,
                 verificationCode: 0,
                 mfaVerified: false,
