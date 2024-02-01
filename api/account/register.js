@@ -21,7 +21,6 @@ module.exports = {
     authenticate: false,
     post: async function(req, res) {
         try {
-            console.log("TESTING");
             
             var error = '';
             var status = "failed";
@@ -31,7 +30,7 @@ module.exports = {
             var hashPass = createHash('sha256').update(password).digest('hex'); // Hash password with SHA256
             var username = generateUsername(); // Generate username Ex: Fast-Red-Elephant-281
 
-            var session = uuidv4(); // Generate session token
+            var session = uuidv4();
             const sessionExpiry = 1000 * 3600 * 5; // By default, expire in 5 hours
 
             let creationTime = Date.now(); 
@@ -52,7 +51,6 @@ module.exports = {
             };
 
             try {
-                console.log("CONNECTING");
                 await db.connect(async (db) => {
 
                     if((await db.collection('Users').findOne({"email":email})) != null) {

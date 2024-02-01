@@ -2,10 +2,12 @@
 import Link from 'next/link'
 import { useState } from 'react';
 
-export default function Login() {
+export default function Page() {
 	const [mfaRequired, setMfaRequired] = useState(false);
     const [emailState, setEmail] = useState("");
     const [passwordState, setPassword] = useState("");
+
+	const [isLoading, setIsLoading] = useState("");
 
 	async function login(event) {
 		event.preventDefault();
@@ -26,9 +28,10 @@ export default function Login() {
             body: JSON.stringify(payload)
         }).then(async response => {
             const data = await response.json();
-
+			
             if(data.status == "success") {
                 // router.push('/');
+				setIsLoading(true);
                 window.location.href = "/home";
             } else {
 				if(data?.data["mfa"] == true) {
@@ -44,6 +47,9 @@ export default function Login() {
             throw new Error ("A server error has occurred.");
         });
 	}
+
+	
+
 
 	const form = mfaRequired ? <>
 		<div className="form-control">

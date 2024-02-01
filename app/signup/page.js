@@ -30,14 +30,13 @@ export default function Page() {
                 window.location.href = "/home";
             }
         });
-        console.log(response);
     }
 
     const [samePassword, setSamePassword] = useState("");
 
     function verifyPassword() {
         setSamePassword(document.getElementById("password").value);
-        console.log(samePassword);
+
     }
 
     return (
@@ -169,7 +168,7 @@ export default function Page() {
 
 
                         <div className="label justify-end">
-                            <Link className="link-hover link label-text-alt" href="/">
+                            <Link className="link-hover link label-text-alt" href="/login">
                                 Login to existing accout
                             </Link>
                         </div>

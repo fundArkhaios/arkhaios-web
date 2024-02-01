@@ -12,7 +12,8 @@ html, body, div {
 
 
 body {
-  background-color: #18181B;
+  background-color: #141416;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 a:hover {
@@ -25,8 +26,10 @@ a:hover {
 }
 
 .landing {
-	/* background-image: url('/arkhaiosBackground1.png'); */
+	background-image: url('/bullvsBearPillar.jpg');
 	background-size: cover;
+  
+  
 }
 
 .loading {
@@ -127,6 +130,11 @@ section span {
 	letter-spacing: -4px;
   }
   
+
+  .interFont {
+    font-family: 'Inter-Bold', "Inter", sans-serif;
+  }
+
 
 .interBold {
   font-weight: 700;
@@ -316,4 +324,12 @@ section span {
 .switcher-active-item,
 .switcher-active-item:hover {
 	background-color: #e1eff9;
+}
+
+
+.title {
+  background-image: url(https://cdn.pixabay.com/photo/2017/07/03/20/17/abstract-2468874_960_720.jpg);
+  background-attachment: fixed;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
 }
