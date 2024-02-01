@@ -36,7 +36,7 @@ export default async function RootLayout({ children }) {
       if (loginPaths.includes(path)) {
         redirect("/home");
       } else if (!user.emailVerified && path !== "/verification") {
-        console.log("TRIGGERED");
+        // console.log("TRIGGERED");
         // redirect("/");
       }
     }
