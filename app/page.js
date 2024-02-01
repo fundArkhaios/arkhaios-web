@@ -24,26 +24,27 @@ export default function Page() {
           <div className="flex items-center justify-center">
             <div className="flex justify-center">
 
-              <Link href="/" className="text-xl interBold text-black px-4">
+              <Link href="/" className="text-xl interBold text-black px-4 py-1 hover:bg-cyan-50 rounded-md">
                 Businesses
               </Link>
-              <Link href="/" className="text-xl interBold text-black px-4">
+              <Link href="/" className="text-xl interBold text-black px-4 py-1 hover:bg-cyan-50 rounded-md">
                 Individuals
               </Link>
             </div>
             
               <img
                 src="/noBackgroundArkhaiosLogo.png"
-                width={50}
-                height={50}
+                width={75}
+                height={75}
                 alt="Logo"
+				className = "px-2"
               ></img>
             
             <div className="flex items-center">
-              <Link href="/" className="text-xl interBold text-black whitespace-nowrap px-4">
+              <Link href="/" className="text-xl interBold text-black whitespace-nowrap px-4 py-1 hover:bg-cyan-50 rounded-md">
                 Who We Are
               </Link>
-              <Link href="/" className="text-xl interBold text-black px-4">
+              <Link href="/" className="text-xl interBold text-black px-4 py-1 hover:bg-cyan-50 rounded-md">
                 Contact
               </Link>
             </div>
@@ -67,7 +68,7 @@ export default function Page() {
             Fund your Future
           </h1>
           <Link href="/signup" className="no-underline mx-3 mdSizeInter px-3">
-            <button className="animate w-23 bg-amber-100 hover:bg-amber-50 hover:underline rounded-bl-lg rounded-tr-lg py-2 px-5 hover:no-underline text-black">
+            <button className="animate w-23 bg-amber-100 hover:bg-amber-50 hover:underline hover:rounded-bl-lg hover:rounded-tr-lg py-2 px-5 hover:no-underline text-black">
               Get Started
             </button>
           </Link>

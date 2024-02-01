@@ -5,7 +5,6 @@ module.exports = {
     extend: {},
   },
   fontFamily: {
-    sans: ['beaufort-pro'],
   },
   plugins: [require('daisyui')],
 }
