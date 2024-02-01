@@ -4,6 +4,7 @@ import Redirect from './components/redirect';
 import { redirect } from 'next/navigation'
 // import { useRouter } from 'next/router';
 import Header from './header';
+import { UserContextProvider } from './UserContext';
 
 export const metadata = {
   title: 'Arkhaios',
@@ -11,14 +12,14 @@ export const metadata = {
 } 
 
 
-
-
 export default async function RootLayout({ children }) {
+
+    // const { user } = useContext(UserContext)
 
     // const router = useRouter();
     // const { pathname } = router;
 
-    const loginPaths = ["/", "/signup"];
+    const loginPaths = ["/", "/login", "/signup", "/recovery"];
   
     const path = headers().get("x-url");
     const cookieStore = cookies();
@@ -27,25 +28,28 @@ export default async function RootLayout({ children }) {
 
     const user = await authenticate.login(email, session);
     
-    
+    console.log("Path: " + path);
 
     if (!user && !loginPaths.includes(path)) {
-        redirect("/signup");
+        redirect("/login");
     } else if (user) {
       if (loginPaths.includes(path)) {
         redirect("/home");
       } else if (!user.emailVerified && path !== "/verification") {
-        redirect("/");
+        // console.log("TRIGGERED");
+        // redirect("/");
       }
     }
 
   const renderAuthenticatedContent = () => (
-    <div className="">
-      <nav className="border-b-2 relative group">  
-          <Header user={user} />
-      </nav>
-      {children} 
-    </div>
+    <UserContextProvider user = {user}>
+        <div className="">
+          <nav className="border-b border-amber-100 relative group"> {/* <- You can add a border by putting 'border-b-2'*/}
+              <Header user={user} />
+          </nav>
+          {children} 
+        </div>
+      </UserContextProvider>
   );
 
   const renderUnauthenticatedContent = () => (<>{children}</>);

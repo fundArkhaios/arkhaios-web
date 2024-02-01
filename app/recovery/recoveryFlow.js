@@ -17,6 +17,9 @@ export default function RecoveryFlow() {
         emailComponent, 
         codeRecoveryComponent,
         newPasswordComponent,
+        isLoading,
+        setIsLoading,
+        renderLoading
         } = useContext(RecoveryContext);
 
   const renderComponentFlow = () => {

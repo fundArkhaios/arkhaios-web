@@ -3,13 +3,13 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 
-export default function Page() {
+export default function EnableMFA() {
     const router = useRouter();
 
     const [qrCode, setQrCode] = useState(null);
     const [error, setError] = useState("");
     const [enabled, setEnabled] = useState(false);
-
+    console.log(qrCode);
     useEffect(() => {
         if(qrCode == null) {
             fetch("/api/mfa", {
@@ -50,7 +50,7 @@ export default function Page() {
             console.log(response);
             response.json().then(data => {
                 if(data.status == "success") {
-                    router.push('/account')
+                    router.push('/account/settings/security-privacy')
                 } else setError(data.message);
             });
         }).catch(error => {

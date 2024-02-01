@@ -3,6 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import Link from 'next/link'
 import "../../output.css";
 import "../globals.css";
+import './../components/components.css'
 
 export const RecoveryContext = createContext();
 
@@ -23,8 +24,15 @@ export const RecoveryContextProvider = ( {children} ) => {
 
     // Make sure the passwords are the same.
     const [samePassword, setSamePassword] = useState("");
+    
+
+    // Loading Wheel
+    const [isLoading, setIsLoading] = useState(false);
+
+    
 
     async function sendRecoveryCode(event) {
+        setIsLoading(true);
         event.preventDefault()
 		await fetch("/api/sendRecoveryCode", {
             method: 'POST',
@@ -37,6 +45,7 @@ export const RecoveryContextProvider = ( {children} ) => {
             })
         }).then(async response => {
             const data = await response.json();
+            
             if(data.error == "") {
                 setEmail(document.getElementById("email").value);
                 setSendEmailPage(false);
@@ -49,6 +58,9 @@ export const RecoveryContextProvider = ( {children} ) => {
         }).catch(error => {
 			console.log(error);
             throw new Error ("A server error has occurred.");
+        }).finally(() => {
+            // Stays on forever if the code below is commented.
+            setIsLoading(false);
         });
 	}
 
@@ -118,6 +130,8 @@ export const RecoveryContextProvider = ( {children} ) => {
         }).catch(error => {
             console.log(error);
             throw new Error("A server error has occured.")
+        }).finally(() => {
+            setIsLoading(false);
         })
     }
 
@@ -191,10 +205,14 @@ export const RecoveryContextProvider = ( {children} ) => {
 							required
 							id="email" />
 					</div>
-										
-					<button className="btn btn-neutral" type="submit" id="submit">
-						Send Recovery Email
-					</button>
+                    { isLoading ?	
+                        <button className="btn btn-neutral" type="submit" id="submit">
+                            <p className = "loader"></p>
+                        </button> :		
+                        <button className="btn btn-neutral" type="submit" id="submit">
+                            Send Recovery Email
+                        </button> 
+                    }
                 
 					<div className="label justify-end">
 						<Link href="/signup" className="link-hover link label-text-alt" >Create new account</Link>
