@@ -1,0 +1,52 @@
+.buttonLoader svg {
+    width: 3em;
+    transform-origin: center;
+    animation: rotate4 3s linear infinite;
+   }
+   
+   .buttonLoader circle {
+    fill: none;
+    stroke: rgb(0, 211, 137);
+    stroke-width: 2.2;
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    stroke-linecap: round;
+    animation: dash4 2s ease-in-out infinite;
+   }
+   
+   @keyframes rotate4 {
+    100% {
+     transform: rotate(360deg);
+    }
+   }
+   
+   @keyframes dash4 {
+    0% {
+     stroke-dasharray: 1, 200;
+     stroke-dashoffset: 0;
+    }
+   
+    50% {
+     stroke-dasharray: 90, 200;
+     stroke-dashoffset: -35px;
+    }
+   
+    100% {
+     stroke-dashoffset: -125px;
+    }
+   }
+
+
+   /* To add this loader to a button attach the 'buttonLoader' className to the parent div like so.
+      Don't change the circle and svg fields. Trust me. 
+
+    <button className="btn btn-neutral buttonLoader" type="submit" id="submit">
+        <svg viewBox="25 25 50 50">
+            <circle r="20" cy="50" cx="50"></circle>
+        </svg>
+    </button>
+
+
+
+   */
+   

@@ -21,13 +21,13 @@ export default function Page() {
       <div className="landing h-screen">
         <div className="grid grid-cols-3 items-center fixed w-screen backdrop-blur-sm h-20">
 			<div></div>{/* Super Important empty div. It's supposed to be 3 columns. This is the left one.*/}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center px-1">
             <div className="flex justify-center">
 
-              <Link href="/" className="text-xl interBold text-black px-4 py-1 hover:bg-cyan-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-md">
                 Businesses
               </Link>
-              <Link href="/" className="text-xl interBold text-black px-4 py-1 hover:bg-cyan-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-md">
                 Individuals
               </Link>
             </div>
@@ -41,10 +41,10 @@ export default function Page() {
               ></img>
             
             <div className="flex items-center">
-              <Link href="/" className="text-xl interBold text-black whitespace-nowrap px-4 py-1 hover:bg-cyan-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black whitespace-nowrap px-4 py-1 hover:bg-amber-50 rounded-md">
                 Who We Are
               </Link>
-              <Link href="/" className="text-xl interBold text-black px-4 py-1 hover:bg-cyan-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-md">
                 Contact
               </Link>
             </div>
@@ -63,6 +63,8 @@ export default function Page() {
         {/*<Logo/>*/}
 
         {/*<Fund Your Future/>*/}
+		{/*<Build Your Fund/>*/}
+		{/*<Message Your Friends/>*/}
         <div className="flex flex-col items-center justify-center min-h-screen">
           <h1 className="interBold text-9xl py-1 text-black title">
             Fund your Future
