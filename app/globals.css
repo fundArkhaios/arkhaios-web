@@ -5,17 +5,16 @@
 
 
 html, body, div {
-  font-family: "Inter";
+  font-family: "Inter-Bold", "Inter", sans-serif;
   font-style: normal;
-  
 }
+
 
 .beaufort {
-  font-family: beaufort-pro, serif;
+/*   font-family: "beaufort-pro", serif;
   font-style: heavy;
-  font-weight: 500;
+  font-weight: 500; */
 }
-
 
 
 body {
@@ -35,14 +34,13 @@ a:hover {
 .landing {
 	background-image: url('/bullvsBearPillar.jpg');
 	background-size: cover;
+  background-attachment: fixed;
 }
 
 .loginFlow {
 	background-image: url('/homePagePNG.png');
 	background-size: cover;
 }
-
-
 
 .loading {
 	@apply inline-block w-4 h-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]
@@ -389,3 +387,46 @@ section span {
   color: #2196f3;
  }
  /* Input Boxes for Login | Signup | Recovery */
+
+
+ /* Button Loader */
+
+ .buttonLoader svg {
+  width: 3em;
+  transform-origin: center;
+  animation: rotate4 3s linear infinite;
+ }
+ 
+ .buttonLoader circle {
+  fill: none;
+  stroke: rgb(0, 211, 137);
+  stroke-width: 2.2;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 2s ease-in-out infinite;
+ }
+ 
+ @keyframes rotate4 {
+  100% {
+   transform: rotate(360deg);
+  }
+ }
+ 
+ @keyframes dash4 {
+  0% {
+   stroke-dasharray: 1, 200;
+   stroke-dashoffset: 0;
+  }
+ 
+  50% {
+   stroke-dasharray: 90, 200;
+   stroke-dashoffset: -35px;
+  }
+ 
+  100% {
+   stroke-dashoffset: -125px;
+  }
+ }
+
+ /* Button Loader */

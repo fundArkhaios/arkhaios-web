@@ -40,6 +40,7 @@ export default async function RootLayout({ children }) {
         // redirect("/");
       }
     }
+    
 
   const renderAuthenticatedContent = () => (
     <UserContextProvider user = {user}>
@@ -60,7 +61,7 @@ export default async function RootLayout({ children }) {
     <link rel="icon" type="image/x-icon" href="/trimmedNoBackgroundHDArkhaiosLogo.ico"></link>	
     <body>
       <Redirect authenticated={!!user} />
-        {user && user.emailVerified ? renderAuthenticatedContent() : renderUnauthenticatedContent()}
+        {user ? renderAuthenticatedContent() : renderUnauthenticatedContent()}
     </body>
   </html>
   )
