@@ -9,12 +9,15 @@ import "./../output.css";
 export default function Page() {
 
 	
+	useEffect(() => {
+		gsap.to(".title", {
+		  duration: 30,
+		  backgroundPosition: "-960px 0",
+		  repeat: -1,
+		  ease: "linear"
+		});
+	  }, []);
 	
-	useEffect( () => {
-		var tl = gsap.timeline({ repeat: -1 });
-		tl.duration("h1", 30, { backgroundPosition: "-960px 0" });
-	}, []);
-
 
   return (
     <main>

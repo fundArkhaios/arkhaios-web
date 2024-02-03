@@ -6,6 +6,8 @@ module.exports = {
     */
     login: async function(email, session) {        
         var result = null;
+
+
         await db.connect(async (db) => {
             result = await db.collection('Users')
             .findOne({email: email, sessionToken: session});
@@ -15,7 +17,7 @@ module.exports = {
                 result = null;
             }
         });
-
+    
         return result;
     }
 };

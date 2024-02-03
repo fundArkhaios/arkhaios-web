@@ -1,20 +1,20 @@
 'use client'
+
 // import UserChart from "./userChart";
 import Header from "../header.js"
 import './userChart'
 import MainChart from './mainChart.js'
 import UserContext from "../UserContext.js";
+import  React, {useContext}  from 'react';
 
-import { useContext } from 'react';
+export default function Page() {
 
-export default function Home() {
+    const { user } = useContext(UserContext);
 
-    const {user} = useContext(UserContext);
-    // console.log(value)
     return(
         
         <main>            
-            <MainChart/>
+            {/* <MainChart/> */}
             <div>{user.firstName}</div>
         </main>
 

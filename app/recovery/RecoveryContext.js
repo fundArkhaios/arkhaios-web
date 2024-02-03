@@ -4,7 +4,6 @@ import Link from "next/link";
 import "../../output.css";
 import "../globals.css";
 import "./../components/components.css";
-import '../utilities.css'
 
 export const RecoveryContext = createContext();
 
@@ -59,7 +58,7 @@ export const RecoveryContextProvider = ({ children }) => {
         throw new Error("A server error has occurred.");
       })
       .finally(() => {
-        // Stays on forever if the code below is commented.
+        // Stop the loading regardless of the response. It just matters we have a response.
         setIsLoading(false);
       });
   }
@@ -78,6 +77,7 @@ export const RecoveryContextProvider = ({ children }) => {
   ]);
 
   async function checkRecoveryCode(event) {
+    setIsLoading(true);
     console.log("Inside of Check Recovery Code function!");
     event.preventDefault();
     await fetch("/api/checkRecoveryCode", {
@@ -106,11 +106,13 @@ export const RecoveryContextProvider = ({ children }) => {
       .catch((error) => {
         console.log(error);
         throw new Error("A server error has occured.");
+      }).finally( () => {
+        setIsLoading(false);
       });
   }
 
   async function resetPassword(event) {
-    console.log("Inside of Check Recovery Code function!");
+    setIsLoading(true);
     event.preventDefault();
     await fetch("/api/resetPassword", {
       method: "POST",
@@ -266,7 +268,7 @@ export const RecoveryContextProvider = ({ children }) => {
           />
         </div>
         {isLoading ? (
-          <button className="btn btn-neutral buttonLoader" type="submit" id="submit">
+          <button className="btn btn-neutral buttonLoader cursor-progress" type="submit" id="submit">
             <svg viewBox="25 25 50 50">
               <circle r="20" cy="50" cx="50"></circle>
             </svg>
@@ -309,11 +311,17 @@ export const RecoveryContextProvider = ({ children }) => {
             id="recoveryCode"
           />
         </div>
-
+        {isLoading ? (
+          <button className="btn btn-neutral buttonLoader cursor-progress" type="submit" id="submit">
+            <svg viewBox="25 25 50 50">
+              <circle r="20" cy="50" cx="50"></circle>
+            </svg>
+          </button>
+        ) : (
         <button className="btn btn-neutral" type="submit" id="submit">
           Submit Recovery Code
         </button>
-
+        ) }
         <div className="label justify-end">
           <Link href="/signup" className="link-hover link label-text-alt">
             Create new account
@@ -364,9 +372,17 @@ export const RecoveryContextProvider = ({ children }) => {
             onChange={verifyRecoveryPassword}
           />
         </div>
-        <button className="btn btn-neutral" type="submit" id="submit">
+        {isLoading ? (
+          <button className="btn btn-neutral buttonLoader cursor-progress" type="submit" id="submit">
+            <svg viewBox="25 25 50 50">
+              <circle r="20" cy="50" cx="50"></circle>
+            </svg>
+          </button>
+        ) :
+        (<button className="btn btn-neutral" type="submit" id="submit">
           Reset
-        </button>
+        </button>)
+        }
       </form>
     );
   };
