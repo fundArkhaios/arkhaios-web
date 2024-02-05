@@ -20,6 +20,7 @@ export default function Page() {
 	
 
   return (
+	<>
     <main>
       <div className="landing h-screen">
         <div className="grid grid-cols-3 items-center fixed w-screen backdrop-blur-sm h-20">
@@ -69,7 +70,7 @@ export default function Page() {
 		{/*<Build Your Fund/>*/}
 		{/*<Message Your Friends/>*/}
         <div className="flex flex-col items-center justify-center min-h-screen">
-          <h1 className="interBold text-9xl py-1 text-black title">
+          <h1 className="interBold text-9xl py-1 font-black title">
             Fund your Future
           </h1>
           <Link href="/signup" className="no-underline mx-3 mdSizeInter px-3">
@@ -80,5 +81,11 @@ export default function Page() {
         </div>
       </div>
     </main>
+	<main className = "secondBackground h-screen">
+		<div className = "text-6xl py-20 px-10 josefinFont font-black text-amber-100">
+			Businesses
+		</div>
+	</main>
+	</>
   );
 }

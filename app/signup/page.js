@@ -84,7 +84,7 @@ export default function Page() {
           <h1 className="text-lg font-bold">New Account</h1>
         </div>
 
-        <main className="shadow-xl grid bg-base-100 lg:aspect-[2/1] lg:grid-cols-2 h-full w-full">
+        <main classNtame="shadow-xl grid bg-base-100 lg:aspect-[2/1] lg:grid-cols-2 h-full w-full">
           <figure className="pointer-events-none bg-base-300 object-cover max-lg:hidden">
             <img src="rectangle-logo.png" alt="Login" />
           </figure>

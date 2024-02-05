@@ -9,7 +9,6 @@ module.exports = {
             console.log("Recovery API working...")
             var error = "";
             const {email} = req.body;
-            console.log(email);
             try {
                 await db.connect(async (db) => {
 

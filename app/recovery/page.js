@@ -8,7 +8,7 @@ import RecoveryFlow from './recoveryFlow.js';
 export default function Page() {
     
     
-    
+
     return (
 		<div className="flex min-h-screen items-center justify-center bg-base-200">
 		<div className="m-4 min-h-[50vh] w-full max-w-sm lg:max-w-4xl">

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;700&display=swap');
 
 
 html, body, div {
@@ -9,11 +10,16 @@ html, body, div {
   font-style: normal;
 }
 
+/* @font-face {
+  font-family: League;
+  src: url("/arkhaios-web/public/League.otf") format("opentype");
+} */
 
-.beaufort {
-/*   font-family: "beaufort-pro", serif;
-  font-style: heavy;
-  font-weight: 500; */
+
+/* https://fonts.google.com/specimen/Josefin+Sans */
+.josefinFont {
+  font-family: 'Josefin Sans', sans-serif;
+  font-style: normal;
 }
 
 
@@ -34,7 +40,13 @@ a:hover {
 .landing {
 	background-image: url('/bullvsBearPillar.jpg');
 	background-size: cover;
-  background-attachment: fixed;
+  background-attachment: scroll;
+}
+
+.secondBackground {
+  background-image: url('/swordInStoneCity.jpg');
+	background-size: cover;
+  background-attachment: scroll;
 }
 
 .loginFlow {
@@ -79,7 +91,7 @@ input:focus {
 }
 /* Sliding thing */
 
-@font-face {
+/* @font-face {
   font-family: "Inter";
   font-style: normal;
   font-weight: 700;
@@ -89,7 +101,7 @@ input:focus {
   unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
     U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
-
+ */
 body {
   display: flex;
   flex-direction: column;
@@ -168,18 +180,6 @@ section span {
 
 
 /* Sliding thing */
-
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inter/v3/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa25L7W0Q5n-wU.woff2)
-    format("woff2");
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
-    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
 body {
   display: flex;
   flex-direction: column;
