@@ -13,6 +13,8 @@ export default function Funding() {
     })
   };
 
+  
+
   // A helper function to convert the boolean to a string for the select value
   const getSelectValue = (key) => {
     const value = userData[key];
@@ -87,7 +89,7 @@ export default function Funding() {
           </span>
         </div>
         <select
-        name="family_exposed"
+        name="is_family_exposed"
           onChange={handleChange}
           className="select select-bordered"
         >

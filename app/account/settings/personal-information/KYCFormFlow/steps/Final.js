@@ -29,7 +29,7 @@ export default function Final() {
           <div className="text-lg font-semibold text-gray-500">
             Your Account has been sent to be reviewed!
           </div>
-          <a className="mt-10" href="/account/settings/personal-information">
+          <a className="mt-10" href="/home">
             <button className="h-10 px-5 text-green-700 transition-colors duration-150 border border-gray-300 rounded-lg focus:shadow-outline hover:bg-green-500 hover:text-green-100">
               Close
             </button>
