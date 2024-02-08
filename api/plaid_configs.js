@@ -15,19 +15,6 @@ const client = new PlaidAPI(configuration);
 //are finished authenticating the link token. Store it in the .env file, as well as configure it in the Plaid dashboard
 const PLAID_REDIRECT_URI = '';
 
-const configs = {
-    user: {
-        client_user_id: usr.salt,
-    },
-    client_name: 'Arkhaios',
-    products: ['auth'],
-    language: 'en',
-};
-
-if(PLAID_REDIRECT_URI !== '')
-    configs.redirect_uri = PLAID_REDIRECT_URI;
-
 module.exports = {
-    client, 
-    configs
+    client
 }
