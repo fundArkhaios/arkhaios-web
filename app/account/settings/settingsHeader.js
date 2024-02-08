@@ -10,7 +10,7 @@ export default function SettingsHeader() {
     const headerLink = (path, text) => {
         const isActive = pathname === path;
         var fontClass = "font-extrabold"; // Boldneess
-        const textClass = isActive ? "text-amber-100" : "text-white hover:text-amber-100"; // Color
+        const textClass = isActive ? "text-amber-200" : "text-white hover:text-amber-200"; // Color
         
 
         return (
@@ -23,11 +23,15 @@ export default function SettingsHeader() {
 
 
     return (
-        <div className = "flex flex-col pl-20 px-2 border-r-2 pt-10">
+      <div className = "pt-10 pr-5">
+        <div className = "flex flex-col pl-20 px-2 border-r-2 border-amber-200">
+          <div className = "flex flex-col p-2"> 
             {headerLink("/account/settings/personal-information", "Personal Information")}
             {headerLink("/account/settings/security-privacy", "Security & Privacy")}
             {headerLink("/account/settings/beneficiaries", "Beneficiaries")}
+            </div>
         </div>
+      </div>
     )
 
 }

@@ -1,8 +1,16 @@
+'use client'
+import { useContext } from "react"
+import UserContext from "../../UserContext"
+import NotVerifiedAlert from "../../components/notVerifiedAlert";
 export default function Page() {
+
+    const { user } = useContext(UserContext);
+
     return (
-        <div>
-            <div className = "text-center">Transfers Page</div>
-            <div>Start a transfer</div>
+        <div className = "py-5">
+            { !user.kycVerified ? <NotVerifiedAlert/> : <></>
+
+            }
         </div>
         
     )

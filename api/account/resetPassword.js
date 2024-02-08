@@ -17,8 +17,6 @@ module.exports =  {
 
 
             const { email, password } = req.body;
-            console.log("Email: " + email);
-            console.log("Password: " + password);
 
             var hashPass = createHash('sha256').update(password).digest('hex'); // Hash Password with SHA256
 

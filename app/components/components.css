@@ -8,7 +8,7 @@
     border-radius: 9999px;
     transition: all .2s ease-in-out;
     outline-style: solid;
-    background-color: black;
+    background-color: rgb(14, 17, 21);
     outline: none;
     /*outline-color: rgb(254 243 199);*/
     opacity: 0.8;   
