@@ -16,10 +16,10 @@ module.export = {
 
         try{
             await db.connect(async (db) => {
-                let results = await db.collection('Users').findOne({user});
+                let results = await db.collection('Users').findOne(user);
 
                 if(results){
-                    await db.collection('Users').updateOne({user},
+                    await db.collection('Users').updateOne(user,
                         {$push: {"plaidAccess": accessToken}});
                 }
             });
