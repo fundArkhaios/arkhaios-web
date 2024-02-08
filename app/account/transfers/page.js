@@ -8,7 +8,7 @@ export default function Page() {
 
     return (
         <div className = "py-5">
-            { !user.kyc ? <NotVerifiedAlert/> : <></>
+            { !user.kycVerified ? <NotVerifiedAlert/> : <></>
 
             }
         </div>

@@ -6,19 +6,17 @@ export default function Funding() {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setUserData(prevState => {
-        const newData = { ...prevState, [name]: value};
-        console.log(newData);
-        return newData;
-    })
+    setUserData((prevState) => {
+      const newData = { ...prevState, [name]: value };
+      console.log(newData);
+      return newData;
+    });
   };
-
-  
 
   // A helper function to convert the boolean to a string for the select value
   const getSelectValue = (key) => {
     const value = userData[key];
-    return value ? 'true' : 'false';
+    return value ? "true" : "false";
   };
 
   return (
@@ -30,9 +28,8 @@ export default function Funding() {
           </span>
         </div>
         <select
-        name="is_control_person"
+          name="is_control_person"
           onChange={handleChange}
-          
           className="select select-bordered"
         >
           <option disabled selected>
@@ -50,7 +47,7 @@ export default function Funding() {
           </span>
         </div>
         <select
-        name="is_affiliated"
+          name="is_affiliated"
           onChange={handleChange}
           className="select select-bordered"
         >
@@ -69,7 +66,7 @@ export default function Funding() {
           </span>
         </div>
         <select
-        name="is_pep"
+          name="is_pep"
           onChange={handleChange}
           className="select select-bordered"
         >
@@ -89,7 +86,7 @@ export default function Funding() {
           </span>
         </div>
         <select
-        name="is_family_exposed"
+          name="is_family_exposed"
           onChange={handleChange}
           className="select select-bordered"
         >

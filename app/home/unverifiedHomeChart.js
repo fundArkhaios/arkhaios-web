@@ -49,11 +49,24 @@ export default function unverifiedHomeChart({user}) {
                     visible: false,
                 },
             },
+            handleScroll: {
+                mouseWheel: false,
+                pressedMouseMove: false,
+            },
+            handleScale: {
+                mouseWheel: false,
+                pinch: false,
+                axisDoubleClickReset: false,
+                axisPressedMouseMove: {
+                    time: false,
+                    price: false
+                }
+            },
             layout: {
                 background: {type: ColorType.Solid, color: "rgb(14, 17, 21)"},
             },
-            width: 1200,
-            height:400,
+            width: 700,
+            height:300,
             timeScale: {
                 borderVisible: false
             },
@@ -73,18 +86,24 @@ export default function unverifiedHomeChart({user}) {
 
         newSeries.setData(initialData);
         chart.timeScale().fitContent();
-        chart.timeScale().lockVisibleTimeRangeOnResize = true;
+        // chart.timeScale().lockVisibleTimeRangeOnResize = true;
+
+        
+
 
         return() => [chart.remove()]
     })
 
+
+    
+
+
     return(
         <>
         <div className="interBold text-2xl text-white">$0.00</div>
-        <div className="text-sm text-white">1D - 0% (UP ARROW)</div>
+        <div className="text-sm text-white">1D - 0% -</div>
         <div ref = {chartContainerRef}></div>
         </>
-
     )
 
 

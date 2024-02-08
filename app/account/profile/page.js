@@ -10,7 +10,7 @@ export default function Page() {
   return (
     <div className = "py-5 grid">
       {/* <div className="text-center">Profile Page</div> */}
-      {!user.kyc ? (
+      {!user.kycVerified ? (
         <NotVerifiedAlert/>
       ) : (
         <></>

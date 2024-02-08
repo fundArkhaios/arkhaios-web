@@ -13,7 +13,7 @@ export default function Page() {
   return (
     <div className="grid grid-cols-1 py-10">
       <div className="text-center justify-self-center ">
-        {!user.kyc ? (
+        {!user.kycVerified ? (
           <>
             <div className="card bg-error text-error-content">
               <div className="card-body">
