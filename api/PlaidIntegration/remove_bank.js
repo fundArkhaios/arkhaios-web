@@ -21,11 +21,12 @@ module.export = {
                 res.status(500).json({error: "Something went wrong"});
 
             await db.connect(async (db) => {
-                let results = await db.collection('Users').findOne({user});
+                let results = await db.collection('Users').findOne(user);
 
                 if(results){
-                    await db.collection('Users').deleteOne({user},
-                        {plaidAccess: accessToken});
+                    await db.collection('Users').updateOne(user,
+                        {$unset: {"plaidAccess": ""}}
+                    );
                 }
             });
         }
