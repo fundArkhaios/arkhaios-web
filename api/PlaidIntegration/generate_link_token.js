@@ -4,7 +4,7 @@ module.export = {
     route: '/plaidIntegration/generate_link_token',
     method: GET,
     authenticate: true,
-    get: async function (user){
+    get: async function (req, res, user){
         const configs = {
             usr: {
                 client_user_salt: user.salt,
