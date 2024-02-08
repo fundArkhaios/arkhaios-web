@@ -1,4 +1,4 @@
-const client = require('../plaid_configs');
+const { client } = require('../plaid_configs');
 const db = require('../util/db');
 const { forward } = require('../aes');
 
