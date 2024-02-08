@@ -4,7 +4,7 @@ const { forward } = require('../aes');
 
 module.export = {
     route: '/PlaidIntegration/public_token_exchange',
-    method: GET,
+    method: POST,
     authenticate: true,
     post: async function(req, res, publicAccessToken, user){
         var response = client.itemPublicTokenExchange({
