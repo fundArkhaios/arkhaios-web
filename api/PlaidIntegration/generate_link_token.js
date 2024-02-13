@@ -7,7 +7,7 @@ module.export = {
     get: async function (req, res, user){
         const configs = {
             usr: {
-                client_user_salt: user.salt,
+                client_user_id: user.id,
             },
             client_name: 'Arkhaios',
             products: ['auth'],
