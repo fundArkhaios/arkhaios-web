@@ -3,7 +3,7 @@ const db = require('../util/db');
 const { backward } = require('../aes');
 
 module.export = {
-    route: '/PlaidIntegration/remove_bank',
+    route: 'api/PlaidIntegration/remove_bank',
     method: POST,
     authenticate: true,
     post: async function(req, res, user){
