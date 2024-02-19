@@ -13,6 +13,7 @@ module.export = {
 
         var error = "";
         var accessToken = forward(response.data.access_token);
+        var item_id = forward(response.data.item_id);
 
         try{
             await db.connect(async (db) => {
@@ -20,7 +21,7 @@ module.export = {
 
                 if(results){
                     await db.collection('Users').updateOne(user,
-                        {$push: {"plaidAccess": accessToken}});
+                        {$push: {"plaidAccess": accessToken, "plaidItem": item_id}});
                 }
             });
         }
