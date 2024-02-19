@@ -3,7 +3,7 @@ const db = require('../util/db');
 const { forward } = require('../aes');
 
 module.export = {
-    route: '/PlaidIntegration/public_token_exchange',
+    route: 'api/PlaidIntegration/public_token_exchange',
     method: POST,
     authenticate: true,
     post: async function(req, res, publicAccessToken, user){
