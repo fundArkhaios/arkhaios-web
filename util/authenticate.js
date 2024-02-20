@@ -1,15 +1,16 @@
-const { commandOptions } = require('redis');
 const db = require('./db')
 
 module.exports = {
-    /* Return the user object, assuming login was successful, and that their
-       session token has not yet expired
-    */
     login: async function(email, session) {
         let result = null;
 
         const key = `authenticate:${email}`;
-        const data = await db.redis.get(key)
+        
+        // Get the Redis client instance from the updated db.js
+        const redis = db.redis;
+        
+        // Make sure to use the connected Redis client
+        const data = await redis.get(key);
 
         if(data) {
             const authentication = JSON.parse(data);
@@ -23,16 +24,16 @@ module.exports = {
         if(!result) {
             await db.connect(async (db) => {
                 result = await db.collection('Users')
-                .findOne({email: email, sessionToken: session});
-                // Check if the session token has expired
-                if(result && (Date.now() >= result.sessionExpiry)) {
-                    // Nullify authentication; session expired
+                .findOne({ email: email, sessionToken: session });
+
+                if(result && Date.now() >= result.sessionExpiry) {
                     result = null;
                 }
             });
 
             if(result) {
-                await db.redis.setEx(key, Math.trunc((result.sessionExpiry - Date.now()) / 1000), JSON.stringify(result));
+                // Set the session data with an expiration based on the remaining time until the session expiry
+                await redis.setEx(key, Math.trunc((result.sessionExpiry - Date.now()) / 1000), JSON.stringify(result));
             }
         }
     

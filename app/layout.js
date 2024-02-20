@@ -33,7 +33,7 @@ export default async function RootLayout({ children }) {
   const session = cookieStore.get("session")?.value;
 
   const user = await authenticate.login(email, session);
-
+  //console.log(JSON.stringify(user));
   console.log("Path: " + path);
 
   if (!user && !loginPaths.includes(path)) {
