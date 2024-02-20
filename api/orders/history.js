@@ -18,21 +18,21 @@ module.exports = {
 
         const expiration = ((period, timeframe) => {
             if(period == '1D' && timeframe == '1Min') return 60;
-            else if(period == '1W' && timeframe == '5Min') return 3600;
-            else if(period == '1M' && timeframe == '1D') return 3600 * 24;
-            else if(period == '6M' && timeframe == '1D') return 3600 * 24;
+            else if(period == '1W' && timeframe == '5Min') return 150;
+            else if(period == '1M' && timeframe == '1D') return 3600;
+            else if(period == '6M' && timeframe == '1D') return 3600;
 
             return -1;
         })(period, timeframe);
 
-        db.redis.get(`portfolio:${user.brokerageID}`).then(async (data) => {
+        db.redis.get(`portfolio:${user.brokerageID}:${period}:${timeframe}`).then(async (data) => {
             if(data) {
                 res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: {history: JSON.parse(data) }});
             } else {
                 const response = await alpaca.get_portfolio(user.brokerageID, period, timeframe);
                 if(expiration >= 0) {
                     // Only cache calls relevant for displaying charts
-                    db.redis.setEx(`portfolio:${user.brokerageID}`, expiration, JSON.stringify(response));
+                    db.redis.setEx(`portfolio:${user.brokerageID}:${period}:${timeframe}`, expiration, JSON.stringify(response));
                 }
                 
                 res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: { history: response }});
