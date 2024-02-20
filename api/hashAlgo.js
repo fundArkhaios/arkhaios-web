@@ -11,35 +11,36 @@ const pepp = process.env.PEPPER;
 //                salt
 //                iterations
 //}
-module.export = {
-    hash: async function(plain, salt, iterations){
+
+//a function to just generate a random salt
+function generateSalt() {
+    return crypto.randomBytes(128).toString('base64');
+}
+
+//a function to generate a random iteration
+function generateIter() {
+    //this SHOULD generate a random int from 1,000 - 10,000
+    return Math.floor(Math.random() * 10000) + 1000;
+}
+
+module.exports = {
+    hash: function(plain, salt, iterations){
         //this is checking to see if the user already has a generated salt
         var tempSalt = salt;
-        if(salt == '') tempSalt = generateSalt();
+        if(!salt) tempSalt = generateSalt();
 
         //same thing, except for checking for amount of iterations for the SHA512
         var tempIter = iterations;
-        if(iterations == 0) tempIter = generateIter();
+        if(!iterations) tempIter = generateIter();
 
         //call the password-based key derivation function with pepper prepended to the plaintext, 64bit keyspace and SHA512 as the algo
         var result = crypto.pbkdf2Sync(pepp + plain, tempSalt, tempIter, 64, 'sha512');
-        
+       
         //this returns 3 things, the hashed string, salt, and iterations
         return {
             hashed: result.toString('hex'), 
             salt: tempSalt, 
             iter: tempIter
         };
-    },
-
-    //a function to just generate a random salt
-    generateSalt: function(){
-        return crypto.randomBytes(128).toString('base64');
-    },
-
-    //a function to generate a random iteration
-    generateIter: function(){
-        //this SHOULD generate a random int from 1,000 - 10,000
-        return Math.floor(Math.random() * 10000) + 1000;
     }
 }
