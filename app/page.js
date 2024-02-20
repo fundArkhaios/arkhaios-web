@@ -28,27 +28,27 @@ export default function Page() {
           <div className="flex items-center justify-center px-1">
             <div className="flex justify-center">
 
-              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-sm">
                 Businesses
               </Link>
-              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-sm">
                 Individuals
               </Link>
             </div>
             
               <img
                 src="/noBackgroundArkhaiosLogo.png"
-                width={75}
-                height={75}
+                width={80}
+                height={80}
                 alt="Logo"
 				className = "px-2"
               ></img>
             
             <div className="flex items-center">
-              <Link href="/" className="interFont font-bold text-md text-black whitespace-nowrap px-4 py-1 hover:bg-amber-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black whitespace-nowrap px-4 py-1 hover:bg-amber-50 rounded-sm">
                 Who We Are
               </Link>
-              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-md">
+              <Link href="/" className="interFont font-bold text-md text-black px-4 py-1 hover:bg-amber-50 rounded-sm">
                 Contact
               </Link>
             </div>
@@ -57,7 +57,7 @@ export default function Page() {
               href="/login"
               className="flex justify-end no-underline mx-3 mdSizeInter px-3"
             >
-              <button className="bg-amber-100 hover:bg-amber-50 rounded-bl-lg rounded-tr-lg py-2 px-7 text-black hover:no-underline">
+              <button className="bg-amber-100 hover:bg-amber-50 rounded-sm py-2 px-7 text-black hover:no-underline">
                 Login
               </button>
             </Link>
@@ -73,8 +73,8 @@ export default function Page() {
           <h1 className="interBold text-9xl py-1 font-black title">
             Fund your Future
           </h1>
-          <Link href="/signup" className="no-underline mx-3 mdSizeInter px-3">
-            <button className="animate w-23 bg-amber-100 hover:bg-amber-50 hover:underline hover:rounded-bl-lg hover:rounded-tr-lg py-2 px-5 hover:no-underline text-black">
+          <Link href="/signup" className="no-underline mx-3 mdSizeInter px-3 pt-5">
+            <button className="animate bg-amber-100 hover:bg-amber-50 rounded-bl-lg rounded-tr-lg hover:rounded-none py-2 px-5 hover:no-underline text-black">
               Get Started
             </button>
           </Link>

@@ -1,6 +1,6 @@
 import { useKYCFlowContext } from "../KYCFlowContext";
 
-export default function Funding() {
+export default function Disclosures() {
   const { userData, setUserData } = useKYCFlowContext();
 
   const handleChange = (e) => {

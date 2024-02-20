@@ -55,15 +55,15 @@ export default function Page() {
 
   return (
     <div>
-      <div className="text-center font-bold text-lg mb-4">
-        Reports & Statements Page
+      <div className="text-center font-bold text-lg mb-4 pt-2">
+        Arkhaios & Alpaca - Reports, Agreements, and Disclosures
       </div>
       {retrievingError && (
         <div className="text-center text-red-500">
           There was an error retrieving the documents.
         </div>
       )}
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-2 bg-gray-200">
         {/* Add a header row here for column titles */}
         <div className="grid grid-cols-3 text-sm font-semibold p-3 bg-gray-200 rounded-t-md">
           <div className="text-left">Document ID</div>
@@ -78,7 +78,7 @@ export default function Page() {
             <a
               href={`/api/document?id=${id}`}
               key={id}
-              className="grid grid-cols-3 items-center p-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200"
+              className="grid grid-cols-3 items-center p-3 py-2 rounded-md hover:bg-gray-300"
             >
               <div className="text-left font-medium">{document.id}</div>
               <div className="text-center font-medium">
