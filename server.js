@@ -10,7 +10,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 3000;
 
 const nextApp = next({ dir: '.', dev });
-const nextHandler = nextApp.getRequestHandler();
+const nextHandler = nextApp.  getRequestHandler();
 
 const cookieParser = require('cookie-parser');
 
@@ -90,7 +90,18 @@ nextApp.prepare()
 
     route(server);
 
+
     server.get('*', async (req, res) => {
+      const hostname = req.hostname;
+      
+      // Check if the hostname includes the subdomain `subdomainA`
+      if (hostname.startsWith('funds.localhost')) {
+        // Modify the request to point to a specific path for the subdomain
+        req.url = '/funds' + req.url;
+      }
+      
+      // Continue to the next middleware or route handler
+      
       const parsed = url.parse(req.url, true);
       await nextHandler(req, res, parsed);
     });

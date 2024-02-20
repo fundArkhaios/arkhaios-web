@@ -63,7 +63,7 @@ export default async function RootLayout({ children }) {
   const renderUnauthenticatedContent = () => <>{children}</>;
 
   return (
-    <html lang="en">
+    <html data-theme="customBlackTheme" lang="en">
       <title>Arkhaios</title>
       <link
         rel="icon"

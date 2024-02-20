@@ -10,6 +10,22 @@ export default function Header({ user }) {
 
   // let [theme, setTheme] = useState("dark");
 
+  async function logout() {
+    await fetch("/api/logout", {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then(async (response) => {
+        if (response.status === 200) {
+          window.location.href = "/";
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   /**
    *
    * @param {*} str Name
@@ -33,9 +49,37 @@ export default function Header({ user }) {
     return components1[0] === components2[0];
   }
 
+  const dropDownLink = (path, text) => {
+    const isActive = pathname === path;
+
+    var fontClass = "text-sm font-semibold interFont text-nowrap"; // Boldneess
+    const textClass = isActive
+      ? "text-yellow-200"
+      : "text-white hover:text-yellow-200"; // Color
+
+    return (
+      <Link href={path} className={`${fontClass} ${textClass} no-underline`}>
+        {text}
+      </Link>
+    );
+  };
+
+  const dropDownHeader = (path, text) => {
+    const isActive = haveSameInitialDomainPath(path, pathname);
+
+    var fontClass = "text-sm font-bold interFont text-nowrap"; // Boldneess
+    const textClass = isActive
+      ? "text-yellow-200"
+      : "text-white hover:text-yellow-200"; // Color
+
+    return (
+      <Link href={path} className={`${fontClass} ${textClass} no-underline`}>
+        {text}
+      </Link>
+    );
+  };
+
   const headerLink = (path, text) => {
-    
-    
     const isActive = haveSameInitialDomainPath(path, pathname);
 
     var fontClass = "text-sm font-extrabold interFont"; // Boldneess
@@ -50,7 +94,7 @@ export default function Header({ user }) {
     return (
       <Link
         href={path}
-        className={`w-20 h-9 ${fontClass} ${textClass} no-underline px-5`}
+        className={`w-20 h-9 ${textClass} ${fontClass} no-underline px-5`}
       >
         {text}
       </Link>
@@ -92,10 +136,59 @@ export default function Header({ user }) {
 
       <div className="flex items-center pr-10">
         <div className="pl-2 text-center">
-          {headerLink(
-            "/account/profile",
-            user.firstName.toUpperCase() + " " + user.lastName.toUpperCase()
-          )}
+          <div className="dropdown dropdown-end dropdown-hover text-md">
+            <div tabIndex={0} role="button">
+              {headerLink("/account/profile", "ACCOUNT")}
+            </div>
+
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[50] menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <div className="flex" title="View profile">
+                  <img
+                    alt=""
+                    src="/avatar.png"
+                    className="w-8 h-8 rounded-full"
+                  />
+
+                  <div className="flex flex-col">
+                    <h3 className="font-bold">
+                      {dropDownHeader(
+                        "/account/profile",
+                        user.firstName.toUpperCase() +
+                          " " +
+                          user.lastName.toUpperCase()
+                      )}
+                    </h3>
+                    <span className="text-xs text-accent">{user.email}</span>
+                  </div>
+                </div>
+              </li>
+              <div className="divider my-0"></div>
+              <li>{dropDownLink("/account/investing", "Investing")}</li>
+              <li>{dropDownLink("/account/transfers", "Transfers")}</li>
+              <li>
+                {dropDownLink(
+                  "/account/reports-statements",
+                  "Reports & Statements"
+                )}
+              </li>
+              <div className="divider my-0"></div>
+              <li>{dropDownLink("/account/settings", "Settings")}</li>
+              <li>{dropDownLink("/account/help", "Help")}</li>
+              <div className="divider my-0"></div>
+              <li>
+                <button
+                  onClick={logout}
+                  className="place-content-center font-bold"
+                >
+                  Sign Out
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
