@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express');
 const next = require('next');
 const url = require('url');
@@ -13,6 +15,7 @@ const nextApp = next({ dir: '.', dev });
 const nextHandler = nextApp.  getRequestHandler();
 
 const cookieParser = require('cookie-parser');
+const { redis } = require('./util/db');
 
 function route(server) {
   // Listen for an endpoint defined in a file
@@ -28,7 +31,6 @@ function route(server) {
             const user = await authenticate.login(req.cookies.email,
                                                   req.cookies.session);
 
-            
             let forbidden = false;
             let userValid = user ? true : false;
             
@@ -83,6 +85,8 @@ function route(server) {
 
 nextApp.prepare()
   .then(async () => {
+    await redis.connect();
+
     const server = express();
 
     server.use(cookieParser());
