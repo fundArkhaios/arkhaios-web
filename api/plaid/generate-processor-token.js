@@ -1,14 +1,16 @@
 const { client } = require('../plaid_configs');
 const db = require('../../util/db');
 const { forward, backward } = require('../aes');
-//const plaidAccount = require('/get-account');
+const plaidAccount = require('./get-account');
 
 module.exports = {
     route: '/api/plaid/generate-processor-token',
     authenticate: true,
     get: async function (req, res, user){
         var accessToken = backward(user.plaidAccess);
-        //var user_id = plaidAccount.get().accounts.account_id;
+        var userAccount = plaidAccount.getAccount(user);
+
+        var user_id = userAccount.account_id;
 
         var request = {
             access_token: accessToken,
