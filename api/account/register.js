@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { createHash } = require('crypto');
 const sendgrid = require('../external/sendgrid/api')
 const db = require('../../util/db');
+const { hash } = require('../hashAlgo');
 
 function generateUsername() {
     const numberDictionary = NumberDictionary.generate({ min: 100, max: 999 });
@@ -27,20 +28,25 @@ module.exports = {
             
             const { firstName, lastName, email, password } = req.body;
             
-            var hashPass = createHash('sha256').update(password).digest('hex'); // Hash password with SHA256
+            var { hashed, salt, iter } = hash(password, '', 0); // Hash password with SHA256
             var username = generateUsername(); // Generate username Ex: Fast-Red-Elephant-281
 
             var session = uuidv4();
             const sessionExpiry = 1000 * 3600 * 5; // By default, expire in 5 hours
 
+            var id = uuidv4();
+
             let creationTime = Date.now(); 
             
             const newUser = {
+                id: id,
                 firstName: firstName,
                 lastName: lastName, 
                 username: username,
                 email: email,
-                password: hashPass, 
+                password: hashed,
+                salt: salt, 
+                iter: iter,
                 emailVerified: false,
                 verificationCode: 0,
                 mfaVerified: false,

@@ -6,7 +6,7 @@ import { KYCFlowContextProvider } from "./KYCFlowContext.js";
 import Account from "./steps/Account";
 import Contact from "./steps/Contact";
 import Agreements from "./steps/Agreements.js";
-import Funding from './steps/Funding.js'
+import Disclosures from "./steps/Disclosures.js";
 import Final from "./steps/Final";
 import './kycFlow.css'
 
@@ -17,7 +17,7 @@ export default function KYCForm() {
   const steps = [
     "Account Information",
     "Contact",
-    "Funding",
+    "Disclosures",
     "Agreements",
     "Final"
   ];
@@ -29,7 +29,7 @@ export default function KYCForm() {
       case 2:
         return <Contact />;
       case 3:
-        return <Funding />;
+        return <Disclosures />;
       case 4:
         return <Agreements/>;
       case 5:

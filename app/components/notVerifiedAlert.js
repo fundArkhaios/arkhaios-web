@@ -20,7 +20,7 @@ export default function NotVerifiedAlert() {
             />
           </svg>
           <div>
-            <h3 className="font-bold text-lg text-white">Unverified Account!</h3>
+            <h3 className="font-bold text-lg">Unverified Account!</h3>
             <div className="text-sm">
               You must legally verify your account in the settings to use all
               features.

@@ -10,9 +10,8 @@ export default function Page() {
   const [isLoading, setIsLoading] = useState();
 
   async function login(event) {
-	setIsLoading(true);
+    setIsLoading(true);
     event.preventDefault();
-	
 
     const mfa = document.getElementById("mfa")?.value;
     const email = mfa ? emailState : document.getElementById("email").value;
@@ -33,10 +32,10 @@ export default function Page() {
     })
       .then(async (response) => {
         const data = await response.json();
-		
+
         if (data.status == "success") {
           // router.push('/');
-          
+
           window.location.href = "/home";
         } else {
           if (data?.data["mfa"] == true) {
@@ -44,7 +43,7 @@ export default function Page() {
             setPassword(password);
             setMfaRequired(true);
           }
-		  setIsLoading(false);
+          setIsLoading(false);
 
           throw new Error("Invalid username or password.");
         }
@@ -52,9 +51,10 @@ export default function Page() {
       .catch((error) => {
         console.log(error);
         throw new Error("A server error has occurred.");
-      }).finally( () => {
-		// setIsLoading(false);
-	  });
+      })
+      .finally(() => {
+        // setIsLoading(false);
+      });
   }
 
   const form = mfaRequired ? (

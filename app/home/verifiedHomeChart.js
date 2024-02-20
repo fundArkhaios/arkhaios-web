@@ -61,8 +61,10 @@ export default function VerifiedHomeChart({ user }) {
         body: JSON.stringify(historyPayload),
       }).then(async (response) => {
         const data = await response.json();
+
         setResponse(data.data.history);
         setChartData(await convertData(data.data.history.timestamp, data.data.history.equity));
+
         // console.log("Chart Data: " + chartData);
       });
     }

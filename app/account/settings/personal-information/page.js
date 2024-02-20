@@ -2,7 +2,7 @@
 
 import UserContext from "../../../UserContext.js";
 import { useContext } from "react";
-import KYCForm from "./KYCFormFlow/kycForm.js";
+import KYCForm from "./KYCFormFlow/KYCForm.js";
 import { useUserContext } from "../../../UserContext.js";
 
 export default function Page() {
