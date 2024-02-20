@@ -19,8 +19,8 @@ function generateSalt() {
 
 //a function to generate a random iteration
 function generateIter() {
-    //this SHOULD generate a random int from 1,000 - 10,000
-    return Math.floor(Math.random() * 10000) + 1000;
+    //this will generate a random int from 1,000 - 10,000
+    return Math.floor(Math.random() * 9001) + 1000;
 }
 
 module.exports = {
