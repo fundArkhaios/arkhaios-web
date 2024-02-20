@@ -22,7 +22,7 @@ module.exports =  {
             console.log("Password: " + password);
 
             //var hashPass = createHash('sha256').update(password).digest('hex'); // Hash Password with SHA256
-            var { hashPass, salt, iter } = hash(password, '', 0);
+            var { hashed, salt, iter } = hash(password, '', 0);
 
             try {
 
@@ -31,7 +31,7 @@ module.exports =  {
                     const result = await db.collection('Users').updateOne(
                         {email: email},
                         {
-                            $set: { password: hashPass,
+                            $set: { password: hashed,
                                     salt: salt,
                                     iter: iter
                                   }
