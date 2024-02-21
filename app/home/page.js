@@ -9,7 +9,7 @@ import NotVerifiedAlert from "../components/notVerifiedAlert.js";
 import UnverfiedHomeChart from "./unverifiedHomeChart.js";
 import AssetView from "./AssetView.js";
 import VerifiedHomeChart from "./verifiedHomeChart.js";
-
+import Watchlist from "./watchlist.js";
 export default function Page() {
   const { user } = useContext(UserContext);
 
@@ -19,7 +19,7 @@ export default function Page() {
         {/* <MainChart/> */}
         {!user.kycVerified ? <NotVerifiedAlert /> : <></>}
         <div className="grid grid-cols-3 p-5 justify-items-stretch">
-          <div className="justify-self-start pr-5 rounded-sm w-72">
+          <div className="justify-self-start pr-10 rounded-sm w-80">
             {!user.kycVerified ? <></> : <AssetView />}
           </div>
           <div className="grid space-y-15 max-w-[3/4] justify-self-center">
@@ -30,7 +30,7 @@ export default function Page() {
             )}
           </div>
           <div className="justify-self-end pl-5 pr-3 rounded-sm">
-            {!user.kycVerified ? <></> : <AssetView />}
+            {!user.kycVerified ? <></> : <Watchlist />}
           </div>
         </div>
       </main>

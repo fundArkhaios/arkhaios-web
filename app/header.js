@@ -52,7 +52,7 @@ export default function Header({ user }) {
   const dropDownLink = (path, text) => {
     const isActive = pathname === path;
 
-    var fontClass = "text-sm font-semibold interFont text-nowrap"; // Boldneess
+    var fontClass = "text-sm font-bold interFont text-nowrap"; // Boldneess
     const textClass = isActive
       ? "text-yellow-200"
       : "text-white hover:text-yellow-200"; // Color
@@ -108,7 +108,7 @@ export default function Header({ user }) {
     <div className="flex justify-items-center bg-color-black">
       {/*  Left Side  */}
       <div className="m-2 flex grow items-center px-10">
-        <div>{headerLink("/home", "ARKHAIOS")}</div>
+        <div className = "josefinFont">{headerLink("/home", "ARKHAIOS")}</div>
 
         {/*<img src="/noBackgroundArkhaiosLogo.png" width={50} height={70}/>*/}
       </div>
@@ -176,7 +176,7 @@ export default function Header({ user }) {
                 )}
               </li>
               <div className="divider my-0"></div>
-              <li>{dropDownLink("/account/settings", "Settings")}</li>
+              <li>{dropDownLink("/account/settings/personal-information", "Settings")}</li>
               <li>{dropDownLink("/account/help", "Help")}</li>
               <div className="divider my-0"></div>
               <li>

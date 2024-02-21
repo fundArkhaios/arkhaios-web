@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ColorType, createChart, CrosshairMode } from "lightweight-charts";
 import SmallDayChart from "./smallDayChart";
 
-export default function AssetView({ user }) {
+export default function Watchlist({ user }) {
   const [positions, setPositions] = useState([]);
 
 
@@ -11,8 +11,6 @@ export default function AssetView({ user }) {
   } */
 
   
-
-
   useEffect(() => {
     async function getPositions() {
       try {
@@ -51,13 +49,13 @@ export default function AssetView({ user }) {
   };
  */
   return (
-    <div className="rounded-sm w-80 h-80 backdrop-blur-xl">
-      <div className="relative rounded-sm">
-        <div className="bg-[#121212] rounded-sm">
-          <div className="border-b border-amber-200 px-2">
+    <div className="rounded-sm bg-[#121212] w-72 h-80 backdrop-blur-xl">
+      <div className="relative ">
+        <div className="">
+          <div className="bg-amber-200 px-2 rounded-sm">
             <div className="grid grid-cols-2 px-1 py-2">
-              <p className="text-amber-100 font-light">Portfolio</p>
-              <button className="text-amber-100 justify-self-end px-2 text-sm font-extralight">
+              <p className="text-black font-light">Watchlist</p>
+              <button className="text-black justify-self-end px-2 text-sm font-extralight">
                 Filter
               </button>
             </div>
@@ -68,11 +66,11 @@ export default function AssetView({ user }) {
                 key={position.asset_id}
                 className="grid grid-cols-3 bg-[#121212] space-y-2 px-1"
               >
-                <div className="pt-3 pl-1">
-                  <div className="place-self-center text-sm text-white">
+                <div className="pt-2">
+                  <div className="place-self-center text-white">
                     {position.symbol}
                   </div>
-                  <div className="text-xs text-slate-300 font-extralight">
+                  <div className="text-sm text-slate-300 font-extralight">
                     {position.exchange}
                   </div>
                 </div>
@@ -80,9 +78,9 @@ export default function AssetView({ user }) {
                 <div className="px-2">
                     <SmallDayChart position = {position} />
                 </div>
-                <div className="px-2 pl-2 pt-1 ">
-                  <p className="text-right font-sm text-white">
-                    ${Number(parseFloat(position.market_value).toFixed(2)).toLocaleString('en-US')}
+                <div className="pr-1 px-1 pt-1 ">
+                  <p className="text-lg text-right text-white">
+                    ${parseFloat(position.market_value).toFixed(2)}
                   </p>
                   <div className="grid grid-cols-2">
                     {parseFloat(position.unrealized_intraday_plpc) >= 0 ? (
@@ -133,7 +131,7 @@ export default function AssetView({ user }) {
                       </svg>
                     )}
                     <p
-                      className={`text-xs font-light text-right ${
+                      className={`text-sm text-right ${
                         parseFloat(position.unrealized_intraday_plpc) >= 0
                           ? "text-[#18CCCC]"
                           : "text-[#FF5000]"
