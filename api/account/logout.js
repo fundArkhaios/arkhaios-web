@@ -7,6 +7,9 @@ module.exports = {
         try {
             let error = '';
             
+            // Delete from redis first; exception from db won't create a cache inconsistency
+            await db.redis.del(`authenticate:${user.email}`)
+            
             await db.connect(async (db) => {
                 try {
                     await db.collection('Users').updateOne(
