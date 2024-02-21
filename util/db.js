@@ -2,10 +2,9 @@ const { MongoClient } = require("mongodb");
 const { createClient } = require('redis')
 
 let redisClient;
-console.log(redisClient);
+
 function getRedisClient() {
   if (!redisClient) {
-    console.log("No Redis Client!")
     redisClient = createClient({
       url: `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_SERVER}:${process.env.REDIS_PORT}`
     });
