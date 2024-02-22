@@ -5,9 +5,10 @@ module.export = {
     authenticate: true,
     get: async function (req, res, user){
         const configs = {
-            usr: {
+            user: {
                 client_user_id: user.id,
             },
+            country_code: ['US'],
             client_name: 'Arkhaios',
             products: ['auth'],
             language: 'en'
@@ -15,6 +16,6 @@ module.export = {
 
         var tokenResponse = await client.linkTokenCreate(configs);
 
-        res.status(201).json(tokenResponse);
+        res.status(201).json(tokenResponse.data);
     }
 }
