@@ -17,8 +17,8 @@ module.exports = {
         }
 
         try{
-            const response = client.processorTokenCreate(request);
-            var encryptProcessorToken = forward(response.data.processor_token);
+            const response = await client.processorTokenCreate(request);
+            var encryptProcessorToken = await forward(response.data.processor_token);
 
             if(response){
                 await db.connect(async (db) => {
