@@ -2,7 +2,7 @@ const { client } = require('../plaid_configs');
 const db = require('../../util/db');
 const { backward } = require('../aes');
 
-module.export = {
+module.exports = {
     route: '/api/plaid/remove-bank',
     authenticate: true,
     post: async function(req, res, user){
