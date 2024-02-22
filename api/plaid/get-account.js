@@ -5,13 +5,13 @@ module.exports = {
     route: '/api/plaid/get-account',
     authenticate: true,
     get: async function(req, res, user){
-        const accessToken = backward(user.plaidAccess);
+        const accessToken = await backward(user.plaidAccess);
 
         const request = {
             access_token: accessToken,
         }
 
-        const response = client.authGet(request);
+        const response = await client.authGet(request);
 
         res.json(response.data);
     }
