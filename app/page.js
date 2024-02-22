@@ -82,8 +82,13 @@ export default function Page() {
       </div>
     </main>
 	<main className = "secondBackground h-screen">
-		<div className = "text-6xl py-20 px-10 josefinFont font-black text-amber-100">
+		<div className = "text-6xl py-20 px-10 font-black text-black">
 			Businesses
+		</div>
+	</main>
+  <main className = "thirdBackground h-screen">
+		<div className = "text-6xl py-20 px-10 font-black text-amber-100">
+			Individuals
 		</div>
 	</main>
 	</>

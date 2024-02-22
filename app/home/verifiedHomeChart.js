@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from "react";
-import AnimatedNumbers from "react-animated-numbers"
 
 import {
   ColorType,
@@ -22,8 +21,7 @@ import "../globals.css";
 */
 export default function VerifiedHomeChart({ user }) {
   const chartContainerRef = useRef();
-
-
+  const [percentChange, setPercentChange] = useState(0)
   const [response, setResponse] = useState({
     base_value: 0,
     profit_loss_pct: [0],
@@ -38,13 +36,16 @@ export default function VerifiedHomeChart({ user }) {
   const [historyPayload, setHistoryPayload] = useState(payload);
 
   async function convertData(timestamps, equity) {
-    const data = timestamps.map((timestamp, index) => {
+    
+    const data = (timestamps || []).map((timestamp, index) => {
       const date = new Date(timestamp * 1000); // Convert UNIX timestamp to milliseconds
       var formattedDate = "";
 
       formattedDate = timestamp;
       console.log("Formatted Date: " + formattedDate);
 
+      // Set the current price for loading.
+      if (index == equity.length - 1) setCurrentPrice(equity[index]);
       return { time: formattedDate, value: equity[index] };
     });
     return data;
@@ -64,7 +65,7 @@ export default function VerifiedHomeChart({ user }) {
 
         setResponse(data.data.history);
         setChartData(await convertData(data.data.history.timestamp, data.data.history.equity));
-
+        // setCurrentPrice(await data.data.history.equity[equity.length - 1]);
         // console.log("Chart Data: " + chartData);
       });
     }
@@ -219,30 +220,49 @@ export default function VerifiedHomeChart({ user }) {
     });
 
     const newSeries = chart.addAreaSeries({
-      topColor: "rgba(33, 150, 243, 0.56)",
-      bottomColor: "rgba(33, 150, 243, 0.04)",
-      lineColor: "rgba(33, 150, 243, 1)",
+      topColor: "rgba(253, 243, 50, 0.56)",
+      bottomColor: "rgba(253, 243, 0, 0.00)",
+      lineColor: "#FDE68A",
     });
+
+    newSeries.applyOptions( {
+      lineWidth: 2,
+    })
 
     newSeries.setData(chartData);
     chart.timeScale().fitContent();
     // chart.timeScale().lockVisibleTimeRangeOnResize = true;
 
-    chart.subscribeCrosshairMove(param => {
-      const x = param.point.x;
-      const data = param.seriesData.get(newSeries);
-      const price = data.value !== undefined ? data.value : data.close;
-      const y = newSeries.priceToCoordinate(price);
-      if (x !== undefined){ setCurrentPrice(price)} else {setCurrentPrice(response.base_value)};
-      console.log(`The data point is at position: ${x}, ${y}`);
-  });
+    function onCrosshairMove(param) {
+      if (param === undefined || !param.time || !param.seriesData.size) {
+        setCurrentPrice(response.equity[response.equity.length - 1]); // Revert to original value if crosshair is not on the chart
+        setPercentChange(response.profit_loss_pct[0]); // Assuming you want to revert to the first pct change
+        return;
+      }
+    
+      const seriesData = param.seriesData.get(newSeries);
+      if (seriesData) {
+        const { time, value: price } = seriesData;
+        const chartIndex = chartData.findIndex(data => data.time === time && data.value === price);
+    
+        if (chartIndex !== -1) {
+          setPercentChange(response.profit_loss_pct[chartIndex]);
+          setCurrentPrice(price);
+        } else {
+          setCurrentPrice(response.equity[response.profit_loss_pct.length - 1])
+          setPercentChange(response.profit_loss_pct[0]); // Revert to some default if not found
+        }
+      }
+    }
+
+    chart.subscribeCrosshairMove(onCrosshairMove);
 
 
     return () => {
       chart.remove();
       chart.unsubscribeCrosshairMove();
     };
-  }, [chartData, historyPayload]);
+  }, [chartData, historyPayload, response]);
 
   const handleRadioChange = (period) => {
     let timeframe = "1D"; // Default timeframe
@@ -266,22 +286,13 @@ export default function VerifiedHomeChart({ user }) {
 
     setHistoryPayload({ ...historyPayload, period, timeframe });
   };
+  
+  
 
   return (
     <>
       <div className="interBold text-2xl text-white">
-      <AnimatedNumbers
-        includeComma
-        transitions={(index) => ({
-          type: "spring",
-          duration: 0.5,
-        })}
-        animateToNumber={currentPrice}
-        fontStyle={{
-          fontSize: 20,
-          color: "white",
-        }}
-      />
+     {"$" + Number(currentPrice).toLocaleString('en-US')}
       </div>
       {response.profit_loss_pct[response.profit_loss_pct.length - 1] >= 0 ? (
         <div className="text-sm text-[#18CCCC]">
@@ -294,6 +305,7 @@ export default function VerifiedHomeChart({ user }) {
           {response.profit_loss_pct[response.profit_loss_pct.length - 1]}%
         </div>
       )}
+      <div>{percentChange}</div>
       <div ref={chartContainerRef} id="verifiedChart"></div>
       <div className="text-center">
         <div className="join p-2 self-center">

@@ -85,7 +85,7 @@ function route(server) {
 
 nextApp.prepare()
   .then(async () => {
-    await redis.connect();
+    // await redis.connect();
 
     const server = express();
 

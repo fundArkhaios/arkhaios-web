@@ -7,30 +7,43 @@ import {
   LineStyle,
 } from "lightweight-charts";
 
-export default function SmallDayChart({symbol}) {
+export default function SmallDayChart({ position }) {
   const miniChartContainerRef = useRef();
 
+  const [chartColor, setChartColor] = useState("#FF5000");
+  useEffect(() => {
+    if (position.exchange == "CRYPTO") {
+      position.symbol = position.symbol.replace(/USD$/, "-usd").toLowerCase();
+    }
+
+    if (Number(position.unrealized_intraday_plpc) >= 0) {
+      setChartColor("#18CCCC");
+    } else {
+      setChartColor("#FF5000");
+    }
+  }, []);
+
   const { responseJSON, isLoading, error } = useFetch(
-    "/api/chart?symbol=" + symbol + "&range=1d&interval=15m"
+    "/api/chart?symbol=" + position.symbol + "&range=1d&interval=5m"
   );
 
-  const [processedData, setProcessedData] = useState([ {time: 0, value: 0}]);
+  const [processedData, setProcessedData] = useState([{ time: 0, value: 0 }, {time: 1, value: 0}]);
 
   useEffect(() => {
-    console.log("Symbol: " + symbol);
-    console.log("Error: " + error);
-    console.log("HELLO");
     // This function will process the responseJSON data
     function processData(data) {
-      let result = [];
-      for (let i = 0; i < data.timestamps.length; i++) {
-        result.push({
-          time: data.timestamps[i] * 1000,
-          value: data.closes[i],
-        });
+        let result = [];
+        for (let i = 0; i < data.timestamps.length; i++) {
+          const value = parseFloat(data.closes[i]);
+          if (!isNaN(value)) {  // Check if the value is a number
+            result.push({
+              time: data.timestamps[i] * 1000,
+              value: value,
+            });
+          }
+        }
+        return result;
       }
-      return result;
-    }
     console.log("ResponseJSON: " + JSON.stringify(responseJSON));
     console.log("isLoading: " + isLoading);
     // Make sure responseJSON is not null and the promise has been resolved
@@ -39,10 +52,9 @@ export default function SmallDayChart({symbol}) {
       console.log("PROCESSING");
       setProcessedData(data);
     }
-  }, [isLoading]);
+  }, [responseJSON]);
 
   useEffect(() => {
-
     const chart = createChart(miniChartContainerRef.current, {
       crosshair: {
         mode: CrosshairMode.Normal, // Use CrosshairMode.Normal to allow tooltip functionality without line
@@ -80,7 +92,7 @@ export default function SmallDayChart({symbol}) {
         background: { type: ColorType.Solid, color: "#121212" },
       },
       width: 100,
-      height: 50,
+      height: 40,
       timeScale: {
         visible: false,
         borderVisible: false,
@@ -91,17 +103,12 @@ export default function SmallDayChart({symbol}) {
       },
     });
 
-    
-
-    const newSeries = chart.addAreaSeries({
-      topColor: "rgba(33, 150, 243, 0.56)",
-      bottomColor: "rgba(33, 150, 243, 0.04)",
-      lineColor: "#18CCCC",
-    });
+    const newSeries = chart.addLineSeries({});
 
     newSeries.applyOptions({
-        lineWidth: 2, // Change the line width
-        crosshairMarkerRadius: 3 // Change the radius of the crosshair marker.
+      color: chartColor,
+      lineWidth: 2, // Change the line width
+      crosshairMarkerRadius: 3, // Change the radius of the crosshair marker.
     });
 
     newSeries.setData(processedData);
@@ -112,7 +119,14 @@ export default function SmallDayChart({symbol}) {
     return () => {
       chart.remove(); // Uncomment this and fix reference to actual chart instance
     };
-  }, [processedData]);
+  }, [processedData, chartColor]);
 
-  return <div ref={miniChartContainerRef}></div>;
+  return (
+    <>
+      <div className="font-thin text-xs text-center text-white">
+        {"$" + Number(position.current_price).toLocaleString("en-US")}
+      </div>
+      <div ref={miniChartContainerRef}></div>
+    </>
+  );
 }
