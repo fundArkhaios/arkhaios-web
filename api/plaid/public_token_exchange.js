@@ -2,7 +2,7 @@ const { client } = require('../plaid_configs');
 const db = require('../../util/db');
 const { forward } = require('../aes');
 
-module.export = {
+module.exports = {
     route: '/api/plaid/public-token-exchange',
     authenticate: true,
     post: async function(req, res, user){
