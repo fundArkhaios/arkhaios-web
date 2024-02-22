@@ -5,9 +5,13 @@ const { forward } = require('../aes');
 module.export = {
     route: '/api/plaid/public-token-exchange',
     authenticate: true,
-    post: async function(req, res, publicAccessToken, user){
+    post: async function(req, res, user){
+        var request = req.body.public_token;
+
+        if(!request) res.status(501).json({err: "public token not received"});
+        
         var response = client.itemPublicTokenExchange({
-            public_token: publicAccessToken
+            public_token: request,
         });
 
         var error = "";
