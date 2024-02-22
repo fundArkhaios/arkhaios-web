@@ -7,7 +7,7 @@ module.exports = {
     route: '/api/plaid/generate-processor-token',
     authenticate: true,
     get: async function (req, res, user){
-        var accessToken = backward(user.plaidAccess);
+        var accessToken = await backward(user.plaidAccess);
         //var user_id = plaidAccount.get().accounts.account_id;
 
         var request = {
