@@ -31,6 +31,7 @@
     "react": "18.2.0",
     "react-animated-numbers": "^0.18.0",
     "react-dom": "18.2.0",
+    "react-plaid-link": "^3.5.1",
     "redis": "^4.6.13",
     "speakeasy": "^2.0.0",
     "unique-names-generator": "^4.7.1",

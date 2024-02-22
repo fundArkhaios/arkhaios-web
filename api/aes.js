@@ -10,6 +10,7 @@ module.exports = {
 
     var encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
 
+    console.log(encryptedHex);
     return encryptedHex;
   },
 

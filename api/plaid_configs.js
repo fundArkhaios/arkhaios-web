@@ -5,7 +5,7 @@ const configuration = new Configuration({
     baseOptions: {
         headers: {
             'PLAID-CLIENT-ID': process.env.PLAID_CLIENTID,
-            'PLAID_SECRET': process.env.PLAID_SANDBOX
+            'PLAID-SECRET': process.env.PLAID_SANDBOX
         },
     },
 });
