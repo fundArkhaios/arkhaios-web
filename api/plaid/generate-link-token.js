@@ -5,9 +5,10 @@ module.exports = {
     authenticate: true,
     get: async function (req, res, user){
         const configs = {
-            usr: {
+            user: {
                 client_user_id: user.id,
             },
+            country_codes: ['US'],
             client_name: 'Arkhaios',
             products: ['auth'],
             language: 'en'
