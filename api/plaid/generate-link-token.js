@@ -8,7 +8,7 @@ module.export = {
             user: {
                 client_user_id: user.id,
             },
-            country_code: ['US'],
+            country_codes: ['US'],
             client_name: 'Arkhaios',
             products: ['auth'],
             language: 'en'
