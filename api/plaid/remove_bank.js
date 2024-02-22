@@ -6,7 +6,7 @@ module.exports = {
     route: '/api/plaid/remove-bank',
     authenticate: true,
     post: async function(req, res, user){
-        var accessToken = backward(user.plaidAccess);
+        var accessToken = await backward(user.plaidAccess);
         var error = "";
 
         const request = {
