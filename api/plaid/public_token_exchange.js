@@ -10,13 +10,13 @@ module.exports = {
 
         if(!request) res.status(501).json({err: "public token not received"});
         
-        var response = client.itemPublicTokenExchange({
+        var response = await client.itemPublicTokenExchange({
             public_token: request,
         });
 
         var error = "";
-        var accessToken = forward(response.data.access_token);
-        var item_id = forward(response.data.item_id);
+        var accessToken = await forward(response.data.access_token);
+        var item_id = await forward(response.data.item_id);
 
         try{
             await db.connect(async (db) => {
