@@ -13,7 +13,7 @@ module.exports = {
 
         const response = client.authGet(request);
 
-        res.json(response);
+        res.json(response.data);
     }
 }
 
