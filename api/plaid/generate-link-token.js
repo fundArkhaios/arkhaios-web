@@ -1,6 +1,6 @@
 const { client } = require('../plaid_configs');
 
-module.export = {
+module.exports = {
     route: '/api/plaid/generate-link-token',
     authenticate: true,
     get: async function (req, res, user){
