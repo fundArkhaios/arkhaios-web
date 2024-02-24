@@ -87,7 +87,9 @@ module.exports = {
             }
 
             if(status === 'Success') {
-                sendgrid.sendCode(email);
+                sendgrid.sendCode(email,
+                    "Your Verification Code",
+                    "{} is your verification code");
                 
                 res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
                 res.cookie('username', username, { maxAge: sessionExpiry, httpOnly: true });

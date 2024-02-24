@@ -102,17 +102,11 @@ module.exports = {
             // TODO: need to check for Alpaca 200 responses and respond accordingly
             const response = await alpaca.create_account(payload);
             if(response.id) {
-                await db.connect(async (db) => {
-                    await db.collection('Users').updateOne(user,
-                        {
-                            $set:{
-                                brokerageID: response.id
-                            }
-                        }
-                    );
-
-                    res.status(200).json({ status: "kyc submitted successfully" });
+                db.updateUser(user, {
+                    brokerageID: response.id
                 });
+            
+                res.status(200).json({ status: "kyc submitted successfully" });
             } else {
                 res.status(502).json({ error: "server error" });
             }

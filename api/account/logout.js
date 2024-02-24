@@ -7,22 +7,18 @@ module.exports = {
         try {
             let error = '';
             
-            // Delete from redis first; exception from db won't create a cache inconsistency
-            await db.redis.del(`authenticate:${user.email}`)
-            
-            await db.connect(async (db) => {
-                try {
-                    await db.collection('Users').updateOne(
-                        user, {
-                            $set: {
-                                sessionExpiry: Date.now()
-                            }
-                        }
-                    );
-                } catch(e) {
-                    error = 'server error';
-                }
-            });
+            const result = await db.updateUser(user, {
+                sessionExpiry: Date.now()
+            })
+
+            if(!result) {
+                return res.status(500).json({error: 'server error'})
+            }
+
+            const key = `authenticate:${user.email}`
+            if(await db.redis.get(key)) {
+                await db.redis.del(key)
+            }
 
             if(error != '') {
                 res.status(401).json({error: error});

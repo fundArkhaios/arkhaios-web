@@ -23,28 +23,21 @@ module.exports =  {
             var { hashed, salt, iter } = hash(password, '', 0);
 
             try {
-
-                await db.connect(async (db) => {
-
-                    const result = await db.collection('Users').updateOne(
-                        {email: email},
-                        {
-                            $set: { password: hashed,
-                                    salt: salt,
-                                    iter: iter
-                                  }
-                        }
-                    );
-                
-                    if (result.modifiedCount == 1) {
-                        status = "success";
-                        res.status(200);
-                    } else {
-                        res.status(500);
-                        status = "failed";
-                    }
+                const result = await db.updateUser(user, {
+                    password: hashed,
+                    salt: salt,
+                    iter: iter
                 })
-                res.json( {status: status});
+
+                if(result) {
+                    status = "success";
+                    res.status(200);
+                } else {
+                    res.status(500);
+                    status = "failed";
+                }
+
+                res.json( {status: status } );
 
             } catch(e) { 
                 console.error (e);

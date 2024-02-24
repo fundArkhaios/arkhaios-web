@@ -16,17 +16,11 @@ module.exports = {
                                    message: "a new verification code has been sent."});
         } else {
             if(user.verificationCode == req.body.verificationCode) {
-                await db.connect(async (db) => {
-                    await db.collection('Users').updateOne(user,
-                        {
-                            $set:{
-                                emailVerified: true
-                            }
-                        }
-                    );
+                await db.updateUser(user, {
+                    emailVerified: true
+                })
 
-                    res.status(200).json({ status: "success" });
-                });
+                res.status(200).json({ status: "success" })
             } else {
                 res.status(200).json({ error: "invalid verification code"});
             }

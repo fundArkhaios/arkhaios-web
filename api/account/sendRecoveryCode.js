@@ -1,7 +1,6 @@
 const db = require('../../util/db');
 const sendgrid = require('../external/sendgrid/api');
 module.exports = {
-
     route: "/api/sendRecoveryCode",
     authenticate: false,
     post: async function (req, res) {
@@ -16,7 +15,10 @@ module.exports = {
                     const result = await db.collection('Users').findOne( {"email":email} );
                     console.log("Result: " + result);
                     if (result != null) {
-                        sendgrid.sendRecoveryEmail(email);
+                        sendgrid.sendCode(email,
+                            "Account Recovery",
+                            "{} is your recovery verification code");
+
                         res.status(200);
                         console.log("Email Found");
                         // console.log("Recovery Email Sent!");

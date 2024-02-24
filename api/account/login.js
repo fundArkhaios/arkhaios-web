@@ -56,18 +56,10 @@ module.exports = {
 
                             data["session"] = session;
 
-                            await db.collection('Users').updateOne(
-                                {
-                                    "email": email,
-                                    "password": hash
-                                },
-                                {
-                                    $set: {
-                                        sessionToken: session,
-                                        sessionExpiry: Date.now() + sessionExpiry
-                                    }
-                                }
-                            );
+                            const result = await db.updateUser(user, {
+                                sessionToken: session,
+                                sessionExpiry: Date.now() + sessionExpiry
+                            });
                         }
                     } else error = 'invalid credentials';
                 } catch(e) {
