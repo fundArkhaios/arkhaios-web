@@ -1,5 +1,6 @@
 const alpaca = require('../external/alpaca/api');
 const assetIds = {};
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 async function fetchYahoo(id) {
     const baseURL = 'https://query1.finance.yahoo.com';

@@ -4,7 +4,6 @@ const sendgrid = require('../external/sendgrid/api')
 const db = require('../../util/db');
 const { hash } = require('../hashAlgo');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
-const { hash } = require('../hashAlgo');
 
 function generateUsername() {
     const numberDictionary = NumberDictionary.generate({ min: 100, max: 999 });
@@ -26,17 +25,18 @@ module.exports = {
     route: "/api/account/register",
     authenticate: false,
     post: async function(req, res) {
-        response = RESPONSE_TYPE.ERROR;
+        let response = RESPONSE_TYPE.ERROR;
 
         try {
-            var error = '';
+            let error = '';
             
             const { firstName, lastName, email, password } = req.body;
             
-            var { hashed, salt, iter } = hash(password, '', 0); // Hash password with SHA256
-            var username = generateUsername(); // Generate username Ex: Fast-Red-Elephant-281
+            let { hashed, salt, iter } = hash(password, '', 0); // Hash password with SHA256
+            let username = generateUsername(); // Generate username Ex: Fast-Red-Elephant-281
+            let accountID = generateAccountID(); // Generate a unique account ID
 
-            var session = uuidv4();
+            let session = uuidv4();
             const sessionExpiry = 1000 * 3600 * 5; // By default, expire in 5 hours
 
             let creationTime = Date.now(); 
@@ -63,7 +63,7 @@ module.exports = {
                 await db.connect(async (db) => {
                     // Ensure email is not in use
                     if((await db.collection('Users').findOne({"email":email})) != null) {
-                        error = "Email is already in use."
+                        error = "email is already in use"
                         return;
                     }   
                     
@@ -106,8 +106,12 @@ module.exports = {
                 res.cookie('username', username, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
                 res.cookie('email', email, {maxAge: sessionExpiry, httpOnly: true, sameSite: true});
 
-                res.status(201).json({ status: response, message: error, data: {} });
+                res.status(201).json({ status: response, message: 'account created', data: {
+                    session, username, email
+                }});
                 return
+            } else if(error) {
+                res.status(401).json({ status: response, message: error, data: {} });
             } else {
                 SERVER_ERROR(res)
                 return
