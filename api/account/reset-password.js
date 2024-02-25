@@ -1,4 +1,5 @@
 const db = require('../../util/db');
+const { logger } = require('../../util/logger')
 
 module.exports =  {
     route: "/api/reset-password",
@@ -32,13 +33,19 @@ module.exports =  {
 
                 res.json( {status: status});
 
-            } catch(e) { 
-                console.error (e);
+            } catch(e) {
+                logger.log({
+                    level: 'error',
+                    message: e
+                })
             }
 
 
         } catch(e) {
-            console.error(e);
+            logger.log({
+                level: 'error',
+                message: e
+            })
         }
     } 
 }

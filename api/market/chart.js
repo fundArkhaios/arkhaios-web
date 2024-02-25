@@ -1,4 +1,5 @@
 const RESPONSE_TYPE = require("../response_type");
+const { logger } = require('../../util/logger')
 
 async function fetchYahoo(id, interval, range, afterHours) {
     const baseURL = 'https://query1.finance.yahoo.com';
@@ -86,6 +87,11 @@ module.exports = {
             }
         } catch(e) {
             // Some other exception was thrown
+            logger.log({
+                level: 'error',
+                message: e
+            })
+
             res.status(500).send(JSON.stringify({ status: RESPONSE_TYPE.ERROR, message: 'server error'}));
         }
     }

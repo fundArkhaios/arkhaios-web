@@ -2,6 +2,8 @@ const db = require('../../util/db.js');
 const RESPONSE_TYPE = require('../response_type.js')
 const { v4: uuidv4 } = require('uuid');
 
+const { logger } = require('../../util/logger')
+
 const { fundPeriod, fundPeriods, fundType } = require('./exports.js')
 
 module.exports = {
@@ -62,10 +64,20 @@ module.exports = {
                     await db.collection('FundPortfolios').insertOne(data);
                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'fund successfully created', data: {fundID: fund["fundID"]}});
                 } catch(e) {
+                    logger.log({
+                        level: 'error',
+                        message: e
+                    })
+
                     res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
                 }
             });
         } catch(e) {
+            logger.log({
+                level: 'error',
+                message: e
+            })
+
             res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
         }
     }

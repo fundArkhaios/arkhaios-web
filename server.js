@@ -4,6 +4,8 @@ const express = require('express');
 const next = require('next');
 const url = require('url');
 
+const { logger } = require('./util/logger')
+
 const authenticate = require('./util/authenticate');
 
 const fs = require("fs");
@@ -16,6 +18,7 @@ const nextHandler = nextApp.  getRequestHandler();
 
 const cookieParser = require('cookie-parser');
 const { redis } = require('./util/db');
+const winston = require('winston');
 
 function route(server) {
   // Listen for an endpoint defined in a file
@@ -52,6 +55,11 @@ function route(server) {
               res.send(JSON.stringify({error: "forbidden"}));
             }
           } catch(e) {
+            logger.log({
+              level: 'error',
+              message: e
+            })
+            
             res.status(501);
             res.send(JSON.stringify({error: "server error"}));
           }
@@ -115,6 +123,10 @@ nextApp.prepare()
 
       if(process.env.NODE_ENV !== 'production') {
         console.log(`Listening on http://localhost:${port}`);
+
+        logger.add(new winston.transports.Console({
+          format: winston.format.simple()
+        }));
       }
     });
   });

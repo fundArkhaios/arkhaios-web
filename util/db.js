@@ -1,5 +1,6 @@
 const { MongoClient } = require("mongodb");
 const { createClient } = require('redis')
+const { logger } = require('./logger')
 
 let redisClient;
 
@@ -38,6 +39,7 @@ module.exports = {
           if(update.acknowledged) {
             const result = await db.collection('Users').findOne({"accountID": user.accountID});
 
+            console.log(result)
             const key = `authenticate:${result.email}`
             const data = await module.exports.redis.get(key);
 
@@ -61,9 +63,19 @@ module.exports = {
 
             success = true;
           }
-        } catch(e) {}
+        } catch(e) {
+          logger.log({
+            level: 'error',
+            message: e
+          })
+        }
       });
-    } catch(e) {}
+    } catch(e) {
+      logger.log({
+        level: 'error',
+        message: e
+    })
+    }
 
     return success;
   },
@@ -79,6 +91,11 @@ module.exports = {
       await client.connect();
       const db = client.db("db");
       await callback(db);
+    } catch(e) {
+      logger.log({
+        level: 'error',
+        message: e
+      })
     } finally {
       await client.close();
     }
