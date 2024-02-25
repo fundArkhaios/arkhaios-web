@@ -5,7 +5,7 @@ export default function Page() {
 
     return (
         <div>
-            <div className = 'text-center'> Accounts & Security Sub Page</div>
+            {/* <div className = 'text-center'> Accounts & Security Sub Page</div> */}
             <EnableMFA/>
         </div>
     )

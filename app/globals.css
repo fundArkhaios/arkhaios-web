@@ -39,7 +39,13 @@ a:hover {
 }
 
 .secondBackground {
-  background-image: url('/swordInStoneCity.jpg');
+  background-image: url('/low-poly-grid-haikei.svg');
+	background-size: cover;
+  background-attachment: scroll;
+}
+
+.thirdBackground {
+  background-image: url('/lowpolygrid2.svg');
 	background-size: cover;
   background-attachment: scroll;
 }

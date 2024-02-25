@@ -35,6 +35,7 @@ module.exports = {
             let { hashed, salt, iter } = hash(password, '', 0); // Hash password with SHA256
             let username = generateUsername(); // Generate username Ex: Fast-Red-Elephant-281
             let accountID = generateAccountID(); // Generate a unique account ID
+            var plaidID = uuidv4();
 
             let session = uuidv4();
             const sessionExpiry = 1000 * 3600 * 5; // By default, expire in 5 hours
@@ -43,6 +44,7 @@ module.exports = {
             
             const user = {
                 accountID: generateAccountID(),
+                plaidID: plaidID,
                 firstName: firstName,
                 lastName: lastName, 
                 username: username,
