@@ -1,7 +1,7 @@
 const db = require('../../util/db');
-const authenticate = require('../../util/authenticate')
 
-const sendgrid = require('../external/sendgrid/api')
+const sendgrid = require('../external/sendgrid/api');
+const { RESPONSE_TYPE } = require('../response_type');
 
 module.exports = {
     route: '/api/verify',
@@ -9,20 +9,34 @@ module.exports = {
     unverified: true,
     post: async function(req, res, user) {
         if(user.emailVerified === true) {
-            res.status(401).json({error: "email has already been verified"});
-        } else if(Date.now() >= user.verificationExpiry || req.body.resend == true) {
+            res.status(401).json({
+                status: RESPONSE_TYPE.FAILED,
+                message: "email has already been verified",
+                data: {}
+            });
+        } else if(Date.now() >= user.verificationExpiry) {
+            res.status(401).json({
+                status: RESPONSE_TYPE.FAILED,
+                message: "verification code has expired",
+                data: {}
+            })
+        } else if (req.body.resend == true) {
             sendgrid.sendCode(user.email);
-            res.status(200).json({ error: "verification code has expired",
-                                   message: "a new verification code has been sent."});
+
+            res.status(401).json({
+                status: RESPONSE_TYPE.FAILED,
+                message: "a new verification code has been sent",
+                data: {}
+            })
         } else {
             if(user.verificationCode == req.body.verificationCode) {
                 await db.updateUser(user, {
                     emailVerified: true
                 })
 
-                res.status(200).json({ status: "success" })
+                res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: '', data: {} });
             } else {
-                res.status(200).json({ error: "invalid verification code"});
+                res.status(200).json({ status: RESPONSE_TYPE.FAILED, message: "invalid verification code", data: {}});
             }
         }
     }

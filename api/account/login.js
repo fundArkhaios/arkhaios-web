@@ -70,7 +70,7 @@ module.exports = {
             });
 
             if(error != '') {
-                res.status(401).json({status: response, error: error});
+                res.status(401).json({status: response, message: error});
             } else {
                 res.cookie('email', email, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
                 res.cookie('session', data.session, { maxAge: sessionExpiry, httpOnly: true, sameSite: true });

@@ -1,4 +1,5 @@
 const alpaca = require('../external/alpaca/api');
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 module.exports = {
     route: "/api/place-order",
@@ -24,10 +25,15 @@ module.exports = {
                 data.qty = req.body.qty;
             } else data.notional = req.body.qty;
 
-            const response = await alpaca.create_order(user.brokerageID, data);
-
+            const { response, status } = await alpaca.create_order(user.brokerageID, data);
+      
             res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(response));
+
+            if(status == 200) {
+                res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "", data: response});
+            } else {
+                SERVER_ERROR(res)
+            }
         }
     }
 }

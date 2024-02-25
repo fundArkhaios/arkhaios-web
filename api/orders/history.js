@@ -1,6 +1,6 @@
 const db = require('../../util/db');
 const alpaca = require('../external/alpaca/api');
-const RESPONSE_TYPE = require('../response_type');
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 module.exports = {
     route: "/api/history",
@@ -29,13 +29,18 @@ module.exports = {
             if(data) {
                 res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: {history: JSON.parse(data) }});
             } else {
-                const response = await alpaca.get_portfolio(user.brokerageID, period, timeframe);
-                if(expiration >= 0) {
-                    // Only cache calls relevant for displaying charts
-                    db.redis.setEx(`portfolio:${user.brokerageID}:${period}:${timeframe}`, expiration, JSON.stringify(response));
-                }
+                const { response, status } = await alpaca.get_portfolio(user.brokerageID, period, timeframe);
                 
-                res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: { history: response }});
+                if(status == 200) {
+                    if(expiration >= 0) {
+                        // Only cache calls relevant for displaying charts
+                        db.redis.setEx(`portfolio:${user.brokerageID}:${period}:${timeframe}`, expiration, JSON.stringify(response));
+                    }
+                    
+                    res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: { history: response }});
+                } else {
+                    SERVER_ERROR(res)
+                }
             }
         });
     }

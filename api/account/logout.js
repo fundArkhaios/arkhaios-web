@@ -6,7 +6,7 @@ module.exports = {
     post: async function (req, res, user) {
         try {
             let error = '';
-            
+
             const result = await db.updateUser(user, {
                 sessionExpiry: Date.now()
             })

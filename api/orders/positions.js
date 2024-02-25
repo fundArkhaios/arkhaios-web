@@ -1,4 +1,5 @@
 const alpaca = require('../external/alpaca/api');
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 module.exports = {
     route: "/api/positions",
@@ -6,8 +7,12 @@ module.exports = {
     get: async function(req, res, user) {
         res.setHeader('Content-Type', 'application/json');
         
-        const response = await alpaca.get_positions(user.brokerageID);
+        const { response, status } = await alpaca.get_positions(user.brokerageID);
 
-        res.send(JSON.stringify({response}));
+        if(status == 200) {
+            res.send(JSON.stringify({status: RESPONSE_TYPE.SUCCESS, data: response}));
+        } else {
+            SERVER_ERROR(res)
+        }
     }
 }
