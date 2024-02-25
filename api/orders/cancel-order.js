@@ -1,4 +1,5 @@
 const alpaca = require('../external/alpaca/api');
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 module.exports = {
     route: "/api/cancel-order",
@@ -7,11 +8,15 @@ module.exports = {
         res.setHeader('Content-Type', 'application/json');
 
         if(!req.body.order) {
-            res.send(JSON.stringify({error: "order id required"}));
+            res.status(200).json({ status: RESPONSE_TYPE.FAILED, message: "order id required"});
         } else {
-            const response = await alpaca.cancel_order(user.brokerageID, req.body.order);
+            const { response, status } = await alpaca.cancel_order(user.brokerageID, req.body.order);
 
-            res.send(JSON.stringify(response));
+            if(status == 200) {
+                res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "", data: response});
+            } else {
+                SERVER_ERROR(res)
+            }
         }
     }
 }

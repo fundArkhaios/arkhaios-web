@@ -1,11 +1,9 @@
 const db = require('../../util/db');
 module.exports = {
-    route: "/api/checkRecoveryCode",
+    route: "/api/check-recovery-code",
     authenticate: false,
     post: async function(req, res) {
         try {
-            console.log("Check Recovery Code API Working...");
-
             const { recoveryCode, email } = req.body;
             let error = "";
             
@@ -21,7 +19,6 @@ module.exports = {
                     else {
                         error = "No match";
                         res.status(401)
-                        console.log("Verification Code does not match.")
                     }
                 })
                 res.json( {error: error})

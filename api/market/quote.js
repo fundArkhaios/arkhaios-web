@@ -1,5 +1,6 @@
 const alpaca = require('../external/alpaca/api');
 const assetIds = {};
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 async function fetchYahoo(id) {
     const baseURL = 'https://query1.finance.yahoo.com';
@@ -21,11 +22,14 @@ module.exports = {
         const quote = await fetchYahoo(symbol);
         if(quote.status == 200) {
             const json = await quote.json();
-
-            res.send(JSON.stringify({
-                symbol: symbol,
-                price: json['chart']['result']['0']['meta']['regularMarketPrice']
-            }));
+            
+            res.status(200).json({
+                status: RESPONSE_TYPE.SUCCESS,
+                data: {
+                    symbol: symbol,
+                    price: json['chart']['result']['0']['meta']['regularMarketPrice']
+                }
+            })
 
             return;
         } else {
@@ -42,10 +46,13 @@ module.exports = {
                     const asset = assets[i].symbol.toUpperCase();
                     assetIds[assets[i].symbol] = assets[i].id;
                     if(asset == symbol) {
-                        res.send(JSON.stringify({
-                            symbol: assets[i].symbol,
-                            price: assets[i].lastPrice
-                        }));
+                        res.status(200).json({
+                            status: RESPONSE_TYPE.SUCCESS,
+                            data: {
+                                symbol: asset.symbol,
+                                price: assets[i].lastPrice
+                            }
+                        })
 
                         return;
                     }
@@ -54,16 +61,19 @@ module.exports = {
                 const id = assetIds[symbol];
                 const asset = await alpaca.get_asset(id);
                 if(asset?.lastPrice) {
-                    res.send(JSON.stringify({
-                        symbol: asset.symbol,
-                        price: assets[i].lastPrice
-                    }));
+                    res.status(200).json({
+                        status: RESPONSE_TYPE.SUCCESS,
+                        data: {
+                            symbol: asset.symbol,
+                            price: assets[i].lastPrice
+                        }
+                    })
                     
                     return;
                 }
             }
 
-            res.send(JSON.stringify({"error": "symbol not found"}));
+            res.status(500).json({status: RESPONSE_TYPE.ERROR, message: 'symbol not found'});
         }
     }
 }

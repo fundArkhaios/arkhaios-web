@@ -1,4 +1,4 @@
-const RESPONSE_TYPE = require('../response_type.js')
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type.js')
 const alpaca = require('../external/alpaca/api.js');
 
 module.exports = {
@@ -13,9 +13,16 @@ module.exports = {
             timing: "immediate"
         };
 
-        const response = await alpaca.create_transfer(user.brokerageID, data);
+        const { response, status } = await alpaca.create_transfer(user.brokerageID, data);
 
-        res.status(200).send({status: RESPONSE_TYPE.SUCCESS, message: '',
-        data: response});
+        if(status == 200) {
+            res.status(200).send({
+                status: RESPONSE_TYPE.SUCCESS,
+                message: '',
+                data: response
+            });
+        } else {
+            SERVER_ERROR(res)
+        }
     }
 }

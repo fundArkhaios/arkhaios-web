@@ -1,35 +1,34 @@
 const db = require('../../util/db');
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 module.exports = {
     route: "/api/logout",
     authenticate: true,
+    unverified: true,
     post: async function (req, res, user) {
         try {
-            let error = '';
-            
-            await db.connect(async (db) => {
-                try {
-                    await db.collection('Users').updateOne(
-                        user, {
-                            $set: {
-                                sessionExpiry: Date.now()
-                            }
-                        }
-                    );
-                } catch(e) {
-                    error = 'server error';
-                }
-            });
+            const result = await db.updateUser(user, {
+                sessionExpiry: Date.now()
+            })
 
-            if(error != '') {
-                res.status(401).json({error: error});
-            } else {
-                res.clearCookie('email');
-                res.clearCookie('session');
+            if(!result) return SERVER_ERROR(res)
 
-                var ret = { status: "session ended" };
-                res.status(200).json(ret);
+            const key = `authenticate:${user.email}`
+            if(await db.redis.get(key)) {
+                await db.redis.del(key)
             }
-        } catch (e) { console.log(e); res.status(401).json({error: 'server error'}); }
+
+            res.clearCookie('email');
+            res.clearCookie('session');
+
+            res.status(200).json({
+                status: RESPONSE_TYPE.SUCCESS,
+                message: "session ended",
+                data: {}
+            });
+        } catch (e) {
+            console.log(e)
+            SERVER_ERROR(res)
+        }
     }
 }

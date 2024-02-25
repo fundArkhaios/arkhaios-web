@@ -1,8 +1,6 @@
 const alpaca = require('../external/alpaca/api');
 const db = require('../../util/db');
-const authenticate = require('../../util/authenticate');
-const cookieParser = require('cookie-parser');
-
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type.js')
 
 function verifyFields(data, email) {
     if(data.country !== "USA") {
@@ -52,9 +50,6 @@ module.exports = {
     route: "/api/kyc",
     authenticate: true,
     post: async function(req, res, user) {
-
-        // const cookies = cookieParser();
-
         const error = verifyFields(req.body, user.email);
         if(error) {
             res.status(422).json({error: error});
@@ -99,22 +94,15 @@ module.exports = {
                 ]
             };
 
-            // TODO: need to check for Alpaca 200 responses and respond accordingly
-            const response = await alpaca.create_account(payload);
-            if(response.id) {
-                await db.connect(async (db) => {
-                    await db.collection('Users').updateOne(user,
-                        {
-                            $set:{
-                                brokerageID: response.id
-                            }
-                        }
-                    );
-
-                    res.status(200).json({ status: "kyc submitted successfully" });
+            const { response, status } = await alpaca.create_account(payload);
+            if(status == 200 && response.id) {
+                await db.updateUser(user, {
+                    brokerageID: response.id
                 });
+
+                res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "kyc submitted successfully" });
             } else {
-                res.status(502).json({ error: "server error" });
+                SERVER_ERROR(res)
             }
         }
     }
