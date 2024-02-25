@@ -39,13 +39,13 @@ a:hover {
 }
 
 .secondBackground {
-  background-image: url('/bottomWave.png');
+  background-image: url('/low-poly-grid-haikei.svg');
 	background-size: cover;
   background-attachment: scroll;
 }
 
 .thirdBackground {
-  background-image: url('/wave-haikei.png');
+  background-image: url('/lowpolygrid2.svg');
 	background-size: cover;
   background-attachment: scroll;
 }

@@ -6,7 +6,7 @@ module.exports = {
     get: async function (req, res, user){
         const configs = {
             user: {
-                client_user_id: user.id,
+                client_user_id: user.plaidID,
             },
             country_codes: ['US'],
             client_name: 'Arkhaios',
