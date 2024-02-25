@@ -21,45 +21,51 @@ module.exports = {
   },
 
   updateUser: async function(user, parameters) {
+    let success = false;
+
     try {
       await module.exports.connect(async (db) => {
         try {
           const update = await db.collection('Users').updateOne(
             {
-                "email": user.accountID,
+                "accountID": user.accountID,
             },
             {
                 $set: parameters
             }
           )
 
-          if(update.modifiedCount == 1) {
-            const result = await db.collection('Users').findOne({"email": user.accountID});
+          if(update.acknowledged) {
+            const result = await db.collection('Users').findOne({"accountID": user.accountID});
 
-            const data = await redis.get(`authenticate:${result.email}`);
+            const key = `authenticate:${result.email}`
+            const data = await module.exports.redis.get(key);
+
             const expiry = Math.trunc((result.sessionExpiry - Date.now()) / 1000)
 
             if(data) {
-              await redis.setEx(key, expiry, JSON.stringify(result));
+              if(result.sessionExpiry - Date.now() <= 0) {
+                await module.exports.redis.del(key)
+              } else {
+                await module.exports.redis.setEx(key, expiry, JSON.stringify(result));
+              }
             }
 
             if(result.email != user.email) {
               // This is the special scenario, in case the user updated their email
               const oldKey = `authenticate:${user.email}`
-              if(await redis.get(oldKey)) {
-                await redis.del(oldKey)
+              if(await module.exports.redis.get(oldKey)) {
+                await module.exports.redis.del(oldKey)
               }
             }
 
-            return true;
-          } else return false;
-        } catch(e) {
-          return false;
-        }
+            success = true;
+          }
+        } catch(e) {}
       });
-    } catch(e) {
-      return false;
-    }
+    } catch(e) {}
+
+    return success;
   },
 
   connect: async function(callback) {
