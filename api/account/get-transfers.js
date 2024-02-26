@@ -2,7 +2,7 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type.js')
 const alpaca = require('../external/alpaca/api.js');
 
 module.exports = {
-    route: '/api/get-transfers',
+    route: '/api/account/get-transfers',
     kyc: true,
     get: async function(req, res, user) {
         const { response, status } = await alpaca.get_transfers(user.brokerageID);

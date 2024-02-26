@@ -3,7 +3,7 @@ const sendgrid = require('../external/sendgrid/api');
 const { logger } = require('../../util/logger')
 
 module.exports = {
-    route: "/api/send-recovery-code",
+    route: "/api/account/send-recovery-code",
     authenticate: false,
     post: async function (req, res) {
         try {

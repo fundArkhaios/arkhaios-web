@@ -3,7 +3,7 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 const { logger } = require('../../util/logger')
 
 module.exports = {
-    route: "/api/logout",
+    route: "/api/account/logout",
     authenticate: true,
     unverified: true,
     post: async function (req, res, user) {

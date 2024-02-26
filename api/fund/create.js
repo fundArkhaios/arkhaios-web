@@ -7,7 +7,7 @@ const { logger } = require('../../util/logger')
 const { fundPeriod, fundPeriods, fundType } = require('./exports.js')
 
 module.exports = {
-    route: '/api/create-fund',
+    route: '/api/fund/create',
     kyc: true,
     post: async function(req, res, user) {
         try {

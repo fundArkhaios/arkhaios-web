@@ -7,7 +7,7 @@ const { hash } = require('../hashAlgo');
 const { logger } = require('../../util/logger')
 
 module.exports = {
-    route: "/api/login",
+    route: "/api/account/login",
     authenticate: false,
     post: async function (req, res) {
         try {

@@ -3,7 +3,7 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 const { logger } = require('../../util/logger')
 
 module.exports = {
-    route: "/api/watchlist",
+    route: "/api/account/watchlist",
     authenticate: true,
     unverified: true,
     post: async function(req, res, user) {

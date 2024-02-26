@@ -2,7 +2,7 @@ const db = require('../../util/db');
 const { logger } = require('../../util/logger')
 
 module.exports =  {
-    route: "/api/reset-password",
+    route: "/api/account/reset-password",
     authenticate: false,
     // This needs to be refactored:
     // major security concern regarding password resets
