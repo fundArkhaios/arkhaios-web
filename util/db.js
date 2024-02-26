@@ -39,7 +39,6 @@ module.exports = {
           if(update.acknowledged) {
             const result = await db.collection('Users').findOne({"accountID": user.accountID});
 
-            console.log(result)
             const key = `authenticate:${result.email}`
             const data = await module.exports.redis.get(key);
 
