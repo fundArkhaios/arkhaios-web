@@ -130,3 +130,7 @@ nextApp.prepare()
       }
     });
   });
+
+  module.exports = {
+    route: route
+  }
