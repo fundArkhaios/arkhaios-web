@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
+import Image from "next/image";
 import React, { useState } from "react";
 
 export default function Page() {
@@ -86,7 +86,7 @@ export default function Page() {
 
         <main className="grid bg-base-100 lg:aspect-[2/1] lg:grid-cols-2 h-full">
           <figure className="pointer-events-none bg-base-300 object-cover max-lg:hidden">
-            <img src="rectangle-logo.png" alt="Login" />
+            <Image width={500} height={500} src="/rectangle-logo.png" alt="Login" />
           </figure>
 
           <form
