@@ -10,11 +10,14 @@ async function get(path, options) {
 	});
 
 	let data = response;
+	let status = data.status;
 	if(options?.response == "buffer") {
-		data = data.arrayBuffer();
-	}  else data = data.json();
+		data = await data.arrayBuffer();
+	} else {
+		data = await data.json();
+	}
 
-	return data;
+	return { response: data, status };
 }
 
 async function post(path, body) {
@@ -27,8 +30,10 @@ async function post(path, body) {
 		}
 	});
 
+	const status = response.status
 	const data = await response.json();
-	return data;
+
+	return { response: data, status }
 }
 
 async function patch(path, body) {
@@ -41,8 +46,10 @@ async function patch(path, body) {
 		}
 	});
 
+	const status = response.status
+
 	const data = await response.json();
-	return data;
+	return { response: data, status };
 }
   
 module.exports = {
@@ -80,19 +87,22 @@ module.exports = {
 		return patch("/v1/accounts/" + id);
 	},
 
-	sandbox_deposit: async function(id, amount) {
-		const data = {
-			"receiver_account_number": id,
-			"receiver_routing_code": "123456",
-			"amount": amount,
-			"currency": "USD"
-		};
-
-		return post("/v1beta/demo/banking/funding", data);
-	},
-
 	create_ach_relationship: async function(id, data) {
 		return post("/v1/accounts/" + id + "/ach_relationships", data);
+	},
+
+	create_journal: async function(data) {
+		console.log(data);
+		const payload = {
+			to_account: data.to,
+			from_account: data.from,
+			entry_type: "JNLC",
+			amount: data.amount,
+		};
+
+		console.log(payload);
+
+		return post("/v1/journals/", payload);
 	},
 
 	get_ach_relationships: async function(id) {
@@ -106,7 +116,6 @@ module.exports = {
 	get_transfers: async function(id) {
 		return get("/v1/accounts/" + id + "/transfers");
 	},
-
 
 	create_order: async function(account, order) {
 		return post("/v1/trading/accounts/" + account + "/orders", order);
@@ -139,6 +148,4 @@ module.exports = {
 	get_portfolio: async function(account, period, timeframe) {
 		return get(`/v1/trading/accounts/${account}/account/portfolio/history?period=${period}&timeframe=${timeframe}`);
 	},
-
-	
 }

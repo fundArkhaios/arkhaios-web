@@ -1,11 +1,11 @@
 const db = require('../../util/db');
+const { logger } = require('../../util/logger')
+
 module.exports = {
-    route: "/api/checkRecoveryCode",
+    route: "/api/account/check-recovery-code",
     authenticate: false,
     post: async function(req, res) {
         try {
-            console.log("Check Recovery Code API Working...");
-
             const { recoveryCode, email } = req.body;
             let error = "";
             
@@ -21,16 +21,21 @@ module.exports = {
                     else {
                         error = "No match";
                         res.status(401)
-                        console.log("Verification Code does not match.")
                     }
                 })
                 res.json( {error: error})
 
             } catch(e) {
-                console.error(e);
+                logger.log({
+                    level: 'error',
+                    message: e
+                })
             }
         } catch (e) {
-            console.error(e);
+            logger.log({
+                level: 'error',
+                message: e
+            })
         }
 
     }
