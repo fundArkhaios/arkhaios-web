@@ -10,12 +10,9 @@ export default function Page() {
   const user = useContext(UserContext);
 
   return (
-    <>
+    <div className = "py-5">
     {user.kycVerified ? <ReportsTable/> : <NotVerifiedAlert/>}      
-    </>
-
-
-
+    </div>
   )
 
 }
