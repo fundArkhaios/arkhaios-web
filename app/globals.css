@@ -107,9 +107,7 @@ body {
 
 
 .interBold {
-  font-weight: 700;
   font-family: "Inter-Bold", "Inter", sans-serif;
-  font-size: 20px;
   letter-spacing: -1px;
 }
 
