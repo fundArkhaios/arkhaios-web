@@ -12,6 +12,8 @@ import VerifiedHomeChart from "./verifiedHomeChart.js";
 import UnverifiedAssetView from "./unverifiedAssetView.js";
 import Watchlist from "./watchlist.js";
 import UnverifiedWatchlist from "./unverifiedWatchlist.js";
+import MarketNews from "./marketNews.js";
+
 export default function Page() {
   const { user } = useContext(UserContext);
 
@@ -36,7 +38,10 @@ export default function Page() {
           </div>
         </div>
       </main>
-      <main className="p-10 interBold text-3xl text-white">NEWS</main>
+      <main>
+        <h1 className ="pl-10 pt-10 interBold text-3xl text-white">NEWS</h1>
+        <div><MarketNews/></div>
+      </main>
     </>
   );
 }
