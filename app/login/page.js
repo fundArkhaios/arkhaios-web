@@ -23,7 +23,7 @@ export default function Page() {
     let payload = { email: email, password: password };
     if (mfa) payload.mfa = mfa;
 
-    await fetch("/api/login", {
+    await fetch("/api/account/login", {
       method: "POST",
       mode: "cors",
       headers: {

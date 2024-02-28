@@ -14,10 +14,18 @@ export default function Account() {
 
     setUserData((prevState) => {
       const newData = { ...prevState, [name]: value };
-      console.log(newData);
       return newData;
     });
   };
+
+  const fundingSources = [
+    { name: "Employment Income", abbreviation: "employment_income" },
+    { name: "Investments", abbreviation: "investments" },
+    { name: "Inheritance", abbreviation: "inheritance" },
+    { name: "Business Income", abbreviation: "business_income"},
+    { name: "Savings", abbreviation: "savings"},
+    { name: "Family", abbreviation: "family"},
+  ];
 
   return (
     <div className="flex justify-start flex-col space-y-3">
@@ -106,6 +114,29 @@ export default function Account() {
             pattern="\d{3}-\d{2}-\d{4}"
             title="Enter your SSN in the format XXX-XX-XXXX (e.g., 666-55-4321)"
           />
+        </div>
+
+        <div className="form-control">
+          <label className="form-control max-w-md">
+            <div className="label">
+              <span className="label-text">Funding Source</span>
+            </div>
+            <select
+              name="funding_source"
+              onChange={handleChange}
+              value={userData["funding_source"] || ""}
+              className="select select-bordered"
+            >
+              <option disabled selected>
+                Pick one
+              </option>
+              {fundingSources.map((sources) => (
+                <option key={sources.abbreviation} value={sources.abbreviation}>
+                  {sources.name}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </div>
 

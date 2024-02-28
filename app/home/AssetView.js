@@ -10,8 +10,6 @@ export default function AssetView({ user }) {
     return symbol.replace(/USD$/, '-usd').toLowerCase();
   } */
 
-  
-
 
   useEffect(() => {
     async function getPositions() {
@@ -25,7 +23,6 @@ export default function AssetView({ user }) {
         });
         const data = await response.json();
         setPositions(data.response);
-        console.log(data);
       } catch (error) {
         console.error(error);
       }
