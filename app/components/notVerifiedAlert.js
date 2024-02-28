@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function NotVerifiedAlert() {
   return (
-    <div className="grid">
-      <div className="justify-self-center max-w-screen-md">
-        <div role="alert" className="alert max-w-80">
+    <div className="grid ">
+      <div className="justify-self-center max-w-screen-md ">
+        <div role="alert" className="alert max-w-80 border border-rose-500">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="stroke-current shrink-0 h-6 w-6"
@@ -12,7 +12,7 @@ export default function NotVerifiedAlert() {
             viewBox="0 0 24 24"
           >
             <path
-              stroke="#ff9b00"
+              stroke="#f43f5e"
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
@@ -20,8 +20,8 @@ export default function NotVerifiedAlert() {
             />
           </svg>
           <div>
-            <h3 className="font-bold text-lg">Unverified Account!</h3>
-            <div className="text-sm">
+            <h3 className="font-bold text-lg text-white">Unverified Account!</h3>
+            <div className="text-sm font-thin">
               You must legally verify your account in the settings to use all
               features.
             </div>
@@ -29,7 +29,7 @@ export default function NotVerifiedAlert() {
           <div>
             <Link
               href="/account/settings/personal-information"
-              className="btn btn-sm bg-success hover:bg-accent text-black hover:drop-shadow-md"
+              className="btn btn-sm bg-white hover:bg-slate-200 text-black hover:drop-shadow-md"
             >
               Verify
             </Link>

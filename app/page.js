@@ -110,7 +110,7 @@ export default function Page() {
               </div>
               <div className="py-5 place-self-stretch border-b-4 border-l-4 border-black">
                 <div className="text-xl font-bold">Distributions</div>
-                <div className = "flex text-sm font-light text-center px-10">Don't worry about distributing funds. We will handle all calculations at the end of each term.</div>
+                <p className = "text-sm font-light">We handle all calculations and distributions at the end of each term.</p>
               </div>
               <div className="py-5 place-self-stretch border-t-4 border-r-4 border-black">
                 <div className="text-xl font-bold">Financial Statements On-Demand</div>

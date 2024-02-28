@@ -3,12 +3,11 @@
   }
   
 .searchInput {
-    width: 325px;
+    width: 400px;
     padding: 10px 0px 10px 40px;
     border-radius: 9999px;
-    transition: all .2s ease-in-out;
     outline-style: solid;
-    background-color: rgb(14, 17, 21);
+    background-color: rgb(20, 20, 22);
     outline: none;
     /*outline-color: rgb(254 243 199);*/
     opacity: 0.8;   
@@ -26,23 +25,5 @@
     /*outline-style: solid;*/
     /*outline-color: rgb(254 243 199);*/
     opacity: 1;
-    width: 450px;
   }
 
-
-.loader {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    box-sizing: border-box;
-    border-top: 8px solid #fff;
-    border-left: 8px solid #fff;
-    border-right: 8px solid #ff00;
-    animation: loader .4s infinite linear;
-}
-
-@keyframes loader {
-to {
-    transform: rotate(360deg);
-}
-}
