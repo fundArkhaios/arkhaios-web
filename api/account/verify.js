@@ -4,7 +4,7 @@ const sendgrid = require('../external/sendgrid/api');
 const { RESPONSE_TYPE } = require('../response_type');
 
 module.exports = {
-    route: '/api/verify',
+    route: '/api/account/verify',
     authenticate: true,
     unverified: true,
     post: async function(req, res, user) {

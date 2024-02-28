@@ -1,8 +1,8 @@
-const alpaca = require('../external/alpaca/api');
+const alpaca = require('../external/alpaca/api.js');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type.js')
 
 module.exports = {
-    route: "/api/account-status",
+    route: "/api/account/status",
     authenticate: true,
     get: async function(req, res, user) {
         const { response, status } = await alpaca.account_status(user.brokerageID);

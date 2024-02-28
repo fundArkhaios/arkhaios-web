@@ -4,6 +4,8 @@ const { randomInt } = require('node:crypto')
 const sendgrid = require('@sendgrid/mail');
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
+const { logger } = require('../../../util/logger')
+
 module.exports = {
     // Signup Function
     sendCode: async function(email, subject, text) {
@@ -26,6 +28,11 @@ module.exports = {
                     text: text.replace("{}", key)
                 });
             }
-        } catch(e) {}
+        } catch(e) {
+            logger.log({
+                level: 'error',
+                message: e
+            })
+        }
     }
 }

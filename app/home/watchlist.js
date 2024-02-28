@@ -14,7 +14,7 @@ export default function Watchlist({ user }) {
   useEffect(() => {
     async function getPositions() {
       try {
-        const response = await fetch("/api/positions", {
+        const response = await fetch("/api/account/watchlist", {
           method: "GET",
           mode: "cors",
           headers: {
@@ -23,7 +23,6 @@ export default function Watchlist({ user }) {
         });
         const data = await response.json();
         setPositions(data.response);
-        console.log(data);
       } catch (error) {
         console.error(error);
       }

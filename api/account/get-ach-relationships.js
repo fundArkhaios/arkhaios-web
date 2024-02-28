@@ -2,7 +2,7 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type.js')
 const alpaca = require('../external/alpaca/api.js');
 
 module.exports = {
-    route: '/api/get-ach-relationships',
+    route: '/api/account/get-ach-relationships',
     kyc: true,
     get: async function(req, res, user) {
         const { response, status } = await alpaca.get_ach_relationships(user.brokerageID);

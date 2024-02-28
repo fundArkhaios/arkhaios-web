@@ -5,8 +5,10 @@ import Link from "next/link";
 import gsap from "gsap";
 import "./globals.css";
 import "./../output.css";
+import Carousel from "./components/logoCarousel/carousel";
 
 export default function Page() {
+
   useEffect(() => {
     gsap.to(".title", {
       duration: 30,
@@ -20,7 +22,7 @@ export default function Page() {
     <>
       <main>
         <div className="landing h-screen">
-          <div className="grid grid-cols-3 items-center fixed w-screen bg-black h-20">
+          <div className="grid grid-cols-3 items-center fixed w-screen bg-black h-20 z-20">
             <div></div>
             {/* Super Important empty div. It's supposed to be 3 columns. This is the left one.*/}
             <div className="flex items-center justify-center px-1">
@@ -91,24 +93,65 @@ export default function Page() {
           </div>
         </div>
       </main>
-      <main className="secondBackground h-screen">
-        <div className="text-6xl py-20 px-10 font-black text-black">
+      <main className="h-screen">
+        <div className="text-5xl text-left px-10 py-10 font-black text-white">
           Businesses
         </div>
+        <div className="grid grid-cols 1">
+          <div className="place-self-center place-content-center w-5/6 bg-white rounded-md text-black h-screen">
+            <div className="w-full h-full grid grid-cols-2 grid-rows-2 text-center m-0 p-0">
+              <div className="py-5 place-self-stretch border-b-4 border-r-4 border-black">
+                <div className="text-xl font-bold">
+                  Streamline the Fund Process
+                </div>
+                <p className="text-sm font-light">
+                  Open a fund in less than 5 minutes.
+                </p>
+              </div>
+              <div className="py-5 place-self-stretch border-b-4 border-l-4 border-black">
+                <div className="text-xl font-bold">Distributions</div>
+                <p className = "text-sm font-light">We handle all calculations and distributions at the end of each term.</p>
+              </div>
+              <div className="py-5 place-self-stretch border-t-4 border-r-4 border-black">
+                <div className="text-xl font-bold">Financial Statements On-Demand</div>
+                <p className="text-sm font-light">
+                  No need for an accountant. We handle the paperwork.
+                </p>
+              </div>
+              <div className="py-5 place-self-stretch border-t-4 border-l-4 border-black">
+                <div className="text-xl font-bold">Data On-Demand</div>
+                <p className="text-sm font-light">
+                  Lightining fast polling. Low latency execution. 
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
-      <main className="thirdBackground h-screen">
-        <div className="text-6xl py-20 px-10 font-black text-amber-100">
+
+      <div className = "pt-44">
+        <div className ="text-white font-light text-xl text-center py-2">Trade over 5,000 Stocks</div>
+      <Carousel/>
+      </div>
+
+      <main className="h-screen">
+        <div className="text-5xl text-right px-10 pt-44 py-10 font-black text-white">
           Individuals
+        </div>
+        <div className="grid grid-cols 1">
+          <div className="place-self-center place-content-center w-5/6 border bg-white rounded-md text-black h-4/6">
+            <p>Hi</p>
+          </div>
         </div>
       </main>
       <footer className="footer p-10 bg-base-200 text-base-content">
         <aside>
-        <img
-                src="/noBackgroundArkhaiosLogo.png"
-                width={70}
-                height={70}
-                alt="Logo"
-              ></img>
+          <img
+            src="/noBackgroundArkhaiosLogo.png"
+            width={70}
+            height={70}
+            alt="Logo"
+          ></img>
           <p>
             Arkhaios
             <br />
@@ -137,5 +180,6 @@ export default function Page() {
         </nav>
       </footer>
     </>
+    
   );
 }

@@ -1,6 +1,8 @@
 const db = require('../../util/db');
+const { logger } = require('../../util/logger')
+
 module.exports = {
-    route: "/api/check-recovery-code",
+    route: "/api/account/check-recovery-code",
     authenticate: false,
     post: async function(req, res) {
         try {
@@ -24,10 +26,16 @@ module.exports = {
                 res.json( {error: error})
 
             } catch(e) {
-                console.error(e);
+                logger.log({
+                    level: 'error',
+                    message: e
+                })
             }
         } catch (e) {
-            console.error(e);
+            logger.log({
+                level: 'error',
+                message: e
+            })
         }
 
     }

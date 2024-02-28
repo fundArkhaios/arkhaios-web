@@ -2,7 +2,7 @@ const alpaca = require('../external/alpaca/api');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 module.exports = {
-    route: "/api/account-equity",
+    route: "/api/account/equity",
     kyc: true,
     get: async function(req, res, user) {
         const { response, status } = await alpaca.get_portfolio(user.brokerageID, "1D", "1Min");

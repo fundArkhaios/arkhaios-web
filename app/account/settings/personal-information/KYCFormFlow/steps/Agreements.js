@@ -56,31 +56,7 @@ export default function Agreements() {
           </a>
         </div>
         <div className="flex space-x-2 self-center">
-          <a
-            name="margin_agreement"
-            href="https://files.alpaca.markets/disclosures/library/AcctAppMarginAndCustAgmt.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleMarginClick}
-            className="hover:underline self-center text-sm"
-          >
-            Margin Account Agreement
-          </a>
-          <div className="form-control self-center">
-            <label className="label cursor-pointer gap-x-2">
-              <input
-                type="checkbox"
-                name="margin_agreement"
-                onClick={handleChange}
-                className="checkbox checkbox-info"
-                disabled={!marginLinkClicked}
-              />
-            </label>
-          </div>
-          <a className="self-center text-xs">
-            I, the undersigned, acknowledge and accept the terms and conditions
-            outlined in this document.
-          </a>
+          <p className = "text-xs">Please note that when you click "Confirm," you agree that the information you have entered in this form is legally correct and verifiable. Your submission of this form does not guarantee any services or obligations from us until confirmed by further communication.</p>
         </div>
       </div>
     </div>

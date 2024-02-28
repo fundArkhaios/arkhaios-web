@@ -1,8 +1,9 @@
 const db = require('../../util/db');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
+const { logger } = require('../../util/logger')
 
 module.exports = {
-    route: "/api/logout",
+    route: "/api/account/logout",
     authenticate: true,
     unverified: true,
     post: async function (req, res, user) {
@@ -27,7 +28,11 @@ module.exports = {
                 data: {}
             });
         } catch (e) {
-            console.log(e)
+            logger.log({
+                level: 'error',
+                message: e
+            })
+
             SERVER_ERROR(res)
         }
     }

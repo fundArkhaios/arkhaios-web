@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-
+import Image from "next/image";
 export default function Page() {
   const [mfaRequired, setMfaRequired] = useState(false);
   const [emailState, setEmail] = useState("");
   const [passwordState, setPassword] = useState("");
 
   const [isLoading, setIsLoading] = useState();
+  const [loginErorr, setLoginError] = useState();
 
   async function login(event) {
     setIsLoading(true);
@@ -22,7 +23,7 @@ export default function Page() {
     let payload = { email: email, password: password };
     if (mfa) payload.mfa = mfa;
 
-    await fetch("/api/login", {
+    await fetch("/api/account/login", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -37,18 +38,22 @@ export default function Page() {
           // router.push('/');
 
           window.location.href = "/home";
+          setLoginError(false);
         } else {
           if (data?.data["mfa"] == true) {
             setEmail(email);
             setPassword(password);
             setMfaRequired(true);
+            setLoginError(false);
           }
-          setIsLoading(false);
-
-          throw new Error("Invalid username or password.");
+          setLoginError(true); 
+          // throw new Error("Invalid username or password.");
         }
+        setIsLoading(false);
       })
       .catch((error) => {
+        setLoginError(true);
+        setIsLoading(false)
         console.log(error);
         throw new Error("A server error has occurred.");
       })
@@ -162,7 +167,12 @@ export default function Page() {
 
         <main className="grid bg-base-100 lg:aspect-[2/1] lg:grid-cols-2 h-full">
           <figure className="pointer-events-none bg-base-300 object-cover max-lg:hidden">
-            <img src="rectangle-logo.png" alt="Login" />
+            <Image
+              width={500}
+              height={500}
+              src="/rectangle-logo.png"
+              alt="Login"
+            />
           </figure>
 
           <form
@@ -170,6 +180,26 @@ export default function Page() {
             onSubmit={login}
             className="flex flex-col justify-center gap-4 px-10 py-10 lg:px-16"
           >
+            {loginErorr ? (
+              <div role="alert" className="alert alert-error">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span>Login Error!</span>
+              </div>
+            ) : (
+              <></>
+            )}
             {form}
             {isLoading ? (
               <button

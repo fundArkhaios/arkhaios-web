@@ -1,5 +1,6 @@
 const db = require('../../util/db');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
+const { logger } = require('../../util/logger')
 
 module.exports = {
     route: "/api/search",
@@ -25,9 +26,19 @@ module.exports = {
                     }
 
                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: '', data: results});
-                } catch(e) {}
+                } catch(e) {
+                    logger.log({
+                        level: 'error',
+                        message: e
+                    })
+                }
             });
-        } catch(e) {}
+        } catch(e) {
+            logger.log({
+                level: 'error',
+                message: e
+            })
+        }
 
         if(!res.headersSent) {
             SERVER_ERROR(res)

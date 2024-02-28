@@ -47,7 +47,7 @@ function verifyFields(data, email) {
 }
 
 module.exports = {
-    route: "/api/kyc",
+    route: "/api/account/kyc",
     authenticate: true,
     post: async function(req, res, user) {
         const error = verifyFields(req.body, user.email);

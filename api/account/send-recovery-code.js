@@ -1,8 +1,9 @@
 const db = require('../../util/db');
 const sendgrid = require('../external/sendgrid/api');
+const { logger } = require('../../util/logger')
 
 module.exports = {
-    route: "/api/send-recovery-code",
+    route: "/api/account/send-recovery-code",
     authenticate: false,
     post: async function (req, res) {
         try {
@@ -28,11 +29,17 @@ module.exports = {
                     res.json( {error: error} )
 
                 })
-            } catch (e) {
-                console.log(e);
+            } catch (e) { 
+                logger.log({
+                    level: 'error',
+                    message: e
+                })
             }
         } catch (e) {
-            console.log(e);
+            logger.log({
+                level: 'error',
+                message: e
+            })
         }
     }
 

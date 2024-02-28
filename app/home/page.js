@@ -9,7 +9,11 @@ import NotVerifiedAlert from "../components/notVerifiedAlert.js";
 import UnverfiedHomeChart from "./unverifiedHomeChart.js";
 import AssetView from "./AssetView.js";
 import VerifiedHomeChart from "./verifiedHomeChart.js";
+import UnverifiedAssetView from "./unverifiedAssetView.js";
 import Watchlist from "./watchlist.js";
+import UnverifiedWatchlist from "./unverifiedWatchlist.js";
+import MarketNews from "./marketNews.js";
+
 export default function Page() {
   const { user } = useContext(UserContext);
 
@@ -18,23 +22,26 @@ export default function Page() {
       <main className="p-5 border-b border-amber-100">
         {/* <MainChart/> */}
         {!user.kycVerified ? <NotVerifiedAlert /> : <></>}
-        <div className="grid grid-cols-3 p-5 justify-items-stretch">
-          <div className="justify-self-start pr-10 rounded-sm w-80">
-            {!user.kycVerified ? <></> : <AssetView />}
+        <div className="grid grid-cols-3 px-3 justify-items-center">
+          <div className="justify-self-start rounded-sm">
+            {!user.kycVerified ? <UnverifiedAssetView/> : <AssetView />}
           </div>
-          <div className="grid space-y-15 max-w-[3/4] justify-self-center">
+          <div className="grid max-w-[3/4] justify-self-center">
             {!user.kycVerified ? (
               <UnverfiedHomeChart user={user} />
             ) : (
               <VerifiedHomeChart user={user} />
             )}
           </div>
-          <div className="justify-self-end pl-5 pr-3 rounded-sm">
-            {!user.kycVerified ? <></> : <Watchlist />}
+          <div className="justify-self-end pl-5 rounded-sm">
+            {!user.kycVerified ? <UnverifiedWatchlist/> : <Watchlist />}
           </div>
         </div>
       </main>
-      <main className="p-10 interBold text-3xl text-white">NEWS</main>
+      <main>
+        <h1 className ="pl-10 pt-10 interBold text-3xl text-white">NEWS</h1>
+        <div><MarketNews/></div>
+      </main>
     </>
   );
 }

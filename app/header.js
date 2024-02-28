@@ -11,7 +11,7 @@ export default function Header({ user }) {
   // let [theme, setTheme] = useState("dark");
 
   async function logout() {
-    await fetch("/api/logout", {
+    await fetch("/api/account/logout", {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/json" },

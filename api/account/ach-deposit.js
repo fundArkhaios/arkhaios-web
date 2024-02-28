@@ -2,7 +2,7 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type.js')
 const alpaca = require('../external/alpaca/api.js');
 
 module.exports = {
-    route: '/api/ach-deposit',
+    route: '/api/account/ach-deposit',
     kyc: true,
     post: async function(req, res, user) {
         let data = {

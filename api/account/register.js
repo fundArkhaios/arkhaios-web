@@ -5,6 +5,8 @@ const db = require('../../util/db');
 const { hash } = require('../hashAlgo');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
+const { logger } = require('../../util/logger')
+
 function generateUsername() {
     const numberDictionary = NumberDictionary.generate({ min: 100, max: 999 });
     username = uniqueNamesGenerator({
@@ -91,12 +93,19 @@ module.exports = {
                         }  
                     } catch (e) {
                         response = RESPONSE_TYPE.ERROR
-                        console.log(error = e.toString());
+                        
+                        logger.log({
+                            level: 'error',
+                            message: e
+                        })
                     };
                 });
             } catch (e) {
                 response = RESPONSE_TYPE.ERROR
-                console.log(error = e.toString());
+                logger.log({
+                    level: 'error',
+                    message: e
+                })    
             }
 
             if(response === RESPONSE_TYPE.SUCCESS) {
@@ -119,7 +128,11 @@ module.exports = {
                 return
             }
         } catch (e) {
-            console.log(e.toString())
+            logger.log({
+                level: 'error',
+                message: e
+            })
+
             SERVER_ERROR(res)
         }
         

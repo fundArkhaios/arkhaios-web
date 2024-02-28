@@ -8,15 +8,15 @@ module.exports = {
     themes: [
       {
         customBlackTheme: {
-          primary: "#e5e7eb",
-          secondary: "#fbcfe8",
-          accent: "#ddd6fe",
-          neutral: "#121000",
+          "primary": "#e5e7eb",
+          "secondary": "#fbcfe8",
+          "accent": "#78716c",
+          "neutral": "#121000",
           "base-100": "#141416",
-          info: "#312e81",
-          success: "#34d399",
-          warning: "#fde047",
-          error: "#f43f5e",
+          "info": "#312e81",
+          "success": "#34d399",
+          "warning": "#fde047",
+          "error": "#f43f5e",
 
           "--rounded-box": "1rem", // border radius rounded-box utility class, used in card and other large boxes
           "--rounded-btn": "0.5rem", // border radius rounded-btn utility class, used in buttons and similar element

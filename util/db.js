@@ -1,5 +1,6 @@
 const { MongoClient } = require("mongodb");
 const { createClient } = require('redis')
+const { logger } = require('./logger')
 
 let redisClient;
 
@@ -61,9 +62,19 @@ module.exports = {
 
             success = true;
           }
-        } catch(e) {}
+        } catch(e) {
+          logger.log({
+            level: 'error',
+            message: e
+          })
+        }
       });
-    } catch(e) {}
+    } catch(e) {
+      logger.log({
+        level: 'error',
+        message: e
+    })
+    }
 
     return success;
   },
@@ -79,6 +90,11 @@ module.exports = {
       await client.connect();
       const db = client.db("db");
       await callback(db);
+    } catch(e) {
+      logger.log({
+        level: 'error',
+        message: e
+      })
     } finally {
       await client.close();
     }

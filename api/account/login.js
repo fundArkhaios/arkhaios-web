@@ -4,9 +4,10 @@ const speakeasy = require('speakeasy');
 const aes = require('../aes');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 const { hash } = require('../hashAlgo');
+const { logger } = require('../../util/logger')
 
 module.exports = {
-    route: "/api/login",
+    route: "/api/account/login",
     authenticate: false,
     post: async function (req, res) {
         try {
@@ -50,7 +51,11 @@ module.exports = {
                         }
                     } else error = 'invalid credentials';
                 } catch(e) {
-                    console.log(e);
+                    logger.log({
+                        level: 'error',
+                        message: e
+                    })
+
                     error = 'server error';
                     response = RESPONSE_TYPE.ERROR;
                 }
@@ -69,7 +74,6 @@ module.exports = {
                 });
                 
                 if(!result) {
-                    console.log("res");
                     // Failed to write to db
                     response = RESPONSE_TYPE.ERROR;
                 }
@@ -84,7 +88,11 @@ module.exports = {
                 res.status(200).json({ status: response, message: error, data: data });
             }
         } catch (e) {
-            console.log(e)
+            logger.log({
+                level: 'error',
+                message: e
+            })
+
             SERVER_ERROR(res)
         }
     }
