@@ -32,6 +32,7 @@ module.exports = {
                 data: responseJSON
             });
         } else {
+            // Response JSON is null or empty
             res.status(204).send({
                 status: RESPONSE_TYPE.FAILED,
                 message: 'No news data available for the specified parameters.',
@@ -39,7 +40,7 @@ module.exports = {
             });
         }
       } catch (error) {
-        // Handle errors that may occur during the fetch request
+        // Error during fetch request
         SERVER_ERROR(res, error);
       }
     

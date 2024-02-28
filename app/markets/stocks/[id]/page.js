@@ -6,10 +6,8 @@ export default async function Page({ params }) {
   let list = headers();
 
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  console.log("HELLO");
-  console.log(params.id);
-
-  console.log(quote);
+  
+  
   return (
     <div className = "grid grid-cols-2">
       

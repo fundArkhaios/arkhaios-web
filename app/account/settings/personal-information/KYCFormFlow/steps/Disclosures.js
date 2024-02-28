@@ -8,7 +8,6 @@ export default function Disclosures() {
 
     setUserData((prevState) => {
       const newData = { ...prevState, [name]: value };
-      console.log(newData);
       return newData;
     });
   };
