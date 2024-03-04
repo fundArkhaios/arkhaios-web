@@ -9,7 +9,7 @@ module.exports = {
     get: async function (req, res, user){
         //this takes the user's access token and decrypts it
         var accessToken = await backward(user.plaidAccess);
-        //call the getaccount endpoint from Plaid to have access to their items.
+        //call the getaccount endpoint that i created to use internally. This refers to the get-account.js endpoint i wrote
         //"Items" in this case refers to the objects stored within the user object in PLaid's database
         //The other objects in here refer to the user's Plaid ID, bank account's connected, and personal info
         //The full json object returned can be seen at https://plaid.com/docs/api/accounts/#accountsget
