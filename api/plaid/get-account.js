@@ -6,7 +6,7 @@ module.exports = {
     //this function is to be used in other endpoints
     getAccount: async function (user) {
         //decrypt plaid access token
-        var userAccess = backward(user.plaidAccess);
+        var userAccess = await backward(user.plaidAccess);
 
         //create request object
         var request = {
@@ -14,7 +14,7 @@ module.exports = {
         }
 
         //call the authGet endpoint from Plaid
-        var account = client.authGet(request);
+        var account = await client.authGet(request);
 
         //return the account
         return account; 
