@@ -13,7 +13,7 @@ module.exports = {
         //"Items" in this case refers to the objects stored within the user object in PLaid's database
         //The other objects in here refer to the user's Plaid ID, bank account's connected, and personal info
         //The full json object returned can be seen at https://plaid.com/docs/api/accounts/#accountsget
-        var userAccount = plaidAccount.getAccount(user);
+        var userAccount = await plaidAccount.getAccount(user);
 
         //grab their account from Plaid
         var user_id = userAccount.account_id;
@@ -29,11 +29,11 @@ module.exports = {
 
         try{
             //call the processor token endpoint from Plaid with the request object
-            const response = client.processorTokenCreate(request);
+            const response = await client.processorTokenCreate(request);
             //encrypt the processor token. The response is an object of objects. 
             //response.data refers to the data object that is returned. There are a couple of fields that we could
             //look at, but the only one that we should concern ourselves with is .data
-            var encryptProcessorToken = forward(response.data.processor_token);
+            var encryptProcessorToken = await forward(response.data.processor_token);
 
             //if there was a response, connect to the database and store the processor token for later use
             if(response){
