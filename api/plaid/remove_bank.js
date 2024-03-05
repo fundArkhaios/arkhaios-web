@@ -7,7 +7,7 @@ module.exports = {
     authenticate: true,
     post: async function(req, res, user){
         //grab decrypted access token from database
-        var accessToken = backward(user.plaidAccess);
+        var accessToken = await backward(user.plaidAccess);
         var error = "";
 
         //create request object, we only need an access token here. 
