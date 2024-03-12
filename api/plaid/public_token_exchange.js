@@ -16,7 +16,6 @@ module.exports = {
     
     try {
       await db.connect(async (db) => {
-        console.log("HI");
         try {
           let results = await db.collection("Users").findOne({email: user.email});
           console.log("hello");

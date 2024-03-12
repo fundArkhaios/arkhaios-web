@@ -21,7 +21,7 @@
 .logos {
   overflow: hidden;
   padding: 10px 0;
-  background: white;
+  background: #F4F0ED;
   white-space: nowrap;
   position: relative;
 }
@@ -38,12 +38,12 @@
 
 .logos:before {
   left: 0;
-  background: linear-gradient(to left, rgba(255, 255, 255, 0), white);
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), #F4F0ED);
 }
 
 .logos:after {
   right: 0;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), white);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #F4F0ED);
 }
 
 .logosSlide {

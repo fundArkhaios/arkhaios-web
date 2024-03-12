@@ -16,9 +16,9 @@ export default async function RootLayout ({ children }) {
 
 
     return (
-        <main className = "text-center py-6 px-10">
-            <p className = "text-5xl font-bold text-white place-self-center py-2 drop-shadow-lg">{user.firstName + " " + user.lastName} </p>
-            <p className ="pb-5 text-sm text-amber-100">{user.username}</p>
+        <main className = "py-6 px-10">
+            <p className = " text-center text-5xl font-bold text-white place-self-center py-2 drop-shadow-lg">{user.firstName + " " + user.lastName} </p>
+            <p className ="text-center pb-5 text-sm text-amber-100">{user.username}</p>
             <AccountHeader/>
             {children}
         </main>

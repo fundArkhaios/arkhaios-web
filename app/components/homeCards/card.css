@@ -1,0 +1,36 @@
+.card {
+    --blob-size:250px;
+}
+
+.blob {
+    background-color: aqua;
+    border-radius: 50%;
+    position: absolute;
+
+}
+
+.fakeblob {
+    border-radius: 50%;
+}
+
+.card .inner{
+    backdrop-filter: blur(80px);
+    height: 100%;
+}
+
+.card .blob{
+    width: var(--blob-size);
+    height: 80%;
+    left: calc(50% - calc(var(--blob-size)/2));
+    filter: blur(40px);
+    z-index: -1;
+    opacity: 0;    
+    transition: opacity 300ms 300ms linear;
+    background-color: aqua;
+}
+
+.card .fakeblob {
+  visibility: hidden;
+  z-index: -1;
+  height: 100%;
+}

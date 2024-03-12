@@ -1,16 +1,15 @@
 import "./components.css";
 import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
-
+import Link from "next/link";
 export default function SearchModal() {
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState();
 
   const [response, setResponse] = useState([{ id: "0" }]);
 
   const handleInputChange = (event) => {
     setSearchInput(event.target.value);
   };
-
 
   const { error, isLoading, responseJSON } = useFetch(
     "/api/search?query=" + searchInput
@@ -46,18 +45,32 @@ export default function SearchModal() {
           onChange={handleInputChange}
         />
       </div>
-      {response?.map((asset) => (
-        <div key={asset.id} className="py-2">
-          <div className="grid grid-cols-3 ">
-            <div className="hover:bg-slate-500 rounded-sm">
-              <div className="flex flex-row"></div>
-              <div className="font-light text-sm">{asset.symbol}</div>
-              <div className="font-thin text-sm">{asset.exchange}</div>
-            </div>
-            <div className="font-bold">{asset.name}</div>
+      {isLoading ? (
+        <div className="grid place-content-center">
+          <div className="place-content-center justify-self-center buttonLoader cursor-progress">
+            <svg viewBox="25 25 50 50">
+              <circle r="20" cy="50" cx="50"></circle>
+            </svg>
           </div>
         </div>
-      ))}
+      ) : (
+        <>
+          {response?.map((asset) => (
+            <Link href={`/markets/stocks/${asset.symbol}`}>
+              <div key={asset.id} className="py-2">
+                <div className="rounded-sm hover:bg-slate-600 grid grid-cols-2 ">
+                  <div className="">
+                    <div className="flex flex-row"></div>
+                    <div className="font-light text-sm">{asset.symbol}</div>
+                    <div className="font-thin text-sm">{asset.exchange}</div>
+                  </div>
+                  <div className="font-bold text-nowrap">{asset.name}</div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </>
+      )}
     </>
   );
 }

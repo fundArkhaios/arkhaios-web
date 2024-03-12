@@ -1,93 +1,52 @@
+'use client'
 import { useRef, useEffect, useState } from "react";
+
 import {
   ColorType,
   createChart,
   CrosshairMode,
   LineStyle,
 } from "lightweight-charts";
+import useFetch from "../../hooks/useFetch";
 
-export default function unverifiedHomeChart({ user }) {
+/*
+
+  This component includes the price and percent change on top of the chart.
+  It also includes a radio input field below the chart, to select a different range. 
+  The supported ranges are: [1 Day, 1 Week, 1 Month, 6 Months, 1 Year]
+  The corresponding intervals which the price will be displayed based on 
+  the range are, respectively: [1 Minute, 15 Minutes, 1 Day, 1 Day, 1 Day]
+
+  As of writing this, the 'All Time' button does not work.
+*/
+export default function StockChartComponent({ symbol }) {
+
   const chartContainerRef = useRef();
-
-  const [chartData, setChartData] = useState([{ time: 0, value: 0 }]);
-  
-
-  /*
-   Data should be generated based on when the account was created. 
-   Using user.creationTime. We can for all the timeframes:
-
-
-   1D: 24 Hours before up until current time. 1 Minute intervals. 
-
-   1W: 1 Week before up until current time. 5 Minute intervals.
-
-   1M: 1 month before up until current time. 1 Day intervals.
-
-   6M: 6 months before up until current time. 1 Day intervals.
-
-   1 Year: 1 Year before up until current time. 1 Day interval
-   
-
-  */
-
-
-
-
-  function generateData(initialTimestamp, period, timeframe) {
-    // Define the increments in milliseconds
-    const increments = {
-      "1Min": 60 * 1000,
-      "5Min": 5 * 60 * 1000,
-      "1D": 24 * 60 * 60 * 1000,
-    };
-
-    // Define the periods in milliseconds
-    const periods = {
-      "1D": 24 * 60 * 60 * 1000,
-      "1W": 7 * 24 * 60 * 60 * 1000,
-      "1M": 30 * 24 * 60 * 60 * 1000, // assuming 30 days in a month for simplicity
-      "6M": 6 * 30 * 24 * 60 * 60 * 1000, // assuming 30 days in a month
-      "All Time": Date.now() - initialTimestamp, // all time up to current time
-    };
-
-    // Calculate end time depending on the period
-    let endTime = initialTimestamp + (periods[period] || periods["oneDay"]);
-    let currentTime = Date.now();
-    if (period === "allTime") {
-      endTime = currentTime;
-    }
-
-    let timestamps = [];
-    let incrementValue = increments[timeframe] || increments["day"];
-
-    for (
-      let time = initialTimestamp;
-      time < endTime && time <= currentTime;
-      time += incrementValue
-    ) {
-      timestamps.push({ time: time, value: 0 });
-    }
-
-    return timestamps;
-  }
-
+  const [percentChange, setPercentChange] = useState(0)
   const [response, setResponse] = useState({
     base_value: 0,
     profit_loss_pct: [0],
   });
   const [currentPrice, setCurrentPrice] = useState(response.base_value);
+  const [chartData, setChartData] = useState([
+    { time: "2018-12-22", value: 0 },
+  ]);
 
-  const payload = { period: "1M", timeframe: "1D" };
+
+  const [range, setRange] = useState("1d");
+  const [interval, setInterval] = useState("1m");
+
+  const payload = { range: "1D", interval: "1D" };
 
   const [historyPayload, setHistoryPayload] = useState(payload);
 
   async function convertData(timestamps, equity) {
+    
     const data = (timestamps || []).map((timestamp, index) => {
       const date = new Date(timestamp * 1000); // Convert UNIX timestamp to milliseconds
       var formattedDate = "";
 
       formattedDate = timestamp;
-      console.log("Formatted Date: " + formattedDate);
 
       // Set the current price for loading.
       if (index == equity.length - 1) setCurrentPrice(equity[index]);
@@ -96,31 +55,34 @@ export default function unverifiedHomeChart({ user }) {
     return data;
   }
 
-  function generateTimestamps(startDate, initialValue = 0) {
-    const start = new Date(startDate);
-    console.log("Start Data: " + start);
+  const {isLoading, error, responseJSON } = useFetch("/api/chart?symbol="+ symbol + "&range=" + range + "&interval=" + interval);
 
-    const today = new Date();
 
-    const timestamps = [];
-
-    for (
-      let date = new Date(start);
-      date <= today;
-      date.setDate(date.getDate() + 1)
-    ) {
-      const formattedDate = date.toISOString().split("T")[0];
-      timestamps.push({ time: formattedDate, value: initialValue });
+  useEffect(() => {
+    async function handleResponse() {
+    if (!responseJSON && !isLoading) {
+        console.log("ResponseJSON: " + responseJSON);
+        setResponse(responseJSON.data);
+        setChartData(await convertData(responseJSON.data.timestamps, responseJSON.data.closes));
+        console.log("Timestamps: " + responseJSON.data.timestamps)
+        console.log("Closes: " + responseJSON.data.closes)
+        console.log(chartData);
     }
+    }
+    handleResponse();
+  }, [isLoading]);
+  
 
-    return timestamps;
-  }
+
+
+  /* useEffect(() => {
+    initialData = convertData(chartData.timestamp, chartData.equity);
+  }, [chartData]); */
 
   useEffect(() => {
     const chart = createChart(chartContainerRef.current, {
-      width: 600,
+      width: 700,
       height: 300,
-      autoSize: true,
       localization: {
         timeFormatter: (businessDayOrTimestamp) => {
           const date = new Date(businessDayOrTimestamp * 1000);
@@ -235,70 +197,84 @@ export default function unverifiedHomeChart({ user }) {
       },
     });
 
-
     const newSeries = chart.addAreaSeries({
       topColor: "rgba(253, 243, 50, 0.56)",
       bottomColor: "rgba(253, 243, 0, 0.00)",
       lineColor: "#FDE68A",
     });
 
-    newSeries.applyOptions({
+    newSeries.applyOptions( {
       lineWidth: 2,
-    });
+    })
 
     newSeries.setData(chartData);
     chart.timeScale().fitContent();
-
     // chart.timeScale().lockVisibleTimeRangeOnResize = true;
 
-    // Make Chart Responsive with screen resize
-    new ResizeObserver(entries => {
-      if (entries.length === 0 || entries[0].target !== chartContainer) { return; }
-      const newRect = entries[0].contentRect;
-      chart.applyOptions({ height: newRect.height, width: newRect.width });
-    }).observe(document.getElementById("unverifiedChart"));
+    function onCrosshairMove(param) {
+      if (param === undefined || !param.time || !param.seriesData.size) {
+        // setCurrentPrice(response.equity[response.equity.length - 1]); // Revert to original value if crosshair is not on the chart
+        // setPercentChange(response.profit_loss_pct[0]); // Assuming you want to revert to the first pct change
+        return;
+      }
+    
+      const seriesData = param.seriesData.get(newSeries);
+      if (seriesData) {
+        const { time, value: price } = seriesData;
+        const chartIndex = chartData.findIndex(data => data.time === time && data.value === price);
+    
+        if (chartIndex !== -1) {
+          // setPercentChange(response.profit_loss_pct[chartIndex]);
+          // setCurrentPrice(price);
+        } else {
+          // setCurrentPrice(response.equity[response.profit_loss_pct.length - 1])
+          // setPercentChange(response.profit_loss_pct[0]); // Revert to some default if not found
+        }
+      }
+    }
 
+    chart.subscribeCrosshairMove(onCrosshairMove);
 
 
     return () => {
       chart.remove();
+      chart.unsubscribeCrosshairMove();
     };
-  }, [chartData, historyPayload]);
+  }, [chartData]);
 
-  
-    
-
-
-  const handleRadioChange = (period) => {
+  const handleRadioChange = (range) => {
     let timeframe = "1D"; // Default timeframe
-    switch (period) {
+    let interval = ""
+    switch (range) {
       case "1D":
-        timeframe = "1Min";
+        interval = "1Min";
         break;
       case "1W":
-        timeframe = "5Min";
+        interval = "5Min";
         break;
       case "1M":
-        timeframe = "1D";
-        setChartData(generate);
+        interval = "1D";
         break;
       case "6M":
-        timeframe = "1D";
+        interval = "1D";
         break;
       // Add more cases if there are more periods with different timeframes
       default:
         timeframe = "1D"; // Fallback timeframe if none of the above matches
     }
-    setChartData(generateData(user.creationTime, period, timeframe));
+    setInterval(interval)
+    setRange(range)
     setHistoryPayload({ ...historyPayload, period, timeframe });
   };
+  
+  
 
   return (
     <>
       <div className="interBold text-2xl text-white">
-        {"$" + Number(currentPrice).toLocaleString("en-US")}
+     {"$" + Number(currentPrice).toLocaleString('en-US')}
       </div>
-      {response.profit_loss_pct[response.profit_loss_pct.length - 1] >= 0 ? (
+      {/* {response.profit_loss_pct[response.profit_loss_pct.length - 1] >= 0 ? (
         <div className="text-sm text-[#18CCCC]">
           {historyPayload.period}{" "}
           {response.profit_loss_pct[response.profit_loss_pct.length - 1]}%
@@ -308,12 +284,9 @@ export default function unverifiedHomeChart({ user }) {
           {historyPayload.period}{" "}
           {response.profit_loss_pct[response.profit_loss_pct.length - 1]}%
         </div>
-      )}
-      <div
-        ref={chartContainerRef}
-        id="unverifiedChart"
-        style={{ width: "100%", height: "100%" }}
-      ></div>
+      )} */}
+      <div>{percentChange}</div>
+      <div ref={chartContainerRef} id="verifiedChart"></div>
       <div className="text-center">
         <div className="join p-2 self-center">
           {["1D", "1W", "1M", "6M", "All Time"].map((period) => (
