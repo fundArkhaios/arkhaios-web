@@ -148,4 +148,8 @@ module.exports = {
 	get_portfolio: async function(account, period, timeframe) {
 		return get(`/v1/trading/accounts/${account}/account/portfolio/history?period=${period}&timeframe=${timeframe}`);
 	},
+
+	get_trading_details: async function(account) {
+		return get(`/v1/trading/accounts/${account}/account`);
+	}
 }
