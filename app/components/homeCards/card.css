@@ -1,36 +1,102 @@
-.card {
-    --blob-size:250px;
+
+
+*, *:before, *:after {
+    box-sizing: border-box;
+    position: relative;
 }
 
-.blob {
-    background-color: aqua;
-    border-radius: 50%;
+.features {
+    width: 80vw;
+    height: 90vh;
+    display: grid;
+    grid-column-gap: 0.75rem;
+    grid-row-gap: 0.75rem;
+}
+
+.firstCard {
+    --x-px: calc(var(--x) * 1px);
+    --y-px: calc(var(--y) * 1px);
+    --border: 4px;
+    background: rgba(255, 255, 255, 0.125);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.firstCard:before, .firstCard:after {
+    content: "";
+    display: block;
     position: absolute;
-
-}
-
-.fakeblob {
-    border-radius: 50%;
-}
-
-.card .inner{
-    backdrop-filter: blur(80px);
     height: 100%;
+    width: 100%;
+    inset: 0px;
+    border-radius: inherit;
+    background: radial-gradient(800px circle at var(--x-px) var(--y-px), orange, transparent 40%);
 }
 
-.card .blob{
-    width: var(--blob-size);
-    height: 80%;
-    left: calc(50% - calc(var(--blob-size)/2));
-    filter: blur(40px);
-    z-index: -1;
-    opacity: 0;    
-    transition: opacity 300ms 300ms linear;
-    background-color: aqua;
+
+
+.firstCard:before {
+    z-index: 1;
 }
 
-.card .fakeblob {
-  visibility: hidden;
-  z-index: -1;
-  height: 100%;
+.firstCard:after {
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 0.4s ease;
 }
+
+.firstCard:hover:after {
+    opacity: 0.2;
+}
+
+.feature-content {
+    background: white;
+    border-radius: inherit;
+    color: black;
+    text-decoration: none;
+    z-index: 1;
+    position: absolute;
+    inset: var(--border);
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-row-gap: 0.5rem;
+    padding: 0 1rem 0 2rem;
+}
+
+
+
+
+.secondCard {
+    --x-px: calc(var(--x) * 1px);
+    --y-px: calc(var(--y) * 1px);
+    --border: 4px;
+    background: rgba(255, 255, 255, 0.125);
+    border-radius: 0.5rem;
+}
+
+.secondCard:before {
+    z-index: 1;
+}
+
+.secondCard:after {
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 0.4s ease;
+}
+
+.secondCard:hover:after {
+    opacity: 0.2;
+}
+
+.secondCard:before, .secondCard:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    inset: 0px;
+    border-radius: inherit;
+    background: radial-gradient(800px circle at var(--x-px) var(--y-px), aqua, transparent 40%);
+}
+
+
