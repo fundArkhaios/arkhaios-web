@@ -32,12 +32,28 @@ module.exports = {
                 const { response, status } = await alpaca.get_portfolio(user.brokerageID, period, timeframe);
                 
                 if(status == 200) {
+                    let equity = response["equity"]
+
+                    data = {}
+
+                    data["timestamp"] = response["timestamp"];
+
+                    data["equity"] = equity;
+
+                    data["profit_loss"] = [ 0 ];
+                    data["profit_loss_pct"] = [ 0.00 ];
+
+                    for(let i = 1; i < equity.length; ++i) {
+                        data["profit_loss"].push(equity[i] - equity[0]);
+                        data["profit_loss_pct"].push((equity[i] / equity[0] - 1.0) * 100);
+                    }
+
                     if(expiration >= 0) {
                         // Only cache calls relevant for displaying charts
-                        db.redis.setEx(`portfolio:${user.brokerageID}:${period}:${timeframe}`, expiration, JSON.stringify(response));
+                        db.redis.setEx(`portfolio:${user.brokerageID}:${period}:${timeframe}`, expiration, JSON.stringify(data));
                     }
                     
-                    res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: { history: response }});
+                    res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: { history: data }});
                 } else {
                     SERVER_ERROR(res)
                 }
