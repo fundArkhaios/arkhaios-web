@@ -26,14 +26,14 @@ module.exports = {
 
                     if(self?.receivedRequests?.includes(id)) {
                         await db.collection('Friends').updateOne({
-                            user: user.accountID
+                            accountID: user.accountID
                         }, {
                             $addToSet: accept ? { friends: id } : {},
                             $pull: { receivedRequests: id }
                         })
 
                         await db.collection('Friends').updateOne({
-                            user: id
+                            accountID: id
                         }, {
                             $addToSet: accept ? { friends: user.accountID } : {},
                             $pull: { sentRequests: user.accountID }
