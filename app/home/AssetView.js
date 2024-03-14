@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { ColorType, createChart, CrosshairMode } from "lightweight-charts";
 import SmallDayChart from "./smallDayChart";
-
 export default function AssetView({ user }) {
   const [positions, setPositions] = useState([]);
-
+  
 
   /* function changeToCrypto(symbol) {
     return symbol.replace(/USD$/, '-usd').toLowerCase();
@@ -22,7 +21,7 @@ export default function AssetView({ user }) {
           },
         });
         const data = await response.json();
-        setPositions(data.response);
+        setPositions(data.data);
       } catch (error) {
         console.error(error);
       }
@@ -60,7 +59,7 @@ export default function AssetView({ user }) {
             </div>
           </div>
           <div className="overflow-auto h-80">
-            {positions.map((position) => (
+            {positions?.map((position) => (
               <div
                 key={position.asset_id}
                 className="grid grid-cols-3 bg-[#121212] space-y-2 px-1"

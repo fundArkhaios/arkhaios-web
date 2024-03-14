@@ -19,14 +19,14 @@ export default function Page() {
 
   return (
     <>
-      <main className="p-5 border-b border-amber-100">
+      <main className="flex p-5 border-b border-amber-100">
         {/* <MainChart/> */}
         {!user.kycVerified ? <NotVerifiedAlert /> : <></>}
-        <div className="grid grid-cols-3 px-3 justify-items-center">
+        <div className="shrink grid grid-cols-3 px-3 justify-items-center">
           <div className="justify-self-start rounded-sm">
             {!user.kycVerified ? <UnverifiedAssetView/> : <AssetView />}
           </div>
-          <div className="grid max-w-[3/4] justify-self-center">
+          <div className="shrink grid max-w-[3/4] justify-self-center">
             {!user.kycVerified ? (
               <UnverfiedHomeChart user={user} />
             ) : (
@@ -34,7 +34,7 @@ export default function Page() {
             )}
           </div>
           <div className="justify-self-end pl-5 rounded-sm">
-            {!user.kycVerified ? <UnverifiedWatchlist/> : <Watchlist />}
+            {!user.kycVerified ? <UnverifiedWatchlist/> : <UnverifiedWatchlist/>}
           </div>
         </div>
       </main>

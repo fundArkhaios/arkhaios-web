@@ -9,7 +9,7 @@ export default function SettingsHeader() {
 
     const headerLink = (path, text) => {
         const isActive = pathname === path;
-        var fontClass = "font-extrabold"; // Boldneess
+        var fontClass = "font-light"; // Boldneess
         const textClass = isActive ? "text-amber-200" : "text-white hover:text-amber-200"; // Color
         
 
