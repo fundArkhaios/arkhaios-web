@@ -14,14 +14,14 @@ module.exports = {
             await db.connect(async (db) => {
                 try {
                     results = await db.collection('Assets').
-                        find({ "symbol": {"$regex": "^" + query + ".*"} })
+                        find({ "symbol": {"$regex": "(?i)^" + query + ".*"} })
                         .limit(5).toArray();
 
                     if(results.length < 5) {
                         // Two queries worst case;
                         // this makes it trivial to handle the sorting criteria, with more network traffic
                         results = results.concat(await db.collection('Assets').
-                        find({ "name": {"$regex": "^" + query + ".*"} }).
+                        find({ "name": {"$regex": "(?i)^" + query + ".*"} }).
                         limit(5 - results.length).toArray());
                     }
 

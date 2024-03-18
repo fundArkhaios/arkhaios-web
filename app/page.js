@@ -5,7 +5,8 @@ import Link from "next/link";
 import gsap from "gsap";
 import "./globals.css";
 import "./../output.css";
-
+import Carousel from "./components/logoCarousel/carousel";
+import Cards from "./components/homeCards/cards";
 export default function Page() {
   useEffect(() => {
     gsap.to(".title", {
@@ -20,7 +21,7 @@ export default function Page() {
     <>
       <main>
         <div className="landing h-screen">
-          <div className="grid grid-cols-3 items-center fixed w-screen bg-black h-20">
+          <div className="grid grid-cols-3 items-center fixed w-screen bg-black h-20 z-20">
             <div></div>
             {/* Super Important empty div. It's supposed to be 3 columns. This is the left one.*/}
             <div className="flex items-center justify-center px-1">
@@ -91,51 +92,67 @@ export default function Page() {
           </div>
         </div>
       </main>
-      <main className="secondBackground h-screen">
-        <div className="text-6xl py-20 px-10 font-black text-black">
+      <main className="h-screen">
+        <div className="text-5xl text-left px-10 py-10 font-black text-white">
           Businesses
         </div>
+        <Cards/>
       </main>
-      <main className="thirdBackground h-screen">
-        <div className="text-6xl py-20 px-10 font-black text-amber-100">
+
+      <div className="pt-44">
+        <div className="text-white font-light text-xl text-center py-2">
+          Trade over 5,000 Stocks
+        </div>
+        <Carousel />
+      </div>
+
+      <main className="h-screen">
+        <div className="text-5xl text-right px-10 pt-24 py-10 font-black text-white">
           Individuals
         </div>
+        <div className="grid grid-cols 1">
+          <div className="place-self-center place-content-center w-5/6 border bg-white rounded-md text-black h-4/6 min-h-screen pb-96">
+            <p>Hi</p>
+          </div>
+        </div>
       </main>
-      <footer className="footer p-10 bg-base-200 text-base-content">
-        <aside>
-        <img
-                src="/noBackgroundArkhaiosLogo.png"
-                width={70}
-                height={70}
-                alt="Logo"
-              ></img>
-          <p>
-            Arkhaios
-            <br />
-            Brokerage & Fund Management
-          </p>
-        </aside>
-        <nav>
-          <h6 className="footer-title">Services</h6>
-          <a className="link link-hover">Branding</a>
-          <a className="link link-hover">Design</a>
-          <a className="link link-hover">Marketing</a>
-          <a className="link link-hover">Advertisement</a>
-        </nav>
-        <nav>
-          <h6 className="footer-title">Company</h6>
-          <a className="link link-hover">About us</a>
-          <a className="link link-hover">Contact</a>
-          <a className="link link-hover">Jobs</a>
-          <a className="link link-hover">Press kit</a>
-        </nav>
-        <nav>
-          <h6 className="footer-title">Legal</h6>
-          <a className="link link-hover">Terms of use</a>
-          <a className="link link-hover">Privacy policy</a>
-          <a className="link link-hover">Cookie policy</a>
-        </nav>
-      </footer>
+      <main className ="pt-96">
+        <footer className="footer p-10 bg-base-200 text-base-content ">
+          <aside>
+            <img
+              src="/noBackgroundArkhaiosLogo.png"
+              width={70}
+              height={70}
+              alt="Logo"
+            ></img>
+            <p>
+              Arkhaios
+              <br />
+              Brokerage & Fund Management
+            </p>
+          </aside>
+          <nav>
+            <h6 className="footer-title">Services</h6>
+            <a className="link link-hover">Branding</a>
+            <a className="link link-hover">Design</a>
+            <a className="link link-hover">Marketing</a>
+            <a className="link link-hover">Advertisement</a>
+          </nav>
+          <nav>
+            <h6 className="footer-title">Company</h6>
+            <a className="link link-hover">About us</a>
+            <a className="link link-hover">Contact</a>
+            <a className="link link-hover">Jobs</a>
+            <a className="link link-hover">Press kit</a>
+          </nav>
+          <nav>
+            <h6 className="footer-title">Legal</h6>
+            <a className="link link-hover">Terms of use</a>
+            <a className="link link-hover">Privacy policy</a>
+            <a className="link link-hover">Cookie policy</a>
+          </nav>
+        </footer>
+      </main>
     </>
   );
 }

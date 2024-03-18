@@ -29,9 +29,8 @@ export default function StepperControl({ handleClick, currentStep, steps }) {
         shouldDisableNextButton(3, userData)) {
       return true;
     }
-
-    // Check for 'account_agreement' and 'margin_agreement'
-    return userData.account_agreement !== "on" || userData.margin_agreement !== "on";
+    // Check for 'account_agreement'
+    return userData.account_agreement !== "on";
   }
 
   async function createAccount() {
@@ -48,7 +47,7 @@ export default function StepperControl({ handleClick, currentStep, steps }) {
   
     console.log("Sending userData: " + JSON.stringify(updatedUserData));
   
-    await fetch("/api/kyc", {
+    await fetch("/api/account/kyc", {
   
       method: "POST",
       mode: "cors",

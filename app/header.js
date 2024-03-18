@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Search from "./components/search";
 import "./globals.css";
 import "./../output.css";
+import SideBar from "./sidebar";
 
 export default function Header({ user }) {
   const pathname = usePathname();
@@ -11,7 +12,7 @@ export default function Header({ user }) {
   // let [theme, setTheme] = useState("dark");
 
   async function logout() {
-    await fetch("/api/logout", {
+    await fetch("/api/account/logout", {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/json" },
@@ -85,7 +86,7 @@ export default function Header({ user }) {
     var fontClass = "text-sm font-extrabold interFont"; // Boldneess
     const textClass = isActive
       ? "text-yellow-200"
-      : "text-white hover:text-yellow-200"; // Color
+      : "text-[#7c7c6f] hover:text-yellow-100 hover:shadow-lg shadow-yellow-100"; // Color
 
     if (text == "ARKHAIOS") {
       fontClass = "font-black text-lg josefinFont";
@@ -105,6 +106,8 @@ export default function Header({ user }) {
   
   */
   return (
+    <>
+    
     <div className="flex justify-items-center bg-color-black">
       {/*  Left Side  */}
       <div className="m-2 flex grow items-center px-10">
@@ -120,14 +123,16 @@ export default function Header({ user }) {
       {/*  Right Side  */}
 
       <div className="flex px-10 pr-10">
-        <div className="flex px-10 justify-items-center items-center mt-5 mb-6 dark:text-slate-300">
-          <label className="px-10 text-xs">
+        <div className="flex px-5 justify-items-center items-center mt-5 mb-6 dark:text-slate-300">
+        <label className="px-2 text-xs">
+            {headerLink("/markets", "MARKETS")}
+          </label>
+          <label className="px-2 text-xs">
             {headerLink("/friends", "FRIENDS")}
           </label>
 
           <button className="flex justify-center">
-            <label>{headerLink("/inbox", "INBOX")}</label>
-            <div className="badge">+99</div>
+            <label className = "px-2">{headerLink("/inbox", "INBOX")}</label>
           </button>
         </div>
       </div>
@@ -192,5 +197,6 @@ export default function Header({ user }) {
         </div>
       </div>
     </div>
+    </>
   );
 }

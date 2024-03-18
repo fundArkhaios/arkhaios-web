@@ -10,6 +10,7 @@ import {
 export default function SmallDayChart({ position }) {
   const miniChartContainerRef = useRef();
 
+  const [currentPrice, setCurrentPrice] = useState(position?.currentPrice);
   const [chartColor, setChartColor] = useState("#FF5000");
   useEffect(() => {
     if (position.exchange == "CRYPTO") {
@@ -35,7 +36,11 @@ export default function SmallDayChart({ position }) {
         let result = [];
         for (let i = 0; i < data.timestamps.length; i++) {
           const value = parseFloat(data.closes[i]);
+
+
           if (!isNaN(value)) {  // Check if the value is a number
+
+            if (i == data.timestamps.length - 1) setCurrentPrice(value);
             result.push({
               time: data.timestamps[i] * 1000,
               value: value,
@@ -115,16 +120,40 @@ export default function SmallDayChart({ position }) {
     chart.timeScale().fitContent();
     // chart.timeScale().lockVisibleTimeRangeOnResize = true;
 
+
+
+    function onCrosshairMove(param) {
+      const seriesData = param.seriesData.get(newSeries);
+      if (param === undefined || !param.time || !param.seriesData.size) {
+        setCurrentPrice(position.current_price); // Revert to original value if crosshair is not on the chart
+        return;
+      }
+      
+      if (seriesData) {
+        const { time, value: price } = seriesData;
+        const chartIndex = processedData.findIndex(data => data.time === time && data.value === price);
+    
+        if (chartIndex !== -1) {
+          setCurrentPrice(price);
+        } else {
+          setCurrentPrice(position.current_price)
+          
+        }
+      }
+    }
+    chart.subscribeCrosshairMove(onCrosshairMove);
+
     // Cleanup function for the chart
     return () => {
       chart.remove(); // Uncomment this and fix reference to actual chart instance
+      chart.unsubscribeCrosshairMove();
     };
   }, [processedData, chartColor]);
 
   return (
     <>
       <div className="font-thin text-xs text-center text-white">
-        {"$" + Number(position.current_price).toLocaleString("en-US")}
+        {"$" + Number(currentPrice).toLocaleString("en-US")}
       </div>
       <div ref={miniChartContainerRef}></div>
     </>

@@ -25,6 +25,7 @@ export default function VerifiedHomeChart({ user }) {
   const [response, setResponse] = useState({
     base_value: 0,
     profit_loss_pct: [0],
+    equity: [0]
   });
   const [currentPrice, setCurrentPrice] = useState(response.base_value);
   const [chartData, setChartData] = useState([
@@ -46,7 +47,7 @@ export default function VerifiedHomeChart({ user }) {
 
       // Set the current price for loading.
       if (index == equity.length - 1) setCurrentPrice(equity[index]);
-      return { time: formattedDate, value: equity[index] };
+      return { time: formattedDate, value: equity[index] }; 
     });
     return data;
   }
@@ -91,19 +92,10 @@ export default function VerifiedHomeChart({ user }) {
 
     return timestamps;
   }
-
-  // Example usage:
-  /* const startDate = '2018-12-22'; // Your initial start date
-      const timestamps = generateTimestamps(startDate);
-      console.log(timestamps); */
-  let initialData = [];
-  useEffect(() => {
-    initialData = convertData(chartData.timestamp, chartData.equity);
-  }, [chartData]);
-
+  
   useEffect(() => {
     const chart = createChart(chartContainerRef.current, {
-      width: 700,
+      width: 600,
       height: 300,
       localization: {
         timeFormatter: (businessDayOrTimestamp) => {
@@ -297,15 +289,14 @@ export default function VerifiedHomeChart({ user }) {
       {response.profit_loss_pct[response.profit_loss_pct.length - 1] >= 0 ? (
         <div className="text-sm text-[#18CCCC]">
           {historyPayload.period}{" "}
-          {response.profit_loss_pct[response.profit_loss_pct.length - 1]}%
+          {percentChange}%
         </div>
       ) : (
         <div className="text-sm text-[#FF5000]">
           {historyPayload.period}{" "}
-          {response.profit_loss_pct[response.profit_loss_pct.length - 1]}%
+          {percentChange}%
         </div>
       )}
-      <div>{percentChange}</div>
       <div ref={chartContainerRef} id="verifiedChart"></div>
       <div className="text-center">
         <div className="join p-2 self-center">

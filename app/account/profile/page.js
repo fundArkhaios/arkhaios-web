@@ -3,6 +3,7 @@ import UserContext from "../../UserContext.js";
 import { useContext } from "react";
 import Link from "next/link";
 import NotVerifiedAlert from "../../components/notVerifiedAlert.js";
+import DisplayProfile from "./displayProfile.js";
 
 export default function Page() {
   const { user } = useContext(UserContext);
@@ -13,7 +14,7 @@ export default function Page() {
       {!user.kycVerified ? (
         <NotVerifiedAlert/>
       ) : (
-        <></>
+        <DisplayProfile user = {user}/>
       )}
     </div>
   );

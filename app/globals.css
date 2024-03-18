@@ -5,10 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;700&display=swap');
 
 
-html, body, div {
+/* html, body, div {
   font-family: "Inter-Bold", "Inter", sans-serif;
   font-style: normal;
-}
+} */
 
 
 /* https://fonts.google.com/specimen/Josefin+Sans */
@@ -107,9 +107,7 @@ body {
 
 
 .interBold {
-  font-weight: 700;
   font-family: "Inter-Bold", "Inter", sans-serif;
-  font-size: 20px;
   letter-spacing: -1px;
 }
 

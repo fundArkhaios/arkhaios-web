@@ -6,7 +6,7 @@ export default function AccountHeader() {
 
     const headerLink = (path, text) => {
         const isActive = pathname === path;
-        var fontClass = "font-extrabold"; // Boldneess
+        var fontClass = ""; // Boldneess
         const textClass = isActive ? "text-amber-200" : "text-white hover:text-amber-200"; // Color
         
 
@@ -19,7 +19,7 @@ export default function AccountHeader() {
 
 
     return (
-    <div className = "flex col-1 px-10 pt-5 justify-center space-x-16 text-xl pb-4 border-b border-amber-200">
+    <div className = "flex col-1 px-10 pt-5 justify-center space-x-16 text-lg pb-4 border-b border-amber-200">
         {headerLink("/account/profile", "Profile")}
         {headerLink("/account/investing", "Investing")}
         {headerLink("/account/transfers", "Transfers")}

@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-
+import Image from "next/image";
 import React, { useState } from "react";
 
 export default function Page() {
 
   const [isLoading, setIsLoading] = useState();
+  const [registerError, setRegisterError] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
 
   async function register(event) {
     setIsLoading(true);
@@ -23,11 +25,13 @@ export default function Page() {
         password: document.getElementById("password").value,
         email: document.getElementById("email").value,
       }),
-    })
-      .then((response) => response.json())
-      .then((response) => {
-        if (response.error || response.status != "Success") {
-          // setRegisterError(response.status);
+    }).then(async (response) => {
+        const data = await response.json();
+        if (data.error || data.status != "Success") {
+          setRegisterError(true);
+          if (data.message == "email is already in use") {
+            setResponseMessage("Email is already in use!")
+          }
         } else {
           window.location.href = "/home";
         }
@@ -42,51 +46,16 @@ export default function Page() {
   }
 
   return (
-    <body className="flex min-h-screen items-center justify-center bg-base-200">
+    <>
+    <div className="flex min-h-screen items-center justify-center bg-base-200">
       <div className="m-4 min-h-[50vh] w-full max-w-sm lg:max-w-4xl">
         <div className="flex items-center justify-center gap-2 p-8">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 1024 1024"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect
-              x="256"
-              y="670.72"
-              width="512"
-              height="256"
-              rx="128"
-              className="fill-base-content"
-            />
-            <circle
-              cx="512"
-              cy="353.28"
-              r="256"
-              className="fill-base-content"
-            />
-            <circle
-              cx="512"
-              cy="353.28"
-              r="261"
-              stroke="black"
-              strokeOpacity="0.2"
-              strokeWidth="10"
-            />
-            <circle
-              cx="512"
-              cy="353.28"
-              r="114.688"
-              className="fill-base-200"
-            />
-          </svg>
           <h1 className="text-lg font-bold">New Account</h1>
         </div>
 
         <main className="grid bg-base-100 lg:aspect-[2/1] lg:grid-cols-2 h-full">
           <figure className="pointer-events-none bg-base-300 object-cover max-lg:hidden">
-            <img src="rectangle-logo.png" alt="Login" />
+            <Image width={500} height={500} src="/rectangle-logo.png" alt="Login" />
           </figure>
 
           <form
@@ -192,6 +161,30 @@ export default function Page() {
           </form>
         </main>
       </div>
-    </body>
+    </div>
+    {registerError ? (
+        <div className="toast toast-center rounded-sm pb-20">
+          <div className="alert alert-error">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Sign up Erorr. {responseMessage}</span>
+            <span></span>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+    </>
   );
 }
