@@ -23,8 +23,8 @@ module.exports = {
         } else if (req.body.resend == true) {
             sendgrid.sendCode(user.email);
 
-            res.status(401).json({
-                status: RESPONSE_TYPE.FAILED,
+            res.status(200).json({
+                status: RESPONSE_TYPE.SUCCESS,
                 message: "a new verification code has been sent",
                 data: {}
             })
