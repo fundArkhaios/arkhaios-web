@@ -1,46 +1,66 @@
 const { client } = require("../plaid_configs");
 const db = require("../../util/db");
 const { forward } = require("../aes");
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 module.exports = {
   route: "/api/plaid/public-token-exchange",
   authenticate: true,
   post: async function (req, res, user) {
-    //call the itemPublicTokenExchange endpoint from Plaid, this gives us the access token
-    //public_token is given to use from the front end after the link completion.
-    var response = await client.itemPublicTokenExchange({
-      public_token: req.body.public_token,
-    });
-    
-    var error = "";
-    //encrypt both the access token and the "item_id"
-    //item_id is the reference id for the user's individual account with Plaid. 
-    var accessToken = await forward(response.data.access_token);
-    var item_id = await forward(response.data.item_id);
+    var response = "";
 
-    //store the stuff in the database
-    try {
-      await db.connect(async (db) => {
-        try {
-          let results = await db.collection("Users").findOne({email: user.email});
-          if (results) {
-            // console.log(results);
-            await db.collection("Users").updateOne({"email": user.email}, {
-              $set: { plaidAccess: accessToken, plaidItem: item_id },
-            });
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      });
-    } catch (e) {
-      error = e.toString();
+    const public_token = req.public_token;
+    const pubResponse = await client.itemPublicTokenExchange({public_token: public_token});
+
+    const access_token = await forward(pubResponse.data.access_token);
+
+    var metadata = req.body.metadata;
+    var institution = metadata.institution;
+    var accounts = metadata.accounts;
+  
+    var accountObject = {};
+
+    for(let i = 0; i < accounts.length; i++){
+      accountObject[accounts[i].id] = accounts[i].subtype;
     }
 
-    if (!error) {
-      res.status(201).json({ flag: "success" });
-    } else {
-      res.status(501).json({ flag: "failure", err: error });
+    try{
+      await db.connect(async (db) => {
+        var result = await db.collection('Users').findOne({email: user.email});
+
+        if(result){
+          await db.collection('Users').updateOne(
+            { "accountID": user.accountID },
+            { $set: 
+              {
+                access_tokens: { [`${institution.name}`] : access_token },
+                institutions: 
+                {
+                  [`${institution.name}`] : 
+                  {
+                    id: [`${institution.id}`],
+                    accounts: accountObject
+                  }
+                }
+              },
+              $push:
+              {
+                institution_names: [`${institution.name}`]
+              }
+            }
+          );
+
+          response = RESPONSE_TYPE.SUCCESS;
+
+          res.status(201).json({status: response, message: `${accounts.name} linked`, data: ""})
+        }
+        else{
+          SERVER_ERROR(res);
+        }
+      });
+    }
+    catch(e){
+      SERVER_ERROR(res);
     }
   },
 };

@@ -40,12 +40,23 @@ module.exports = {
 
                     data["equity"] = equity;
 
-                    data["profit_loss"] = [ 0 ];
-                    data["profit_loss_pct"] = [ 0.00 ];
+                    let base_value = 0.0;
 
-                    for(let i = 1; i < equity.length; ++i) {
-                        data["profit_loss"].push(equity[i] - equity[0]);
-                        data["profit_loss_pct"].push((equity[i] / equity[0] - 1.0) * 100);
+                    data["profit_loss"] = [];
+                    data["profit_loss_pct"] = [];
+
+                    for(let i = 0; i < equity.length; ++i) {
+                        if(base_value == 0) {
+                            if(equity[i] != 0) {
+                                base_value = equity[i];
+                            }
+
+                            data["profit_loss"].push(0);
+                            data["profit_loss_pct"].push(0.00);
+                        } else {
+                            data["profit_loss"].push(equity[i] - base_value);
+                            data["profit_loss_pct"].push((equity[i] / base_value - 1.0) * 100);
+                        }
                     }
 
                     if(expiration >= 0) {
