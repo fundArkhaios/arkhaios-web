@@ -1,15 +1,16 @@
 'use client'
 import UserContext from "../../UserContext";
 import { useContext } from "react";
+import useFetch from "../../hooks/useFetch";
 
 
 export default function PlaceStockOrder ({symbol}) {
 
   const { user } = useContext(UserContext);
 
-  
-  
-  
+  const {isLoading, error, responseJSON} = useFetch("/api/positions?symbol=" + symbol)
+
+
   return (
     <div>
       <div className="w-72 h-96 rounded-sm border border-gray-300 ">
