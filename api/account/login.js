@@ -14,6 +14,8 @@ module.exports = {
             var error = '';
             let data = {};
 
+            const hostname = req.hostname;
+
             let response = RESPONSE_TYPE.FAILED;
 
             const { email, password } = req.body;
@@ -82,8 +84,8 @@ module.exports = {
             if(error != '') {
                 res.status(401).json({status: response, message: error});
             } else {
-                res.cookie('email', email, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
-                res.cookie('session', data.session, { maxAge: sessionExpiry, httpOnly: true, sameSite: true });
+                res.cookie('email', email, { maxAge: sessionExpiry, httpOnly: true, sameSite: 'none', domain: hostname, secure: true});
+                res.cookie('session', data.session, { maxAge: sessionExpiry, httpOnly: true, sameSite: 'none', domain: hostname, secure: true});
 
                 res.status(200).json({ status: response, message: error, data: data });
             }

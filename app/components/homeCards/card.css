@@ -30,7 +30,7 @@
     width: 100%;
     inset: 0px;
     border-radius: inherit;
-    background: radial-gradient(800px circle at var(--x-px) var(--y-px), orange, transparent 40%);
+    background: radial-gradient(800px circle at var(--x-px) var(--y-px), #C0C0C0, transparent 40%);
 }
 
 
@@ -96,7 +96,7 @@
     width: 100%;
     inset: 0px;
     border-radius: inherit;
-    background: radial-gradient(800px circle at var(--x-px) var(--y-px), aqua, transparent 40%);
+    background: radial-gradient(800px circle at var(--x-px) var(--y-px), #C0C0C0, transparent 40%);
 }
 
 

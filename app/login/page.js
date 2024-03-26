@@ -133,9 +133,7 @@ export default function Page() {
 
           <main className="grid bg-base-100 lg:aspect-[2/1] lg:grid-cols-2 h-full">
             <figure className="pointer-events-none bg-base-300 object-cover max-lg:hidden">
-              <Image
-                width={500}
-                height={500}
+              <img
                 src="/rectangle-logo.png"
                 alt="Login"
               />

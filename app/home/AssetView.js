@@ -5,9 +5,9 @@ export default function AssetView({ user }) {
   const [positions, setPositions] = useState([]);
   
 
-  /* function changeToCrypto(symbol) {
+  function changeToCrypto(symbol) {
     return symbol.replace(/USD$/, '-usd').toLowerCase();
-  } */
+  }
 
 
   useEffect(() => {

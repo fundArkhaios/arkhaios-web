@@ -21,12 +21,13 @@ import "../globals.css";
 */
 export default function VerifiedHomeChart({ user }) {
   const chartContainerRef = useRef();
-  const [percentChange, setPercentChange] = useState(0)
+  
   const [response, setResponse] = useState({
     base_value: 0,
     profit_loss_pct: [0],
     equity: [0]
   });
+  const [percentChange, setPercentChange] = useState(0);
   const [currentPrice, setCurrentPrice] = useState(response.base_value);
   const [chartData, setChartData] = useState([
     { time: "2018-12-22", value: 0 },
@@ -45,10 +46,18 @@ export default function VerifiedHomeChart({ user }) {
       formattedDate = timestamp;
       console.log("Formatted Date: " + formattedDate);
 
+
       // Set the current price for loading.
-      if (index == equity.length - 1) setCurrentPrice(equity[index]);
+      if (index == equity.length - 1) {
+        setCurrentPrice(equity[index]);
+      }
       return { time: formattedDate, value: equity[index] }; 
     });
+    if (response) {
+      setPercentChange(response.profit_loss_pct[response.profit_loss_pct.length - 1] == null ? 0 : response.profit_loss_pct[response.profit_loss_pct.length - 1]);
+    }
+    
+
     return data;
   }
 
@@ -121,7 +130,7 @@ export default function VerifiedHomeChart({ user }) {
 
         // Vertical crosshair line (showing Date in Label)
         vertLine: {
-          width: 4,
+          width: 2,
           color: "#C3BCDB44",
           style: LineStyle.Solid,
           labelBackgroundColor: "#FEF08A",
@@ -144,9 +153,11 @@ export default function VerifiedHomeChart({ user }) {
 
         // Horizontal crosshair line (showing Price in Label)
         horzLine: {
+          visible: false,
+          labelVisible: false,
           style: LineStyle.Solid,
           color: "#C3BCDB44",
-          labelBackgroundColor: "#FEF08A",
+          // labelBackgroundColor: "#FEF08A",
         },
       },
       grid: {
@@ -228,7 +239,7 @@ export default function VerifiedHomeChart({ user }) {
     function onCrosshairMove(param) {
       if (param === undefined || !param.time || !param.seriesData.size) {
         setCurrentPrice(response.equity[response.equity.length - 1]); // Revert to original value if crosshair is not on the chart
-        setPercentChange(response.profit_loss_pct[0]); // Assuming you want to revert to the first pct change
+        setPercentChange(response.profit_loss_pct[response.profit_loss_pct.length - 1] == null ? 0 : response.profit_loss_pct[response.profit_loss_pct.length - 1]); // Assuming you want to revert to the first pct change
         return;
       }
     
@@ -238,11 +249,13 @@ export default function VerifiedHomeChart({ user }) {
         const chartIndex = chartData.findIndex(data => data.time === time && data.value === price);
     
         if (chartIndex !== -1) {
-          setPercentChange(response.profit_loss_pct[chartIndex]);
-          setCurrentPrice(price);
+          // Check if the values are null.
+          setPercentChange(response.profit_loss_pct[chartIndex] == null ? 0 : response.profit_loss_pct[chartIndex]);
+          setCurrentPrice(price == null ? 0 : price);
         } else {
-          setCurrentPrice(response.equity[response.profit_loss_pct.length - 1])
-          setPercentChange(response.profit_loss_pct[0]); // Revert to some default if not found
+          // This means that the mouse is not on the screen and we can go back and display the last index in the array.
+          setCurrentPrice(response.equity[response.profit_loss_pct.length - 1] == null ? 0 : response.equity[response.profit_loss_pct.length - 1])
+          setPercentChange(response.profit_loss_pct[response.profit_loss_pct.length - 1] == null ? 0 : response.profit_loss_pct[response.profit_loss_pct.length - 1]); // Revert to some default if not found
         }
       }
     }
@@ -286,15 +299,15 @@ export default function VerifiedHomeChart({ user }) {
       <div className="interBold text-2xl text-white">
      {"$" + Number(currentPrice).toLocaleString('en-US')}
       </div>
-      {response.profit_loss_pct[response.profit_loss_pct.length - 1] >= 0 ? (
+      {percentChange.toFixed(2) >= 0 ? (
         <div className="text-sm text-[#18CCCC]">
           {historyPayload.period}{" "}
-          {percentChange}%
+          {percentChange.toFixed(2)}%
         </div>
       ) : (
         <div className="text-sm text-[#FF5000]">
           {historyPayload.period}{" "}
-          {percentChange}%
+          {percentChange.toFixed(2)}%
         </div>
       )}
       <div ref={chartContainerRef} id="verifiedChart"></div>

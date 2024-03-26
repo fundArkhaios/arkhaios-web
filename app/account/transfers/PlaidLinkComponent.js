@@ -28,7 +28,7 @@ export default function PlaidLinkComponent() {
     },
   ];
 
-  async function transferPlaidLink(publicToken) {
+  async function transferPlaidLink(publicToken, metadata) {
     await fetch("/api/plaid/public-token-exchange", {
       method: "POST",
       headers: {
@@ -36,6 +36,7 @@ export default function PlaidLinkComponent() {
       },
       body: JSON.stringify({
         public_token: publicToken,
+        metadata: metadata,
       }),
     });
   }
@@ -60,6 +61,7 @@ export default function PlaidLinkComponent() {
   var config = {
     onSuccess: function (publicToken, metadata) {
       console.log("SUCCESS PLAID");
+      console.log(metadata);
       transferPlaidLink(publicToken, metadata);
     },
     onExit: function (err, metadata) {
@@ -78,9 +80,7 @@ export default function PlaidLinkComponent() {
       <div className="space-y-5">
         <div>
           <p className="py-2 text-xl text-light">Start a Transfer </p>
-          <btn
-            className="btn btn-sm  font-light outline rounded-sm text-white"
-          >
+          <btn className="btn btn-sm  font-light outline rounded-sm text-white">
             Money Transfer
             <ArrowsRightLeftIcon className="h-6 w-6" />
           </btn>
@@ -88,7 +88,10 @@ export default function PlaidLinkComponent() {
         <div className="space-y-2">
           <div className="flex flex-row space-x-4 pb-10">
             <p className="text-xl">Linked Accounts</p>
-            <btn className="cursor-pointer text-emerald-400 self-center hover:underline underline-offset-4" onClick={open}>
+            <btn
+              className="cursor-pointer text-emerald-400 self-center hover:underline underline-offset-4"
+              onClick={open}
+            >
               Add Account
             </btn>
           </div>
@@ -96,7 +99,7 @@ export default function PlaidLinkComponent() {
             <div key={account.key} className="space-y-4">
               <div className="grid grid-cols-2 justify-items-start border p-2 text-white w-1/4">
                 <BuildingLibraryIcon className="h-10 w-10" />
-                <div className = "">
+                <div className="">
                   <p className="font-light "> {account.accountName}</p>
                   <p className="font-thin"> {account.type}</p>
                 </div>

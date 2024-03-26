@@ -1,18 +1,22 @@
+import { useRouter } from "next/navigation";
 import "./components.css";
 import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import Link from "next/link";
-export default function SearchModal() {
+import useDebounce from "../hooks/useDebounce";
+export default function SearchModal({ onClose }) {
   const [searchInput, setSearchInput] = useState();
-
+  const router = useRouter();
   const [response, setResponse] = useState([{ id: "0" }]);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
+  const debouncedValue = useDebounce(searchInput, 500);
   const handleInputChange = (event) => {
     setSearchInput(event.target.value);
   };
 
   const { error, isLoading, responseJSON } = useFetch(
-    "/api/search?query=" + searchInput
+    "/api/search?query=" + debouncedValue
   );
 
   useEffect(() => {
@@ -20,6 +24,67 @@ export default function SearchModal() {
       setResponse(responseJSON.data);
     }
   }, [isLoading, responseJSON]);
+
+  const highlightMatch = (text, searchInput) => {
+    if (!searchInput) {
+      return text;
+    }
+
+    const regex = new RegExp(`(${searchInput})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, index) =>
+      regex.test(part) ? (
+        <span key={index} className="text-yellow-200">
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setHighlightedIndex((prevIndex) =>
+          Math.min(prevIndex + 1, response.length - 1)
+        );
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setHighlightedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+      } else if (event.key === "Enter" && highlightedIndex >= 0) {
+        event.preventDefault();
+        handleSelectItem(response[highlightedIndex]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [highlightedIndex, response]);
+
+  const handleSelectItem = (asset) => {
+    const route =
+      asset.exchange === "CRYPTO"
+        ? `/markets/crypto/${changeToCrypto(asset.symbol)}`
+        : `/markets/stocks/${asset.symbol}`;
+
+    router.push(route);
+    onClose();
+  };
+
+  const handleMouseEnter = (index) => {
+    setHighlightedIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setHighlightedIndex(-1);
+  };
+
+  function changeToCrypto(symbol) {
+    return symbol.replace("/USD", "-usd").toLowerCase();
+  }
 
   return (
     <>
@@ -42,6 +107,7 @@ export default function SearchModal() {
           name="text"
           className="text-white searchInput px-10 interFont text-sm"
           value={searchInput}
+          autoComplete="off"
           onChange={handleInputChange}
         />
       </div>
@@ -51,23 +117,38 @@ export default function SearchModal() {
             <svg viewBox="25 25 50 50">
               <circle r="20" cy="50" cx="50"></circle>
             </svg>
-          </div>
+          </div>  
         </div>
       ) : (
         <>
-          {response?.map((asset) => (
-            <Link href={`/markets/stocks/${asset.symbol}`}>
-              <div key={asset.id} className="py-2">
-                <div className="rounded-sm hover:bg-slate-600 grid grid-cols-2 ">
-                  <div className="">
-                    <div className="flex flex-row"></div>
-                    <div className="font-light text-sm">{asset.symbol}</div>
-                    <div className="font-thin text-sm">{asset.exchange}</div>
+          {response?.map((asset, index) => (
+            <div
+              key={asset.id}
+              className={`py-1 overflow-hidden ${
+                highlightedIndex === index ? "bg-[#1E2124]" : ""
+              }`}
+              onMouseEnter={() => handleMouseEnter(index)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <div
+                role="button"
+                onClick={() => handleSelectItem(asset)}
+                className="rounded-sm px-4 py-2 grid grid-cols-2 gap-x-2 cursor-pointer"
+              >
+                <div className="">
+                  <div className="flex flex-row"></div>
+                  <div className="text-white font-light text-sm">
+                    {highlightMatch(asset.symbol, searchInput)}
                   </div>
-                  <div className="font-bold text-nowrap">{asset.name}</div>
+                  <div className="text-white font-thin text-sm">
+                    {asset.exchange}
+                  </div>
+                </div>
+                <div className="text-white truncate">
+                  {highlightMatch(asset.name, searchInput)}
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </>
       )}

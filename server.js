@@ -1,8 +1,11 @@
 require('dotenv').config()
 
+const cors = require('cors');
+const https = require('https');
 const express = require('express');
 const next = require('next');
 const url = require('url');
+
 
 const { logger } = require('./util/logger')
 
@@ -14,7 +17,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const port = process.env.PORT || 3000;
 
 const nextApp = next({ dir: '.', dev });
-const nextHandler = nextApp.  getRequestHandler();
+const nextHandler = nextApp.getRequestHandler();
 
 const cookieParser = require('cookie-parser');
 const { redis } = require('./util/db');
@@ -65,7 +68,8 @@ function route(server) {
           }
         };
       };
-
+      console.log("Path.get: " + path.get); 
+      console.log("Path.route: " + path.route);
       if(path.get) server.get(path.route, handler(path.get));
       if(path.post) server.post(path.route, handler(path.post));
     }
@@ -90,43 +94,92 @@ function route(server) {
     walkDirectory(file);
   });
 }
-
 nextApp.prepare()
-  .then(async () => {
-    // await redis.connect();
+.then(async () => {
+  // await redis.connect();
 
-    const server = express();
+  const server = express();
 
-    server.use(cookieParser());
-    server.use(express.json());
+  server.use(cookieParser());
+  server.use(express.json());
 
-    route(server);
-
-
-    server.get('*', async (req, res) => {
-      const hostname = req.hostname;
-      
-      // Check if the hostname includes the subdomain `subdomainA`
-      if (hostname.startsWith('funds.localhost')) {
-        // Modify the request to point to a specific path for the subdomain
-        req.url = '/funds' + req.url;
+  /* server.use(cors({
+    origin: (origin, callback) => {
+      if (!origin || /\.local\.test$/.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
       }
-      
-      // Continue to the next middleware or route handler
-      
-      const parsed = url.parse(req.url, true);
-      await nextHandler(req, res, parsed);
-    });
+    },
+    credentials: true, // if your frontend needs to send cookies to the backend
+    methods: ['GET', 'HEAD'] // adjust the methods as per your needs
+  }));
+ */
+  // Subdomain parsing middleware
+  server.use((req, res, nextApp) => {
+    console.log('Full URL:', req.protocol + '://' + req.get('host') + req.originalUrl);
+    console.log('Subdomains:', req.subdomains)
+    const host = req.headers.host;
+    const hostParts = host.split('.');
+    req.subdomains = hostParts.slice(0, -2); // Adjust depending on your TLD length
+    console.log('Subdomains:', req.subdomains)
+    nextApp();
+  });
 
-    server.listen(port, (err) => {
+
+  route(server);
+
+  // Custom route for the subdomain 'funds'
+  server.get('/', (req, res) => {
+    console.log("Wow: " + req.subdomains);
+    if (req.subdomains.includes('funds')) {
+      return nextApp.render(req, res, '/funds-home', req.query);
+    } else {
+      // Render the root domain homepage
+      return nextApp.render(req, res, '/root-home', req.query);
+    }
+  });
+
+  server.get('*', async (req, res) => {
+    const parsed = url.parse(req.url, true);
+    await nextHandler(req, res);
+  });
+
+  
+
+  // Check for the existence of the SSL certificate files
+  const keyPath = './certs/local.test.key';
+  const certPath = './certs/local.test.crt';
+
+  if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    const privateKey = fs.readFileSync(keyPath, 'utf8');
+    const certificate = fs.readFileSync(certPath, 'utf8');
+
+    const credentials = { key: privateKey, cert: certificate };
+
+    https.createServer(credentials, server).listen(port, (err) => {
       if (err) throw err;
 
-      if(process.env.NODE_ENV !== 'production') {
-        console.log(`Listening on http://localhost:${port}`);
-
+      if (dev) {
+        console.log(`Listening on https://localhost:${port}`);
+        
         logger.add(new winston.transports.Console({
           format: winston.format.simple()
         }));
       }
     });
-  });
+  } else {
+    // Fall back to HTTP if SSL certificate files are not found
+    server.listen(port, (err) => {
+      if (err) throw err;
+
+      if (dev) {
+        console.log(`Listening on http://localhost:${port}`);
+        
+        logger.add(new winston.transports.Console({
+          format: winston.format.simple()
+        }));
+      }
+    });
+  }
+});
