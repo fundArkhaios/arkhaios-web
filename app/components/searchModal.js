@@ -5,6 +5,7 @@ import useFetch from "../hooks/useFetch";
 import Link from "next/link";
 import useDebounce from "../hooks/useDebounce";
 export default function SearchModal({ onClose }) {
+
   const [searchInput, setSearchInput] = useState();
   const router = useRouter();
   const [response, setResponse] = useState([{ id: "0" }]);
@@ -26,14 +27,16 @@ export default function SearchModal({ onClose }) {
   }, [isLoading, responseJSON]);
 
   const highlightMatch = (text, searchInput) => {
+    
     if (!searchInput) {
       return text;
     }
+    
+    if (text) {
+      const regex = new RegExp(`(${searchInput})`, "gi");
+      const parts = text.split(regex);
 
-    const regex = new RegExp(`(${searchInput})`, "gi");
-    const parts = text.split(regex);
-
-    return parts.map((part, index) =>
+      return parts.map((part, index) =>
       regex.test(part) ? (
         <span key={index} className="text-yellow-200">
           {part}
@@ -42,6 +45,9 @@ export default function SearchModal({ onClose }) {
         part
       )
     );
+    }
+    
+    
   };
 
   useEffect(() => {

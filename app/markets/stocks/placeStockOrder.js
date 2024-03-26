@@ -8,8 +8,6 @@ export default function PlaceStockOrder ({symbol}) {
   const { user } = useContext(UserContext);
 
   
-  
-  
   return (
     <div>
       <div className="w-72 h-96 rounded-sm border border-gray-300 ">

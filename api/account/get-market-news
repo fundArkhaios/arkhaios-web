@@ -1,7 +1,7 @@
 const { RESPONSE_TYPE, SERVER_ERROR } = require("../response_type");
 
 async function getMarketNews(category) {
-  const response = await fetch(
+  const response = await f22etch(
     "https://finnhub.io/api/v1/news?category=" +
       category +
       "&token=" +

@@ -7,12 +7,25 @@ module.exports = {
     get: async function(req, res, user) {
         res.setHeader('Content-Type', 'application/json');
         
-        const { response, status } = await alpaca.get_positions(user.brokerageID);
+        const symbol = req.query?.symbol;
 
-        if(status == 200) {
-            res.send(JSON.stringify({status: RESPONSE_TYPE.SUCCESS, data: response}));
+        if (!symbol) {
+            const { response, status } = await alpaca.get_positions(user.brokerageID);
+
+            if(status == 200) {
+                res.send(JSON.stringify({status: RESPONSE_TYPE.SUCCESS, data: response}));
+            } else {
+                SERVER_ERROR(res)
+            }
+            
         } else {
-            SERVER_ERROR(res)
+            const { response, status } = await alpaca.get_positions_symbol(user.brokerageID, symbol);
+            
+            if(status == 200) {
+                res.send(JSON.stringify({status: RESPONSE_TYPE.SUCCESS, data: response}));
+            } else {
+                SERVER_ERROR(res)
+            }
         }
     }
 }
