@@ -14,7 +14,6 @@ export default function SideBar() {
           <UserGroupIcon className="h-6 w-6" />
         </a>
 
-
         <a className="btn btn-square btn-ghost text-xl" title="Calendar">
           <CalendarDaysIcon className="h-6 w-6"/>
         </a>

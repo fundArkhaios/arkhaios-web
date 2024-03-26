@@ -120,7 +120,6 @@ export default function Contact() {
             id="unitAddress"
             placeholder="APT 413"
             className="input input-bordered [&:user-invalid]:input-warning [&:user-valid]:input-success"
-            required
             pattern="^[A-Za-z0-9\s\-\/]+"
             title="Enter the unit number (e.g., Apt 413 or Suite B)"
           />
