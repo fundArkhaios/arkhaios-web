@@ -13,8 +13,11 @@ export const metadata = {
   description: "Arkhaios",
 };
 
+import { useServerSideProps } from 'next/navigation';
+
+
 export default async function RootLayout({ children }) {
-  const loginPaths = ["/", "/login", "/signup", "/recovery"];
+  const loginPaths = ["/", "/login", "/signup", "/recovery", "root-home"];
 
   const path = headers().get("x-url");
   const cookieStore = cookies();
@@ -22,9 +25,13 @@ export default async function RootLayout({ children }) {
   const session = cookieStore.get("session")?.value;
 
   const user = await authenticate.login(email, session);
-
+  
+  console.log("Path: " + path);
+  
   if (!user && !loginPaths.includes(path)) {
     redirect("/login");
+  } else if (!user && loginPaths.includes(path)) {
+    // Do nothing.
   } else if (user) {
     if (loginPaths.includes(path)) {
       redirect("/home");
@@ -43,10 +50,10 @@ export default async function RootLayout({ children }) {
           <Header user={user} />
         </nav>
         <div className="grid grid-cols-[64px_1fr]">
-          <aside style={{ width: "64px" }}>
-            <SideBar/>
+          <aside className="bg-base-200 w-16">
+            <SideBar className="bg-base-200" />
           </aside>
-          <div>{children}</div>
+          <main>{children}</main>
         </div>
       </div>
     </UserContextProvider>

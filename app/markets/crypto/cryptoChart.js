@@ -7,8 +7,9 @@ import {
   CrosshairMode,
   LineStyle,
 } from "lightweight-charts";
+import Error from 'next/error';
 
-export default function StockChartComponent({ symbol }) {
+export default function CryptoChart({ symbol }) {
   const chartContainerRef = useRef();
 
   const [payload, setPayload] = useState({ range: "1mo", interval: "5m" });
@@ -20,6 +21,9 @@ export default function StockChartComponent({ symbol }) {
       "&interval=" +
       payload.interval
   );
+
+
+
 
     const [chartData, setChartData] = useState( [{time: 0, value: 0}, {time:1, value:0}] );
     const [chartLoaded, setChartLoaded] = useState(false);
@@ -46,6 +50,11 @@ export default function StockChartComponent({ symbol }) {
       }
 
   useEffect(() => {
+    if (error) {
+      return <Error statusCode={404} />;
+    }
+
+
     async function getChartData() {
       if (responseJSON && !isLoading) {
         setChartLoaded(false);

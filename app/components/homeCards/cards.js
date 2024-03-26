@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import "./card.css";
+
 export default function Cards() {
   const cardRef = useRef(null); // This ref will point to the .card element
 

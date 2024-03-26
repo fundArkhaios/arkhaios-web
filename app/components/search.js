@@ -2,15 +2,17 @@ import "./components.css";
 import SearchModal from "./searchModal";
 import { useEffect } from "react";
 export default function Search() {
+  
+  const closeModal = () => {
+    document.getElementById("searchModal").close();
+  };
 
-    
   const openModal = () => {
     document.getElementById("searchModal").showModal();
   };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      
       if (event.key === "/") {
         // Prevent the default '/' key action when the modal is opened
         event.preventDefault();
@@ -18,15 +20,13 @@ export default function Search() {
       }
     };
     window.addEventListener("keydown", handleKeyDown);
-    
+
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []); 
+  }, []);
 
   return (
     <>
-      <button
-        onClick={openModal}
-      >
+      <button onClick={openModal}>
         <div className="container-input text-white">
           <svg
             fill="white"
@@ -51,10 +51,12 @@ export default function Search() {
 
       <dialog id="searchModal" className="modal">
         <div className="modal-box">
-          <SearchModal />
+          <SearchModal onClose={closeModal} />
         </div>
         <form method="dialog" className="modal-backdrop">
-          <button>close</button>
+          <button type="button" onClick={closeModal}>
+            Close
+          </button>
         </form>
       </dialog>
     </>

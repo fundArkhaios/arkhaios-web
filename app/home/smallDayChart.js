@@ -49,12 +49,9 @@ export default function SmallDayChart({ position }) {
         }
         return result;
       }
-    console.log("ResponseJSON: " + JSON.stringify(responseJSON));
-    console.log("isLoading: " + isLoading);
     // Make sure responseJSON is not null and the promise has been resolved
-    if (responseJSON && !isLoading && responseJSON.status != "error") {
+    if (responseJSON && !isLoading && responseJSON.status != "error" && responseJSON.data) {
       const data = processData(responseJSON.data);
-      console.log("PROCESSING");
       setProcessedData(data);
     }
   }, [responseJSON]);
@@ -64,8 +61,9 @@ export default function SmallDayChart({ position }) {
       crosshair: {
         mode: CrosshairMode.Normal, // Use CrosshairMode.Normal to allow tooltip functionality without line
         vertLine: {
-          visible: false,
+          visible: true,
           labelVisible: false,
+          style: LineStyle.Solid,
         },
         horzLine: {
           visible: false,
@@ -113,7 +111,7 @@ export default function SmallDayChart({ position }) {
     newSeries.applyOptions({
       color: chartColor,
       lineWidth: 2, // Change the line width
-      crosshairMarkerRadius: 3, // Change the radius of the crosshair marker.
+      crosshairMarkerRadius: 2, // Change the radius of the crosshair marker.
     });
 
     newSeries.setData(processedData);

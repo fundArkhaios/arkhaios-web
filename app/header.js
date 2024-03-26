@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import Search from "./components/search";
 import "./globals.css";
 import "./../output.css";
-import SideBar from "./sidebar";
 
 export default function Header({ user }) {
   const pathname = usePathname();
@@ -53,10 +52,10 @@ export default function Header({ user }) {
   const dropDownLink = (path, text) => {
     const isActive = pathname === path;
 
-    var fontClass = "text-sm font-bold interFont text-nowrap"; // Boldneess
+    var fontClass = "text-sm text-nowrap"; // Boldneess
     const textClass = isActive
       ? "text-yellow-200"
-      : "text-white hover:text-yellow-200"; // Color
+      : "hover:text-yellow-200"; // Color
 
     return (
       <Link href={path} className={`${fontClass} ${textClass} no-underline`}>
