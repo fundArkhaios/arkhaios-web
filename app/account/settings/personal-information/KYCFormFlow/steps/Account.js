@@ -124,7 +124,7 @@ export default function Account() {
             <select
               name="funding_source"
               onChange={handleChange}
-              value={userData["funding_source"] || ""}
+              value={userData["funding_source"]}
               className="select select-bordered"
             >
               <option disabled selected>
