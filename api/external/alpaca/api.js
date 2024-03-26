@@ -133,6 +133,11 @@ module.exports = {
 		return get("/v1/trading/accounts/" + account + "/positions");
 	},
 
+	// https://docs.alpaca.markets/reference/getpositionsforaccountbysymbol-1
+	get_positions_symbol: async function(account, symbol) {
+		return get("/v1/trading/accounts/" + account + "/positions/" + symbol);
+	},
+
 	cancel_order: async function(account, order) {
 		return get("/v1/trading/accounts/" + account + "/orders/" + order);
 	},

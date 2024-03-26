@@ -9,7 +9,7 @@ export default function StepperControl({ handleClick, currentStep, steps }) {
   function shouldDisableNextButton(step, userData) {
     const stepCriteria = {
       1: ["first_name", "last_name", "dob", "ssn"],
-      2: ["phone", "address", "address_unit", "postal_code", "state", "city"],
+      2: ["phone", "address", "postal_code", "state", "city"],
       3: ["is_control_person", "is_affiliated", "is_pep", "is_family_exposed"],
     };
 

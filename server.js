@@ -6,7 +6,6 @@ const express = require('express');
 const next = require('next');
 const url = require('url');
 
-
 const { logger } = require('./util/logger')
 
 const authenticate = require('./util/authenticate');
@@ -123,6 +122,7 @@ nextApp.prepare()
   // await redis.connect();
 
   const server = express();
+  require('express-ws')(server)
 
   server.use(cookieParser());
   server.use(express.json());
