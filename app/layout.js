@@ -24,9 +24,25 @@ export default async function RootLayout({ children }) {
   const email = cookieStore.get("email")?.value;
   const session = cookieStore.get("session")?.value;
 
-  const user = await authenticate.login(email, session);
+  var user = await authenticate.login(email, session);
+  
+  if (user) {
+  
+    // Remove salt, iter, verificationCode, plaidID 
+    const keysToFilter = ['salt', 'iter', 'verificationCode', 'plaidID'];
+
+    // console.log("Before filter User: " + JSON.stringify(user));
+    user = Object.keys(user).reduce((newUser, key) => {
+      if (!keysToFilter.includes(key)) {
+        newUser[key] = user[key];
+      }
+      return newUser;
+    }, {});
+    // console.log("After Filter User: " + JSON.stringify(user))
+  }
   
   console.log("Path: " + path);
+  
   
   if (!user && !loginPaths.includes(path)) {
     redirect("/login");
@@ -36,10 +52,10 @@ export default async function RootLayout({ children }) {
     if (loginPaths.includes(path)) {
       redirect("/home");
     } else if (!user.emailVerified && path !== "/verification") {
-      // console.log("TRIGGERED");
-      // redirect("/");
+      redirect("/signup/verify");
     }
   }
+
 
   const renderAuthenticatedContent = () => (
     <UserContextProvider user={user}>
@@ -74,7 +90,7 @@ export default async function RootLayout({ children }) {
         href="/trimmedNoBackgroundHDArkhaiosLogo.ico"
       ></link>
       <body className={GeistSans.className}>
-        <Redirect authenticated={!!user} />
+        <Redirect authenticated={user} />
         {user ? renderAuthenticatedContent() : renderUnauthenticatedContent()}
       </body>
     </html>

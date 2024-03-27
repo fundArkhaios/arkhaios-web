@@ -1,28 +1,37 @@
 import "./components.css";
 import SearchModal from "./searchModal";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 export default function Search() {
-  
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const closeModal = () => {
+    setIsModalOpen(false);
     document.getElementById("searchModal").close();
   };
 
   const openModal = () => {
+    setIsModalOpen(true);
     document.getElementById("searchModal").showModal();
   };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "/") {
+      if (event.key === "/" && !isModalOpen) {
         // Prevent the default '/' key action when the modal is opened
         event.preventDefault();
         openModal();
+      } else if (event.key === '/' && isModalOpen) {
+        event.preventDefault();
+        closeModal();
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [isModalOpen]);
+
 
   return (
     <>
