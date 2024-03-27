@@ -12,7 +12,7 @@ export default function Page( {renderScreen} ) {
 
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
 
-  async function register(event) {
+  async function register(event) {  
     setIsLoading(true);
     event.preventDefault();
     const response = await fetch("/api/account/register", {

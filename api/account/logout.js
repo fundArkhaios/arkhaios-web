@@ -19,8 +19,10 @@ module.exports = {
                 await db.redis.del(key)
             }
 
-            res.clearCookie('email');
-            res.clearCookie('session');
+            const hostname = req.hostname;
+
+            res.clearCookie('email', { domain: hostname, secure: true, sameSite: 'none' });
+            res.clearCookie('session', { domain: hostname, secure: true, sameSite: 'none' });
 
             res.status(200).json({
                 status: RESPONSE_TYPE.SUCCESS,
