@@ -8,6 +8,13 @@ import "./../output.css";
 export default function Header({ user }) {
   const pathname = usePathname();
 
+  const socket = new WebSocket("ws://localhost:3000/ws-demo");
+
+  socket.addEventListener("open", (event) => {
+    console.log("Opened socket");
+    socket.send("Hello");
+  });
+
   // let [theme, setTheme] = useState("dark");
 
   async function logout() {
@@ -131,7 +138,31 @@ export default function Header({ user }) {
           </label>
 
           <button className="flex justify-center">
-            <label className = "px-2">{headerLink("/inbox", "INBOX")}</label>
+            <div className="dropdown dropdown-end dropdown-hover text-md">
+            <div tabIndex={0} role="button">
+              {headerLink("/inbox", "INBOX")}
+            <div className="badge">+99</div>
+            </div>
+
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[50] menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li className="flex flex-row items-center">
+                <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-4 h-4 p-0"></div>
+                <p>Order has been filled</p>
+              </li>
+              <li className="flex flex-row items-center">
+                <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-4 h-4 p-0"></div>
+                <p>New statement is available</p>
+              </li>
+              <li className="flex flex-row items-center">
+                <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-4 h-4 p-0"></div>
+                <p>Account action required</p>
+              </li>
+            </ul>
+          </div>
+
           </button>
         </div>
       </div>

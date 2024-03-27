@@ -27,17 +27,17 @@ module.exports = {
     try {
       await module.exports.connect(async (db) => {
         try {
+          const filter = user.accountID ? { "accountID": user.accountID } : { "email": user.email };
+
           const update = await db.collection('Users').updateOne(
-            {
-                "accountID": user.accountID,
-            },
+            filter,
             {
                 $set: parameters
             }
           )
 
           if(update.acknowledged) {
-            const result = await db.collection('Users').findOne({"accountID": user.accountID});
+            const result = await db.collection('Users').findOne(filter);
 
             const key = `authenticate:${result.email}`
             const data = await module.exports.redis.get(key);

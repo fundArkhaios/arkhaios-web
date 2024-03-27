@@ -1,58 +1,96 @@
 const { client } = require('../plaid_configs');
 const db = require('../../util/db');
 const { forward, backward } = require('../aes');
-const plaidAccount = require('./get-account');
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
+//https://plaid.com/docs/api/processors/#processortokencreate
 module.exports = {
     route: '/api/plaid/generate-processor-token',
     authenticate: true,
+    //pre-condition: in the request body, I need the institution name that the user is connecting
+    //post-condition: if the generation is successful, return success message. Return error otherwise
     get: async function (req, res, user){
+        var response = "";
+
         //this takes the user's access token and decrypts it
-        var accessToken = await backward(user.plaidAccess);
-        //call the getaccount endpoint that i created to use internally. This refers to the get-account.js endpoint i wrote
-        //"Items" in this case refers to the objects stored within the user object in PLaid's database
-        //The other objects in here refer to the user's Plaid ID, bank account's connected, and personal info
-        //The full json object returned can be seen at https://plaid.com/docs/api/accounts/#accountsget
-        var userAccount = await plaidAccount.getAccount(user);
+        var inst_name = req.body.institution_name;
+        var accessToken = "";
 
-        //grab their account from Plaid
-        var user_id = userAccount.account_id;
+        try{
+            await db.connect(async (db) => {
+                //try to see if the user exists in the Users collection
+                let result = await db.collection('Users').findOne({accountID: user.accountID});
 
-        //create a request object. The information necessary is their Plaid ID, access token, and the payment
-        //processor that we are going to be using. This can be changed to dwolla, alpaca, or whatever processor
-        //plaid has a list of payment procecssor partners on their doc website
+                //User exists
+                if(result){
+                    //grab their access token from the Banks collection
+                    let temp = await db.collection('Banks').findOne({accountID: user.accountID}).access_tokens[inst_name];
+
+
+                    //decryption
+                    accessToken = await backward(temp);
+                }
+            });
+        }
+        catch(e){
+            SERVER_ERROR(res);
+            return res;
+        }
+
+        //access token is specific to institution
+        //account_id refers to their unique Plaid ID that we generated on registration
+        //processor is the payment processor
         var request = {
             access_token: accessToken,
-            account_id: user_id,
+            account_id: user.plaidID,
             processor: 'alpaca',
         }
 
         try{
             //call the processor token endpoint from Plaid with the request object
-            const response = await client.processorTokenCreate(request);
-            //encrypt the processor token. The response is an object of objects. 
-            //response.data refers to the data object that is returned. There are a couple of fields that we could
-            //look at, but the only one that we should concern ourselves with is .data
-            var encryptProcessorToken = await forward(response.data.processor_token);
+            const processResponse = await client.processorTokenCreate(request);
+
+            //encrypt the processor token
+            var encryptProcessorToken = await forward(processResponse.data.processor_token);
 
             //if there was a response, connect to the database and store the processor token for later use
-            if(response){
+            if(processResponse){
                 await db.connect(async (db) => {
-                    let results = await db.collection('Users').findOne(user);
+                    //check once again for the user in Users collection
+                    let results = await db.collection('Users').findOne({accountID: user.accountID});
 
                     if(results){
-                        await db.collection('Users').updateOne(user,
-                            {$push: {processor_token: encryptProcessorToken}});
+                        //store it within the Banks collection, alongside access tokens
+                        //we are storing it by institution name (similar to access token)
+                        await db.collection('Banks').updateOne(
+                            {"accountID": user.accountID},
+                            { $set: 
+                                {
+                                    processor_tokens: { [`${inst_name}`] : encryptProcessorToken }
+                                }
+                            },
+                            {
+                                upsert: true
+                            }
+                        );
+
+                        response = RESPONSE_TYPE.SUCCESS;
+
+                        res.status(201).json({status: response, message: "Processor token created", data: ""});
                     }
-                    else
-                        res.status(400).json({error: "Something went wrong with generating Processor Token"});
+                    else{
+                        SERVER_ERROR(res);
+                    }
                 });
+            }
+            else{
+                response = RESPONSE_TYPE.FAILED;
+                res.status(406).json({status: response, message: "Error generating processor token", data: processResponse.error_type});
             }
         }
         catch(e){
-            res.status(400).json({error: "Something went wrong with generating Processor Token"});
+            SERVER_ERROR(res);
+            return res;
         }
-
-        res.status(501).json({status: "Success generating the Processor Token"});
     }
 }

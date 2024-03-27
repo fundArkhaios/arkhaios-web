@@ -17,9 +17,7 @@ function verifyFields(data, email) {
         [data.country, "Country"],
         [data.first_name, "First name"],
         [data.last_name, "Last name"],
-        [data.dob_year, "Date of birth year"],
-        [data.dob_month, "Date of birth month"],
-        [data.dob_day, "Date of birth day"],
+        [data.dob, "Date of birth"],
         [data.ssn, "SSN"],
     ];
 
@@ -37,7 +35,7 @@ function verifyFields(data, email) {
     }
 
     const booleans = [ data.is_affiliated, data.is_control_person,
-                       data.is_pep, data.family_exposed];
+                       data.is_pep, data.is_family_exposed];
 
     for(const i in booleans) {
         if(booleans[i] === undefined) {
@@ -52,8 +50,12 @@ module.exports = {
     post: async function(req, res, user) {
         const error = verifyFields(req.body, user.email);
         if(error) {
-            res.status(422).json({error: error});
+            return res.status(422).json({status: RESPONSE_TYPE.FAILED, message: error});
         } else {
+            if(req.body.account_agreement != "on") {
+                return res.status(422).json({status: RESPONSE_TYPE.FAILED, message: "account agreement not accepted"});
+            }
+
             payload = {
                 enabled_assets: ["us_equity"],
                 "contact": {
@@ -70,7 +72,7 @@ module.exports = {
                     "given_name": req.body.first_name,
                     "middle_name": req.body.middle_name ,
                     "family_name": req.body.last_name,
-                    "date_of_birth": `${req.body.dob_year}-${req.body.dob_month}-${req.body.dob_day}`,
+                    "date_of_birth": req.body.dob,
                     "tax_id": req.body.ssn,
                     "tax_id_type": "USA_SSN",
                     "country_of_citizenship": "USA",
@@ -82,7 +84,7 @@ module.exports = {
                     "is_control_person": req.body.is_control_person,
                     "is_affiliated_exchange_or_finra": req.body.is_affiliated,
                     "is_politically_exposed": req.body.is_pep,
-                    "immediate_family_exposed": req.body.family_exposed,
+                    "immediate_family_exposed": req.body.is_family_exposed,
                 },
                 "agreements": [
                     {

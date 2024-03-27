@@ -1,14 +1,38 @@
 const { client } = require('../plaid_configs');
 const db = require('../../util/db');
 const { backward } = require('../aes');
+const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
+//https://plaid.com/docs/api/items/#item-remove-request-client-id
 module.exports = {
     route: '/api/plaid/remove-bank',
     authenticate: true,
+    //pre-condition: req body needs to contain the institution_name
+    //post-condition: 
     post: async function(req, res, user){
-        //grab decrypted access token from database
-        var accessToken = await backward(user.plaidAccess);
-        var error = "";
+        var response = "";
+
+        var accessToken = "";
+        var institution_name = req.institution_name;
+
+        //we need to connect to the database in order to retrieve and decrypt the access token
+        try{
+            await db.connect(async (db) => {
+                let results = await db.collection('Banks').findOne({accountID: user.accountID}).access_tokens[institution_name];
+
+                if(results)
+                    accessToken = await backward(results);
+                else
+                    accessToken = "error";
+            });
+        }
+        catch(e){
+            SERVER_ERROR(res);
+            return res;
+        }
+
+        if(accessToken == "error")
+            return res.status(406).json({status: RESPONSE_TYPE.FAILED, message: "access token was not retrieved", data: ""});
 
         //create request object, we only need an access token here. 
         const request = {
@@ -32,9 +56,9 @@ module.exports = {
         
         try{
             //call the Plaid endpoint for removing an item (should remove ALL of their accounts, not just one)
-            var response = await client.itemRemove(request);
+            var delResponse = await client.itemRemove(request);
 
-            if(!response)
+            if(!delResponse)
                 res.status(500).json({error: "Something went wrong"});
 
             //remove their access token from the database, it should be invalid
