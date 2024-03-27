@@ -1,7 +1,6 @@
 const { startConsumerForUserTopics, sendMessage } = require("../ws/messaging/messaging-service");
 const { getUserConversationIds, findOrCreateConversation } = require("../ws/messaging/utils");
 const { registerWebSocketForUser } = require("../ws/messaging/websocket-messaging");
-const { getUserConversationIds, findOrCreateConversation } = require("../ws/messaging/utils");
 const { getChatHistory } = require("../ws/messaging/chat-services");
 
 

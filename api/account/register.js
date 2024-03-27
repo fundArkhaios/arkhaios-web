@@ -110,8 +110,7 @@ module.exports = {
 
             if(response === RESPONSE_TYPE.SUCCESS) {
                 sendgrid.sendCode(email,
-                    "Your Verification Code",
-                    "{} is your verification code");
+                    "Your Verification Code");
                 
                 res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
                 res.cookie('username', username, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
