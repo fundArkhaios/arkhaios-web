@@ -62,10 +62,6 @@ export default function Page( {renderScreen} ) {
             <figure className="pointer-events-none bg-base-300 object-cover max-lg:hidden">
               <img src="/rectangle-logo.png" alt="Login" />
             </figure>
-
-            {renderVerification ? (
-              <VerificationScreen />
-            ) : (
               <form
                 id="signupForm"
                 onSubmit={register}
@@ -169,7 +165,6 @@ export default function Page( {renderScreen} ) {
                   </Link>
                 </div>
               </form>
-            )}
           </main>
         </div>
       </div>

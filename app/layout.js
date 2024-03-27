@@ -51,7 +51,7 @@ export default async function RootLayout({ children }) {
   } else if (user) {
     if (loginPaths.includes(path)) {
       redirect("/home");
-    } else if (!user.emailVerified && path !== "/verification") {
+    } else if (!user.emailVerified && path !== "/signup/verify") {
       redirect("/signup/verify");
     }
   }
