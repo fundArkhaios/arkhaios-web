@@ -16,7 +16,7 @@ module.exports = {
             // Issue an expiry time for 20 minutes from now
             const expiry = Date.now() + (1000 * 60 * 20);
 
-            const result = await db.updateUser(user, {
+            const result = await db.updateUser({ email: email }, {
                 verificationCode: key, verificationExpiry: expiry
             })
 
