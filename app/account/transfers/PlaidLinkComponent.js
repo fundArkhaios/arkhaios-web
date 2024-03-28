@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 import { useState, useEffect } from "react";
+import TransferModal from "./transferModal";
 
 export default function PlaidLinkComponent() {
   const [linkToken, setLinkToken] = useState();
@@ -80,10 +81,13 @@ export default function PlaidLinkComponent() {
       <div className="space-y-5">
         <div>
           <p className="py-2 text-xl text-light">Start a Transfer </p>
-          <btn className="btn btn-sm  font-light outline rounded-sm text-white">
+          <btn className="btn btn-sm  font-light outline rounded-sm text-white" onClick={() =>
+                      document.getElementById("transferModal").showModal()
+                    }>
             Money Transfer
             <ArrowsRightLeftIcon className="h-6 w-6" />
           </btn>
+          <TransferModal linkedAccounts={linkedAccounts}/>
         </div>
         <div className="space-y-2">
           <div className="flex flex-row space-x-4 pb-10">
