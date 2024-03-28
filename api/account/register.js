@@ -34,6 +34,8 @@ module.exports = {
             
             const { firstName, lastName, email, password } = req.body;
             
+            const hostname = req.hostname;
+
             let { hashed, salt, iter } = hash(password, '', 0); // Hash password with SHA256
             let username = generateUsername(); // Generate username Ex: Fast-Red-Elephant-281
             let accountID = generateAccountID(); // Generate a unique account ID
@@ -111,10 +113,9 @@ module.exports = {
             if(response === RESPONSE_TYPE.SUCCESS) {
                 sendgrid.sendCode(email,
                     "Your Verification Code");
-                
-                res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
-                res.cookie('username', username, { maxAge: sessionExpiry, httpOnly: true, sameSite: true});
-                res.cookie('email', email, {maxAge: sessionExpiry, httpOnly: true, sameSite: true});
+
+                res.cookie('email', email, { maxAge: sessionExpiry, httpOnly: true, sameSite: 'none', domain: hostname, secure: true});
+                res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true, sameSite: 'none', domain: hostname, secure: true});
 
                 res.status(201).json({ status: response, message: 'account created', data: {
                     session, username, email
@@ -128,7 +129,7 @@ module.exports = {
             }
         } catch (e) {
             logger.log({
-                level: 'error',
+                level: 'e   rror',
                 message: e
             })
 
