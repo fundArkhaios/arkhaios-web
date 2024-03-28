@@ -21,7 +21,8 @@ module.exports = {
     return getRedisClient();
   },
 
-  updateUser: async function(user, parameters) {
+  updateUser: async function(user, parameters, option) {
+    let dbOption = option || "$set";
     let success = false;
 
     try {
@@ -32,7 +33,7 @@ module.exports = {
           const update = await db.collection('Users').updateOne(
             filter,
             {
-                $set: parameters
+                [`${dbOption}`]: parameters
             }
           )
 

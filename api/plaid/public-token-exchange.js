@@ -1,5 +1,5 @@
 const { client } = require("../plaid_configs");
-const db = require("../../util/db");
+const database = require("../../util/db");
 const { forward } = require("../aes");
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
@@ -15,8 +15,11 @@ module.exports = {
     var response = "";
 
     //this exchanges the public token for an access token through Plaid
-    const public_token = req.public_token;
+    const public_token = req.body.public_token;
     const pubResponse = await client.itemPublicTokenExchange({public_token: public_token});
+
+    if(pubResponse.data.error_code)
+      return res.status(400).json({status: RESPONSE_TYPE.FAILED, message: "access token not generated", data: ""});
 
     //this encrypts the access token
     const access_token = await forward(pubResponse.data.access_token);
@@ -42,21 +45,17 @@ module.exports = {
 
     try{
       //connect to the database
-      await db.connect(async (db) => {
+      await database.connect(async (db) => {
         //see if the user exists in Users collection
         var result = await db.collection('Users').findOne({accountID: user.accountID});
 
         if(result){
           //store the bank account info in the Users collection considering it is not
           //particularly sensitive
-          await db.collection('Users').updateOne(
-            { "accountID": user.accountID },
-            { $push: 
-              {
-                bank_accounts: accountObject,
-              }
-            }
-          );
+
+          await database.updateUser(user, {
+            bank_accounts: accountObject,
+          }, "$push");
 
           //create a new collection called Banks if it doesnt exist already
           //store the access tokens and all sensitive information here in this collection

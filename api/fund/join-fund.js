@@ -39,6 +39,10 @@ module.exports = {
                     
                 } else error = 'invalid fund';
             } else if(type == 'response') {
+                if(!fund.portfolioManagers.contains(user.accountID)) {
+                    return res.status(401).json({ status: RESPONSE_TYPE.FAILED, message: 'unauthorized', data: {}});
+                }
+
                 const requester = req.body.requester;
                 const action = req.body.action;
 

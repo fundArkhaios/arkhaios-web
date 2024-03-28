@@ -7,13 +7,13 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 module.exports = {
     route: '/api/plaid/remove-bank',
     authenticate: true,
-    //pre-condition: req body needs to contain the institution_name
-    //post-condition: 
-    post: async function(req, res, user){
+    //pre-condition: institutionName needs to be passed in as a parameter
+    //post-condition: If success, return success message. If error, return message with data when applicable
+    post: async function(req, res, user, institutionName){
         var response = "";
 
         var accessToken = "";
-        var institution_name = req.institution_name;
+        var institution_name = institutionName;
 
         //we need to connect to the database in order to retrieve and decrypt the access token
         try{
@@ -58,24 +58,50 @@ module.exports = {
             //call the Plaid endpoint for removing an item (should remove ALL of their accounts, not just one)
             var delResponse = await client.itemRemove(request);
 
-            if(!delResponse)
-                res.status(500).json({error: "Something went wrong"});
+            if(delResponse.error)
+                return res.status(500).json({status: RESPONSE_TYPE.FAILED, message: "could not remove token from Plaid", data: delResponse.error});
 
             //remove their access token from the database, it should be invalid
             await db.connect(async (db) => {
-                let results = await db.collection('Users').findOne(user);
+                let results = await db.collection('Users').findOne({accountID: user.accountID});
 
                 if(results){
-                    await db.collection('Users').updateOne(user,
-                        {$unset: {"plaidAccess": ""}}
+                    //delete the bank account from the Users collection array we have
+                    await db.collection('Users').updateOne(
+                        { "accountID": user.accountID },
+                        { $pull: 
+                            {
+                                bank_accounts: 
+                                {
+                                    $in: [institution_name]
+                                }
+                            }
+                        }
                     );
+
+                    //Delete the access and processor tokens associated with that account
+                    await db.collection('Banks').updateOne(
+                        { "accountID" : user.accountID },
+                        { $pull:
+                            {
+                                access_tokens: {$in: [institution_name]},
+                                processor_tokens: {$in: [institution_name]}
+                            }
+                        }
+                    );
+
+                    response = RESPONSE_TYPE.SUCCESS;
+                }
+                else{
+                    SERVER_ERROR(res);
+                    return res;
                 }
             });
+
+            res.status(200).json({status: response, message: "account deleted successfully", data: ""});
         }
         catch(err){
-            error = err.toString();
+            SERVER_ERROR(res);
         }
-
-        res.status(200).json({flag: "Success! Bank Account deleted."});
     }
 }

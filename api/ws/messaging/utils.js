@@ -1,31 +1,41 @@
-const Kafka = require('node-rdkafka');
+require('dotenv').config();
+const { Kafka } = require('kafkajs');
+const { generateAuthToken } = require('aws-msk-iam-sasl-signer-js')
+const { fromEnv } = require("@aws-sdk/credential-providers");
+
+fromEnv();
+
+async function oauthBearerTokenProvider(region) {
+    const authTokenResponse = await generateAuthToken({ region })
+    return { value: authTokenResponse.token };
+}
 
 async function createKafkaTopic(topicName) {
-    const adminClient = Kafka.AdminClient.create({
-    'client.id': 'kafka-admin',
-    'metadata.broker.list': 'b-3.messenger.ggbw5c.c4.kafka.us-east-2.amazonaws.com:9098,b-1.messenger.ggbw5c.c4.kafka.us-east-2.amazonaws.com:9098,b-2.messenger.ggbw5c.c4.kafka.us-east-2.amazonaws.com:9098',
-    // Include other configurations as needed for your MSK setup
-    'security.protocol': 'SASL_SSL',
-    'sasl.mechanism': 'AWS_MSK_IAM',
-    'sasl.jaas.config': 'software.amazon.msk.auth.iam.IAMLoginModule required;',
-    // Add SSL properties if needed
-});
-
-
-    return new Promise((resolve, reject) => {
-        adminClient.createTopic({
-            topic: topicName,
-            num_partitions: 1,
-            replication_factor: 2
-        }, (err) => {
-            adminClient.disconnect();
-            if (err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        });
+    const kafka = new Kafka({
+        clientId: 'arkhaios-web',
+        brokers: ['b-1.messager.x6qzep.c6.kafka.us-east-2.amazonaws.com:9098','b-2.messager.x6qzep.c6.kafka.us-east-2.amazonaws.com:9098'],
+        ssl: true,
+        sasl: {
+        mechanism: 'oauthbearer',
+        oauthBearerProvider: () => oauthBearerTokenProvider('us-east-2')
+        }
     });
+
+    const admin = kafka.admin()
+
+    try {
+        await admin.connect();
+    
+        await admin.createTopics({
+            topics: {
+                topic: topicName,
+                numPartitions: 1,
+                replicationFactor: 2,
+            }
+        })
+
+        await admin.disconnect();
+    } catch(e) {}
 }
 
 async function getUserConversationIds(db, accountId) {

@@ -3,8 +3,6 @@ const { getUserConversationIds, findOrCreateConversation } = require("../ws/mess
 const { registerWebSocketForUser } = require("../ws/messaging/websocket-messaging");
 const { getChatHistory } = require("../ws/messaging/chat-services");
 
-
-
 module.exports = {
     route: '/message-handler',
     authenticate: true,
@@ -34,7 +32,7 @@ module.exports = {
                         const conversationTopics = await getUserConversationIds(db, userID);
                         //console.log(`Topics to subscribe for user ${userID}:`, conversationTopics);
                         const kafkaConsumer = await startConsumerForUserTopics(userID, conversationTopics);
-                        // No need to call subscribeToConversationTopics here as it's handled in startConsumerForUserTopics
+                        // No need to call subscribeToConversationT opics here as it's handled in startConsumerForUserTopics
                         ws.send(JSON.stringify({ type: 'openMessagesTabResponse', message: 'Subscribed to all conversation topics' }));
                     } catch (error) {
                         console.error(`Error in openMessagesTab:`, error);

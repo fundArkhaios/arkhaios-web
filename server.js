@@ -34,18 +34,18 @@ function route(server) {
         const user = await authenticate.login(req.cookies.email,
                                               req.cookies.session);
 
-        let forbidden = false;
+        let forbidden = true;
         let userValid = user ? true : false;
 
         if(path.kyc) { // Does the user need to be KYC verified?
-          if(!(user?.brokerageID)) forbidden = true;
+          if(user?.brokerageID) forbidden = false;
         } else if(userValid == path.authenticate) {
           if(path.authenticate) {
-            if(!path.unverified && !user.emailVerified) {
-              forbidden = true;
+            if(path.unverified || user.emailVerified) {
+              forbidden = false;
             }
-          }
-        } else if(userValid) forbidden = true;
+          } else forbidden = false;
+        }
 
         return [forbidden, user];
       }
