@@ -1,4 +1,4 @@
-const { logger } = require('./logger');
+const { logger } = require('../../util/logger');
 const alpaca = require('../external/alpaca/api');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 const db = require('../../util/db');
