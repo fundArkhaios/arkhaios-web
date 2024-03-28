@@ -7,13 +7,13 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 module.exports = {
     route: '/api/plaid/remove-bank',
     authenticate: true,
-    //pre-condition: req body needs to contain the institution_name
+    //pre-condition: institutionName needs to be passed in as a parameter
     //post-condition: If success, return success message. If error, return message with data when applicable
-    post: async function(req, res, user){
+    post: async function(req, res, user, institutionName){
         var response = "";
 
         var accessToken = "";
-        var institution_name = req.body.institution_name;
+        var institution_name = institutionName;
 
         //we need to connect to the database in order to retrieve and decrypt the access token
         try{
