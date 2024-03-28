@@ -18,6 +18,9 @@ module.exports = {
     const public_token = req.body.public_token;
     const pubResponse = await client.itemPublicTokenExchange({public_token: public_token});
 
+    if(pubResponse.data.error_code)
+      return res.status(400).json({status: RESPONSE_TYPE.FAILED, message: "access token not generated", data: ""});
+
     //this encrypts the access token
     const access_token = await forward(pubResponse.data.access_token);
 
