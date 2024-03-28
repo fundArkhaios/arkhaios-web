@@ -1,8 +1,22 @@
+import useFetch from "../../hooks/useFetch";
+import { useEffect, useState } from 'react'
 export default function DisplayProfile({ user }) {
+  const [ userData, setUserData ] = useState({});
+
+  const { responseJSON, isLoading, error } = useFetch(
+    "/api/account/trading"
+  );
+
+  useEffect(() => {
+    if(responseJSON) {
+      setUserData(responseJSON.data);
+    }
+  }, [isLoading]);
+
   const payload = {
-    balance: "511.91",
-    purchasing_power: "231.31",
-    transactions_made: "123",
+    balance: userData?.cash || "0",
+    purchasing_power: userData?.buying_power || "0",
+    daytrades_made: userData?.daytrade_count,
   };
 
   return (
@@ -16,8 +30,8 @@ export default function DisplayProfile({ user }) {
         <p className="text-5xl">{payload.purchasing_power}</p>
       </div>
       <div className = "justify-self-start">
-        <p>Transactions Made</p>
-        <p className="text-5xl">{payload.transactions_made}</p>
+        <p>Day Trade Count</p>
+        <p className="text-5xl">{payload.daytrades_made}</p>
       </div>
     </div>
   );
