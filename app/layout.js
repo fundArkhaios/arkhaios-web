@@ -13,12 +13,10 @@ export const metadata = {
   description: "Arkhaios",
 };
 
-import { useServerSideProps } from 'next/navigation';
-
 
 export default async function RootLayout({ children }) {
 
-  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home"];
+  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home", "/funds-home"];
 
   const path = headers().get("x-url");
   const cookieStore = cookies();
@@ -47,7 +45,7 @@ export default async function RootLayout({ children }) {
   var allowAuthenticated = false;
   if (!user && !loginPaths.includes(path)) {
     redirect("/login");
-  } else if (!user && path == '/root-home') {
+  } else if (!user && (path == '/root-home' || path == '/funds-home')) {
     
     // Do nothing.
   } else if (user) {
