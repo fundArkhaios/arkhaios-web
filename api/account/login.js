@@ -28,7 +28,7 @@ module.exports = {
             await db.connect(async (db) => {
                 try {
                     user = await db.collection('Users').
-                    findOne({ email: email, password: hash });
+                    findOne({ email: email });
 
                     if (user) {
                         let { hashed, salt, iter } = hash(password, user.salt, user.iter);
