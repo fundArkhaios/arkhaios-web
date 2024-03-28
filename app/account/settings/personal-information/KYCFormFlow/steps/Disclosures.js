@@ -7,7 +7,10 @@ export default function Disclosures() {
     const { name, value } = e.target;
 
     setUserData((prevState) => {
-      const newData = { ...prevState, [name]: value };
+      const newData = prevState;
+      newData[name] = value == "true" ? true : false;
+
+      console.log(newData);
       return newData;
     });
   };
@@ -15,7 +18,7 @@ export default function Disclosures() {
   // A helper function to convert the boolean to a string for the select value
   const getSelectValue = (key) => {
     const value = userData[key];
-    return value ? "true" : "false";
+    return value ? true : false;
   };
 
   return (
