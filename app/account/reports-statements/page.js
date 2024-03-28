@@ -7,7 +7,7 @@ import { useContext } from "react";
 
 export default function Page() {
 
-  const user = useContext(UserContext);
+  const { user } = useContext(UserContext);
 
   return (
     <div className = "py-5">

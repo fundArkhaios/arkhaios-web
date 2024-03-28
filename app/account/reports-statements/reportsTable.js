@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import RESPONSE_TYPE from "../../../api/response_type";
+import { RESPONSE_TYPE } from "../../../api/response_type";
 
 export default function ReportsTable() {
   const [retrievingError, setRetrievingError] = useState(false);
@@ -15,7 +15,7 @@ export default function ReportsTable() {
         setMappedDocuments(JSON.parse(sessionData));
       } else {
         // If not, fetch the data and then set it to the session
-        const response = await fetch("/api/get-documents", {
+        const response = await fetch("/api/account/get-documents", {
           method: "GET",
           mode: "cors",
           headers: {
@@ -24,12 +24,15 @@ export default function ReportsTable() {
         })
           .then((response) => response.json())
           .then((response) => {
+            console.log(response);
             const initialDocs = {};
-            if (response.status === RESPONSE_TYPE.SUCCESS) {
+            if (response.status == RESPONSE_TYPE.SUCCESS) {
+              console.log("yo");
               response.data.forEach((document) => {
                 initialDocs[document.id] = document;
               });
               sessionStorage.setItem("documents", JSON.stringify(initialDocs)); // Save to session storage
+              console.log("docs: " + response.data);
               setMappedDocuments(initialDocs);
             } else if (response.status === RESPONSE_TYPE.FAILED) {
               setRetrievingError(true);
@@ -76,7 +79,7 @@ export default function ReportsTable() {
           )
           .map(([id, document]) => (
             <a
-              href={`/api/document?id=${id}`}
+              href={`/api/account/document?id=${id}`}
               key={id}
               className="grid grid-cols-3 items-center p-3 py-2 rounded-md hover:bg-gray-300"
             >
