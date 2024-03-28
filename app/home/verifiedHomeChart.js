@@ -72,7 +72,9 @@ export default function VerifiedHomeChart({ user }) {
         body: JSON.stringify(historyPayload),
       }).then(async (response) => {
         const data = await response.json();
+        if (data.data.history) {
 
+        }
         setResponse(data.data.history);
         setChartData(await convertData(data.data.history.timestamp, data.data.history.equity));
         // setCurrentPrice(await data.data.history.equity[equity.length - 1]);
