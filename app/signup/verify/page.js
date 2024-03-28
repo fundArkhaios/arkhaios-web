@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Link from "next/link";
 
+import { RESPONSE_TYPE } from '../../../api/response_type';
 
 export default function Page() {
-
-
-
+  
+  
+const [isLoading, setIsLoading] = useState();
   const [verificationCode, setVerificationCode] = useState();
   const [verificationResponse, setVerificationResponse] = useState();
   const [verificationErrorMSG, setVerificationErrorMSG] = useState();
@@ -23,7 +25,7 @@ export default function Page() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        verificationCode: verificationCode,
+        verificationCode: document.getElementById("verificationCode").value,
       }),
     }).then(async (response) => {
       const data = await response.json();
@@ -31,13 +33,14 @@ export default function Page() {
       if (data.status == RESPONSE_TYPE.SUCCESS) {
         window.location.href = "/home";
       } else if (data.status == RESPONSE_TYPE.FAILED) {
-        verificationErrorMSG(true);
+        setVerificationErrorMSG(true);
       }
     });
     setIsLoading(false);
   }
 
   async function resendVerify() {
+    setVerificationErrorMSG(false);
     await fetch("/api/account/verify", {
       method: "POST",
       mode: "cors",
@@ -49,11 +52,57 @@ export default function Page() {
       }),
     }).then(async (response) => {
       const data = await response.json();
-      if (data.status == RESPONSE_TYPE.FAILED) {
+      if (data.status == RESPONSE_TYPE.SUCCESS) {
         setVerificationEmailSent(true);
       }
     });
   }
+
+  useEffect(() => {
+    let timer;
+    if (verificationEmailSent) {
+      timer = setTimeout(() => setVerificationEmailSent(false), 5000);
+    }
+
+    // Cleanup function
+    return () => clearTimeout(timer);
+  }, [verificationEmailSent]);
+
+  useEffect(() => {
+    let timer;
+    if (verificationErrorMSG) {
+      timer = setTimeout(() => setVerificationErrorMSG(false), 5000);
+    }
+
+    // Cleanup function
+    return () => clearTimeout(timer);
+  }, [verificationErrorMSG]);
+
+
+  const EmailSent = () => {
+    return (
+        <div className="toast toast-center rounded-sm pb-20">
+          <div className="alert alert-success">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Verification Email Sent</span>
+            <span></span>
+          </div>
+        </div>
+      );
+  }
+
 
   const VerificationError = () => {
     return (
@@ -72,7 +121,7 @@ export default function Page() {
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>Verification Erorr {verificationResponse}</span>
+          <span>Verification Error: {verificationResponse}</span>
           <span></span>
         </div>
       </div>
@@ -128,15 +177,16 @@ export default function Page() {
               )}
 
               <div className="label justify-end">
-                <Link href="/signup" className="link-hover link label-text-alt">
+                <div onClick={resendVerify} className="link-hover link label-text-alt">
                   Resend Verification Code
-                </Link>
+                </div>
               </div>
             </form>
           </main>
         </div>
       </div>
       {verificationErrorMSG ? <VerificationError /> : <></>}
+      {verificationEmailSent ? <EmailSent /> : <></>}
     </>
   );
 }

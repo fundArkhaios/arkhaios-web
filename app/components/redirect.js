@@ -7,17 +7,20 @@ export default function redirect({user}) {
     const router = useRouter();
     const path = usePathname();
 
-    if(!!user && !(path == '/login' || path == '/signup' || path == '/recovery')) {
-       useEffect(() => {
+    useEffect( () => {
+        if(!!user && !(path == '/login' || path == '/signup' || path == '/recovery')) {
             router.push("/");
-        }, []);
-    }
+        }
+    }, [])
+    
 
-    if (user && !user.emailVerified) {
-        useEffect(() => {
+    useEffect(() => {
+        if (user && !user.emailVerified && !(path == '/signup/verify')) {
+            console.log("Hello")
+            console.log("Counter " + console.count('Count'))
             router.push("/signup/verify");
-        }, []);
-    }
+        }
+    }, []);
 
     
     return (<></>);

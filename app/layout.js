@@ -4,7 +4,7 @@ import Redirect from "./components/redirect";
 import { redirect } from "next/navigation";
 import "./globals.css";
 import { GeistSans } from "geist/font/sans";
-
+import { NextResponse} from 'next/server';
 import Header from "./header";
 import { UserContextProvider } from "./UserContext";
 import SideBar from "./sidebar";
@@ -17,17 +17,18 @@ import { useServerSideProps } from 'next/navigation';
 
 
 export default async function RootLayout({ children }) {
-  const loginPaths = ["/", "/login", "/signup", "/recovery", "root-home"];
+
+  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home"];
 
   const path = headers().get("x-url");
   const cookieStore = cookies();
   const email = cookieStore.get("email")?.value;
   const session = cookieStore.get("session")?.value;
 
+
   var user = await authenticate.login(email, session);
   
   if (user) {
-  
     // Remove salt, iter, verificationCode, plaidID 
     const keysToFilter = ['salt', 'iter', 'verificationCode', 'plaidID'];
 
@@ -43,18 +44,27 @@ export default async function RootLayout({ children }) {
   
   console.log("Path: " + path);
   
-  
+  var allowAuthenticated = false;
   if (!user && !loginPaths.includes(path)) {
     redirect("/login");
-  } else if (!user && loginPaths.includes(path)) {
+  } else if (!user && path == '/root-home') {
+    
     // Do nothing.
   } else if (user) {
+    allowAuthenticated = true;
     if (loginPaths.includes(path)) {
       redirect("/home");
-    } else if (!user.emailVerified && path !== "/signup/verify") {
-      redirect("/signup/verify");
+    } else if (!user.emailVerified) {
+      allowAuthenticated = false;
+      if (path != "/verify") {
+        redirect("/signup/verify");
+      }
+      console.log("False Authenticated");
     }
   }
+
+  console.log("Authenticated?" + allowAuthenticated);
+
 
 
   const renderAuthenticatedContent = () => (
@@ -91,7 +101,7 @@ export default async function RootLayout({ children }) {
       ></link>
       <body className={GeistSans.className}>
         <Redirect authenticated={user} />
-        {user ? renderAuthenticatedContent() : renderUnauthenticatedContent()}
+        {allowAuthenticated ? renderAuthenticatedContent() : renderUnauthenticatedContent()}
       </body>
     </html>
   );

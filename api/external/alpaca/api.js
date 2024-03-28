@@ -53,26 +53,32 @@ async function patch(path, body) {
 }
   
 module.exports = {
+	// https://docs.alpaca.markets/reference/getallaccounts
 	get_accounts: async function() {
 		return get("/v1/accounts");
 	},
 
+	// https://docs.alpaca.markets/reference/createaccount
 	create_account: async function(payload) {
 		return post("/v1/accounts", payload);
 	},
 
+	// https://docs.alpaca.markets/reference/getassets-1
 	get_assets: async function() {
 		return get("/v1/assets?status=active");
 	},
 
+	// https://docs.alpaca.markets/reference/getassetbysymbolorid-1
 	get_asset: async function(id) {
 		return get("/v1/asset/" + id);
 	},
 
+	// https://docs.alpaca.markets/reference/getaccount
 	account_status: async function(id) {
 		return get("/v1/accounts/" + id);
 	},
 
+	// https://docs.alpaca.markets/reference/patchaccount-1
 	enable_crypto: async function(id, ip) {
 		data = {
 			"agreements": [
@@ -87,12 +93,13 @@ module.exports = {
 		return patch("/v1/accounts/" + id);
 	},
 
+	// https://docs.alpaca.markets/reference/createachrelationshipforaccount-1
 	create_ach_relationship: async function(id, data) {
 		return post("/v1/accounts/" + id + "/ach_relationships", data);
 	},
 
+	// https://docs.alpaca.markets/reference/createjournal-1
 	create_journal: async function(data) {
-		console.log(data);
 		const payload = {
 			to_account: data.to,
 			from_account: data.from,
@@ -100,35 +107,45 @@ module.exports = {
 			amount: data.amount,
 		};
 
-		console.log(payload);
-
 		return post("/v1/journals/", payload);
 	},
 
+	// https://docs.alpaca.markets/reference/getaccountachrelationships-1
 	get_ach_relationships: async function(id) {
 		return get("/v1/accounts/" + id + "/ach_relationships");
 	},
 
+	// https://docs.alpaca.markets/reference/createtransferforaccount-1
 	create_transfer: async function(id, data) {
 		return post("/v1/accounts/" + id + "/transfers", data);
 	},
 	
+	// https://docs.alpaca.markets/reference/gettransfersforaccount-1
 	get_transfers: async function(id) {
 		return get("/v1/accounts/" + id + "/transfers");
 	},
 
+	// https://docs.alpaca.markets/reference/createorderforaccount-1
 	create_order: async function(account, order) {
 		return post("/v1/trading/accounts/" + account + "/orders", order);
 	},
 
-	get_documents: async function(account) {
-		return post("/v1/acounts/" + account + "/documents", order);
-	},
-
+	// https://docs.alpaca.markets/reference/getallordersforaccount-1
 	get_orders: async function(account, status) {
 		return get("/v1/trading/accounts/" + account + "/orders?status=" + status);
 	},
 
+	// https://broker-api.alpaca.markets/v1/trading/accounts/{account_id}/orders/{order_id}
+	get_order: async function(account, order) {
+		return get("/v1/trading/accounts/" + account + "/orders/" + order);
+	},
+	
+	// https://docs.alpaca.markets/reference/deleteorderforaccount-1
+	cancel_order: async function(account, order) {
+		return get("/v1/trading/accounts/" + account + "/orders/" + order);
+	},
+
+	// https://docs.alpaca.markets/reference/getpositionsforaccount-1
 	get_positions: async function(account) {
 		return get("/v1/trading/accounts/" + account + "/positions");
 	},
@@ -138,22 +155,22 @@ module.exports = {
 		return get("/v1/trading/accounts/" + account + "/positions/" + symbol);
 	},
 
-	cancel_order: async function(account, order) {
-		return get("/v1/trading/accounts/" + account + "/orders/" + order);
-	},
-
+	// https://docs.alpaca.markets/reference/getdocsforaccount-1
 	get_documents: async function(account) {
 		return get("/v1/accounts/" + account + "/documents");
 	},
 
+	// https://docs.alpaca.markets/reference/downloaddocfromaccount-1
 	get_document: async function(account, document) {
 		return get("/v1/accounts/" + account + "/documents/" + document + "/download", { "response": "buffer"});
 	},
 
+	// https://docs.alpaca.markets/reference/get-v1-trading-accounts-account_id-account-portfolio-history-1
 	get_portfolio: async function(account, period, timeframe) {
 		return get(`/v1/trading/accounts/${account}/account/portfolio/history?period=${period}&timeframe=${timeframe}`);
 	},
 
+	// https://docs.alpaca.markets/reference/gettradingaccount-1
 	get_trading_details: async function(account) {
 		return get(`/v1/trading/accounts/${account}/account`);
 	}
