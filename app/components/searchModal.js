@@ -11,7 +11,7 @@ export default function SearchModal({ onClose }) {
   const [response, setResponse] = useState([{ id: "0" }]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
-  const debouncedValue = useDebounce(searchInput, 500);
+  const debouncedValue = useDebounce(searchInput, 400);
   const handleInputChange = (event) => {
     setSearchInput(event.target.value);
   };
@@ -21,8 +21,8 @@ export default function SearchModal({ onClose }) {
   );
 
   useEffect(() => {
-    if (responseJSON != null) {
-      setResponse(responseJSON.data);
+    if (responseJSON != null && responseJSON.data) {
+      setResponse(responseJSON.data || [{}]);
     }
   }, [isLoading, responseJSON]);
 
@@ -31,7 +31,7 @@ export default function SearchModal({ onClose }) {
     if (!searchInput) {
       return text;
     }
-    
+
     if (text) {
       const regex = new RegExp(`(${searchInput})`, "gi");
       const parts = text.split(regex);
@@ -46,23 +46,25 @@ export default function SearchModal({ onClose }) {
       )
     );
     }
-    
-    
   };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        setHighlightedIndex((prevIndex) =>
-          Math.min(prevIndex + 1, response.length - 1)
-        );
-      } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        setHighlightedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-      } else if (event.key === "Enter" && highlightedIndex >= 0) {
-        event.preventDefault();
-        handleSelectItem(response[highlightedIndex]);
+      // Only respond to key events when the modal is visible
+      const modal = document.getElementById("searchModal");
+      if (modal && modal.open) {
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          setHighlightedIndex((prevIndex) =>
+            Math.min(prevIndex + 1, response.length - 1)
+          );
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          setHighlightedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+        } else if (event.key === "Enter" && highlightedIndex >= 0) {
+          event.preventDefault();
+          handleSelectItem(response[highlightedIndex]);
+        }
       }
     };
 
@@ -112,6 +114,7 @@ export default function SearchModal({ onClose }) {
           placeholder="Search Stocks, Futures, Funds, Crypto"
           name="text"
           className="text-white searchInput px-10 interFont text-sm"
+          readOnly={!document.getElementById("searchModal")?.open}
           value={searchInput}
           autoComplete="off"
           onChange={handleInputChange}
@@ -139,7 +142,7 @@ export default function SearchModal({ onClose }) {
               <div
                 role="button"
                 onClick={() => handleSelectItem(asset)}
-                className="rounded-sm px-4 py-2 grid grid-cols-2 gap-x-2 cursor-pointer"
+                className="rounded-sm px-4 py-1 grid grid-cols-2 gap-x-2 cursor-pointer"
               >
                 <div className="">
                   <div className="flex flex-row"></div>
