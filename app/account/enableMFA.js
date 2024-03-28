@@ -73,7 +73,7 @@ export default function EnableMFA() {
             console.log(response);
             response.json().then(data => {
                 if(data.status == "success") {
-                    router.push('/account')
+                    router.push('/account/settings/security-privacy')
                 } else setError(data.message);
             });
         }).catch(error => {

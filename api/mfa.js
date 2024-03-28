@@ -3,7 +3,7 @@ const db = require('../util/db');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const aes = require('./aes.js');
-const RESPONSE_TYPE = require('./response_type.js');
+const { RESPONSE_TYPE } = require('./response_type.js');
 
 module.exports = {
   route: "/api/mfa",
@@ -29,12 +29,9 @@ module.exports = {
                                                 token: req.body.code});
 
             if(verified) {
-              await db.connect(async (db) => {
-                await db.collection('Users').updateOne(user,
-                                                        {$set: {"mfaVerified": req.body?.disable ? false : true}});
-              });
-              res.status(201).json({status: RESPONSE_TYPE.SUCCESS, message: "mfa enabled"});
+              await db.updateUser(user, {"mfaVerified": req.body?.disable ? false : true});
 
+              res.status(201).json({status: RESPONSE_TYPE.SUCCESS, message: "mfa enabled"});
             } else {
               res.status(201).json({status: RESPONSE_TYPE.ERROR, message: "Invalid code"});
             }
@@ -55,12 +52,10 @@ module.exports = {
           
           //we are going to store the secret key in the database for safety
           //try connecting to the database
-          await db.connect(async (db) => {
-            //then we need to store the encrypted keys in the data based, so update the user, maybe using cookies
-            //here we are checking to see if the user is logged into a valid session and updating the user's info
-            await db.collection('Users').updateOne(user,
-                                                    {$set: {"base32Secret": base32Encrypted, "qrCode": tokenEncrypted}});
-          })
+          
+          //then we need to store the encrypted keys in the data based, so update the user, maybe using cookies
+          //here we are checking to see if the user is logged into a valid session and updating the user's info
+          await db.updateUser(user, {"base32Secret": base32Encrypted, "qrCode": tokenEncrypted});
 
           // Retrieve QR code image and send to client
           qrcode.toDataURL(token, function(err, url) {
