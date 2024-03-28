@@ -14,19 +14,16 @@ import { useState, useEffect } from "react";
 
 export default function PlaidLinkComponent() {
   const [linkToken, setLinkToken] = useState();
+  const [linkedAccounts, setLinkedAccounts] = useState([]);
 
-  const linkedAccounts = [
-    {
-      key: "1",
-      accountName: "Wells Fargo Clear Access Banking",
-      type: "Checking",
-    },
-    {
-      key: "2",
-      accountName: "Bank of America Credit Card",
-      type: "Credit Card",
-    },
-  ];
+  function fetchBankAccounts() {
+    return fetch("/api/plaid/banks", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+  }
 
   async function transferPlaidLink(publicToken, metadata) {
     await fetch("/api/plaid/public-token-exchange", {
@@ -42,6 +39,11 @@ export default function PlaidLinkComponent() {
   }
 
   useEffect(() => {
+    fetchBankAccounts().then(async (response) => {
+      const data = await response.json();
+      setLinkedAccounts(data.data.banks.flat());
+    });
+
     async function generateLinkToken() {
       await fetch("/api/plaid/generate-link-token", {
         method: "GET",
@@ -100,8 +102,8 @@ export default function PlaidLinkComponent() {
               <div className="grid grid-cols-2 justify-items-start border p-2 text-white w-1/4">
                 <BuildingLibraryIcon className="h-10 w-10" />
                 <div className="">
-                  <p className="font-light "> {account.accountName}</p>
-                  <p className="font-thin"> {account.type}</p>
+                  <p className="font-light "> {account.institution_name} ({account.name})</p>
+                  <p className="font-thin"> {account.subtype} ({account.mask})</p>
                 </div>
               </div>
             </div>

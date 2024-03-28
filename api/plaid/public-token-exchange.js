@@ -1,5 +1,5 @@
 const { client } = require("../plaid_configs");
-const db = require("../../util/db");
+const database = require("../../util/db");
 const { forward } = require("../aes");
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
@@ -45,21 +45,17 @@ module.exports = {
 
     try{
       //connect to the database
-      await db.connect(async (db) => {
+      await database.connect(async (db) => {
         //see if the user exists in Users collection
         var result = await db.collection('Users').findOne({accountID: user.accountID});
 
         if(result){
           //store the bank account info in the Users collection considering it is not
           //particularly sensitive
-          await db.collection('Users').updateOne(
-            { "accountID": user.accountID },
-            { $push: 
-              {
-                bank_accounts: accountObject,
-              }
-            }
-          );
+
+          await database.updateUser(user, {
+            bank_accounts: accountObject,
+          }, "$push");
 
           //create a new collection called Banks if it doesnt exist already
           //store the access tokens and all sensitive information here in this collection
