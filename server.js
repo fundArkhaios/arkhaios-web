@@ -6,7 +6,6 @@ const express = require('express');
 const next = require('next');
 const url = require('url');
 
-
 const { logger } = require('./util/logger')
 
 const authenticate = require('./util/authenticate');
@@ -30,32 +29,43 @@ function route(server) {
 
     // Verify a route is defined
     if(path.route) {
+      const getUser = async (req) => {
+        // API may require authentication
+        const user = await authenticate.login(req.cookies.email,
+                                              req.cookies.session);
+
+        let forbidden = false;
+        let userValid = user ? true : false;
+
+        if(path.kyc) { // Does the user need to be KYC verified?
+          if(!(user?.brokerageID)) forbidden = true;
+        } else if(userValid == path.authenticate) {
+          if(path.authenticate) {
+            if(!path.unverified && !user.emailVerified) {
+              forbidden = true;
+            }
+          }
+        } else if(userValid) forbidden = true;
+
+        return [forbidden, user];
+      }
+
       const handler = (callback) => {
         return async function(req, res) {
           try {
-            // API may require authentication
-            const user = await authenticate.login(req.cookies.email,
-                                                  req.cookies.session);
-
-            let forbidden = false;
-            let userValid = user ? true : false;
-            
-            if(path.kyc) { // Does the user need to be KYC verified?
-              if(user?.brokerageID) callback(req, res, user);
-              else forbidden = true;
-            } else if(userValid == path.authenticate) {
-              if(path.authenticate) {
-                if(path.unverified || user.emailVerified) {
-                  callback(req, res, user);
-                } else forbidden = true;
-              } else callback(req, res);
-            } else forbidden = true;
+            const [forbidden, user] = await getUser(req);
 
             if(forbidden) {
               // Authentication failed, return error response
               res.setHeader('Content-Type', 'application/json');
               res.status(403);
               res.send(JSON.stringify({error: "forbidden"}));
+            } else {
+              if(user) {
+                callback(req, res, user);
+              } else {
+                callback(req, res);
+              }
             }
           } catch(e) {
             logger.log({
@@ -68,10 +78,22 @@ function route(server) {
           }
         };
       };
-      console.log("Path.get: " + path.get); 
-      console.log("Path.route: " + path.route);
+
       if(path.get) server.get(path.route, handler(path.get));
       if(path.post) server.post(path.route, handler(path.post));
+
+      if(path.websocket) {
+        server.ws(path.route, async function(ws, req) {
+          console.log(req);
+          console.log(req.cookies.email);
+          console.log(req.cookies.password);
+          const [forbidden, user] = await getUser(req);
+
+          if(user) {
+            return path.websocket(ws, req, user);
+          } else return path.websocket(ws, req);
+        });
+      }
     }
   }
 
@@ -94,11 +116,13 @@ function route(server) {
     walkDirectory(file);
   });
 }
+
 nextApp.prepare()
 .then(async () => {
   // await redis.connect();
 
   const server = express();
+  require('express-ws')(server)
 
   server.use(cookieParser());
   server.use(express.json());

@@ -4,7 +4,7 @@ import Redirect from "./components/redirect";
 import { redirect } from "next/navigation";
 import "./globals.css";
 import { GeistSans } from "geist/font/sans";
-
+import { NextResponse} from 'next/server';
 import Header from "./header";
 import { UserContextProvider } from "./UserContext";
 import SideBar from "./sidebar";
@@ -13,33 +13,57 @@ export const metadata = {
   description: "Arkhaios",
 };
 
-import { useServerSideProps } from 'next/navigation';
-
 
 export default async function RootLayout({ children }) {
-  const loginPaths = ["/", "/login", "/signup", "/recovery", "root-home"];
+
+  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home", "/funds-home"];
 
   const path = headers().get("x-url");
   const cookieStore = cookies();
   const email = cookieStore.get("email")?.value;
   const session = cookieStore.get("session")?.value;
 
-  const user = await authenticate.login(email, session);
+
+  var user = await authenticate.login(email, session);
+  
+  if (user) {
+    // Remove salt, iter, verificationCode, plaidID 
+    const keysToFilter = ['salt', 'iter', 'verificationCode', 'plaidID'];
+
+    // console.log("Before filter User: " + JSON.stringify(user));
+    user = Object.keys(user).reduce((newUser, key) => {
+      if (!keysToFilter.includes(key)) {
+        newUser[key] = user[key];
+      }
+      return newUser;
+    }, {});
+    // console.log("After Filter User: " + JSON.stringify(user))
+  }
   
   console.log("Path: " + path);
   
+  var allowAuthenticated = false;
   if (!user && !loginPaths.includes(path)) {
     redirect("/login");
-  } else if (!user && loginPaths.includes(path)) {
+  } else if (!user && (path == '/root-home' || path == '/funds-home')) {
+    
     // Do nothing.
   } else if (user) {
+    allowAuthenticated = true;
     if (loginPaths.includes(path)) {
       redirect("/home");
-    } else if (!user.emailVerified && path !== "/verification") {
-      // console.log("TRIGGERED");
-      // redirect("/");
+    } else if (!user.emailVerified) {
+      allowAuthenticated = false;
+      if (path != "/verify") {
+        redirect("/signup/verify");
+      }
+      console.log("False Authenticated");
     }
   }
+
+  console.log("Authenticated?" + allowAuthenticated);
+
+
 
   const renderAuthenticatedContent = () => (
     <UserContextProvider user={user}>
@@ -74,8 +98,8 @@ export default async function RootLayout({ children }) {
         href="/trimmedNoBackgroundHDArkhaiosLogo.ico"
       ></link>
       <body className={GeistSans.className}>
-        <Redirect authenticated={!!user} />
-        {user ? renderAuthenticatedContent() : renderUnauthenticatedContent()}
+        <Redirect authenticated={user} />
+        {allowAuthenticated ? renderAuthenticatedContent() : renderUnauthenticatedContent()}
       </body>
     </html>
   );

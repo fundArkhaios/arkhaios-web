@@ -17,8 +17,7 @@ module.exports = {
                     
                     if (result != null) {
                         sendgrid.sendCode(email,
-                            "Account Recovery",
-                            "{} is your recovery verification code");
+                            "Account Recovery");
 
                         res.status(200);
                         
