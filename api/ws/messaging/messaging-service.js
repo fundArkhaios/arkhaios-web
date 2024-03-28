@@ -15,7 +15,7 @@ async function oauthBearerTokenProvider(region) {
 
 const kafka = new Kafka({
     clientId: 'arkhaios-web',
-    brokers: ['b-1.messager.x6qzep.c6.kafka.us-east-2.amazonaws.com:9098','b-2.messager.x6qzep.c6.kafka.us-east-2.amazonaws.com:9098'],
+    brokers: ['b-1.messager.x6qzep.c6.kafka.us-east-2.amazonaws.com:9198','b-2.messager.x6qzep.c6.kafka.us-east-2.amazonaws.com:9198'],
     ssl: true,
     sasl: {
       mechanism: 'oauthbearer',
@@ -78,11 +78,13 @@ async function startConsumerForUserTopics(userId, topics) {
   return consumer;
 }
 
+/*
 const producer = kafka.producer();
 
 producer.connect().then(() => {
     console.log('Producer is ready');
 });
+*/
 
 // Ideally, above connect() sets some indicator so sendMessage() knows he can actually send
 
