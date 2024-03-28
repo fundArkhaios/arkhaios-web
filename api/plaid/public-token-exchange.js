@@ -15,7 +15,7 @@ module.exports = {
     var response = "";
 
     //this exchanges the public token for an access token through Plaid
-    const public_token = req.public_token;
+    const public_token = req.body.public_token;
     const pubResponse = await client.itemPublicTokenExchange({public_token: public_token});
 
     //this encrypts the access token
