@@ -22,7 +22,7 @@ module.exports = {
   },
 
   updateUser: async function(user, parameters, option) {
-    let dbOption = option || $set;
+    let dbOption = option || "$set";
     let success = false;
 
     try {
