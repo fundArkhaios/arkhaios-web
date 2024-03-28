@@ -74,6 +74,9 @@ module.exports = {
                             }
                         );
 
+                        const { alpacaResponse, alpacaStatus } = await alpaca.create_ach_relationship(user.brokerageID,
+                            { processor_token: processResponse.data.processor_token });
+
                         response = RESPONSE_TYPE.SUCCESS;
 
                         res.status(201).json({status: response, message: "Processor token created", data: ""});
