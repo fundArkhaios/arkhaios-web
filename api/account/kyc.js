@@ -97,6 +97,7 @@ module.exports = {
             };
 
             const { response, status } = await alpaca.create_account(payload);
+
             if(status == 200 && response.id) {
                 await db.updateUser(user, {
                     brokerageID: response.id,
@@ -105,7 +106,7 @@ module.exports = {
 
                 res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "kyc submitted successfully" });
             } else {
-                SERVER_ERROR(res)
+                res.status(500).json({ status: RESPONSE_TYPE.ERROR, message: 'error', data: response});
             }
         }
     }

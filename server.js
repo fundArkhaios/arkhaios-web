@@ -160,7 +160,7 @@ nextApp.prepare()
       return nextApp.render(req, res, '/funds-home', req.query);
     } else {
       // Render the root domain homepage
-      return nextApp.render(req, res, '/root-home', req.query);
+      return nextApp.render(req, res, '/', req.query);
     }
   });
 

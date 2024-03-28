@@ -1,65 +1,58 @@
 const { client } = require('../plaid_configs');
 const db = require('../../util/db');
+const alpaca = require('../external/alpaca/api');
 const { forward, backward } = require('../aes');
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
 //https://plaid.com/docs/api/processors/#processortokencreate
 module.exports = {
-    route: '/api/plaid/generate-processor-token',
-    authenticate: true,
     //pre-condition: in the request body, I need the institution name that the user is connecting
     //post-condition: if the generation is successful, return success message. Return error otherwise
-    get: async function (req, res, user){
+    generate: async function (db, user, account_id, inst_name) {
         var response = "";
 
         //this takes the user's access token and decrypts it
-        var inst_name = req.body.institution_name;
         var accessToken = "";
 
-        try{
-            await db.connect(async (db) => {
-                //try to see if the user exists in the Users collection
-                let result = await db.collection('Users').findOne({accountID: user.accountID});
+        try {
+            //try to see if the user exists in the Users collection
+            let result = await db.collection('Users').findOne({accountID: user.accountID});
 
-                //User exists
-                if(result){
-                    //grab their access token from the Banks collection
-                    let temp = await db.collection('Banks').findOne({accountID: user.accountID}).access_tokens[inst_name];
+            //User exists
+            if(result) {
+                //grab their access token from the Banks collection
+                let banks = await db.collection('Banks').findOne({accountID: user.accountID});
 
-
-                    //decryption
-                    accessToken = await backward(temp);
+                if(banks) {
+                    if(banks?.access_tokens[inst_name]) {
+                        //decryption
+                        accessToken = await backward(banks.access_tokens[inst_name]);
+                    }
                 }
-            });
-        }
-        catch(e){
-            SERVER_ERROR(res);
-            return res;
-        }
+            }
 
-        //access token is specific to institution
-        //account_id refers to their unique Plaid ID that we generated on registration
-        //processor is the payment processor
-        var request = {
-            access_token: accessToken,
-            account_id: user.plaidID,
-            processor: 'alpaca',
-        }
+            if(accessToken) {
+                //access token is specific to institution
+                //account_id refers to their unique Plaid ID that we generated on registration
+                //processor is the payment processor
+                var request = {
+                    access_token: accessToken,
+                    account_id: account_id,
+                    processor: 'alpaca',
+                }
 
-        try{
-            //call the processor token endpoint from Plaid with the request object
-            const processResponse = await client.processorTokenCreate(request);
+                //call the processor token endpoint from Plaid with the request object
+                const processResponse = await client.processorTokenCreate(request);
 
-            //encrypt the processor token
-            var encryptProcessorToken = await forward(processResponse.data.processor_token);
+                //encrypt the processor token
+                var encryptProcessorToken = await forward(processResponse.data.processor_token);
 
-            //if there was a response, connect to the database and store the processor token for later use
-            if(processResponse){
-                await db.connect(async (db) => {
+                //if there was a response, connect to the database and store the processor token for later use
+                if(processResponse) {
                     //check once again for the user in Users collection
                     let results = await db.collection('Users').findOne({accountID: user.accountID});
 
-                    if(results){
+                    if(results) {
                         //store it within the Banks collection, alongside access tokens
                         //we are storing it by institution name (similar to access token)
                         await db.collection('Banks').updateOne(
@@ -77,23 +70,30 @@ module.exports = {
                         const { alpacaResponse, alpacaStatus } = await alpaca.create_ach_relationship(user.brokerageID,
                             { processor_token: processResponse.data.processor_token });
 
+                        console.log(alpacaResponse);
+                        console.log(alpacaStatus);
+
                         response = RESPONSE_TYPE.SUCCESS;
 
-                        res.status(201).json({status: response, message: "Processor token created", data: ""});
+                        // TODO: Return some success, e.g.:
+                        // return RESPONSE_TYPE.SUCCESS;
+
+                        //res.status(201).json({status: response, message: "Processor token created", data: ""});
+                    } else{
+                        // TODO: Return some error 
+                        // SERVER_ERROR(res);
                     }
-                    else{
-                        SERVER_ERROR(res);
-                    }
-                });
-            }
-            else{
-                response = RESPONSE_TYPE.FAILED;
-                res.status(406).json({status: response, message: "Error generating processor token", data: processResponse.error_type});
+                }
+            } else {
+                // TODO: return some error
+                //response = RESPONSE_TYPE.FAILED;
+                //res.status(406).json({status: response, message: "Error generating processor token", data: processResponse.error_type});
             }
         }
-        catch(e){
-            SERVER_ERROR(res);
-            return res;
+        catch(e) {
+            console.log(e);
+            //SERVER_ERROR(res);
+            //return res;
         }
     }
 }

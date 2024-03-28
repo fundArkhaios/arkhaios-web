@@ -3,6 +3,8 @@ const database = require("../../util/db");
 const { forward } = require("../aes");
 const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 
+const processorToken = require('./generate-processor-token')
+
 //https://plaid.com/docs/api/tokens/#itempublic_tokenexchange
 module.exports = {
   route: "/api/plaid/public-token-exchange",
@@ -20,6 +22,8 @@ module.exports = {
 
     if(pubResponse.data.error_code)
       return res.status(400).json({status: RESPONSE_TYPE.FAILED, message: "access token not generated", data: ""});
+
+    console.log(pubResponse);
 
     //this encrypts the access token
     const access_token = await forward(pubResponse.data.access_token);
@@ -70,6 +74,8 @@ module.exports = {
               upsert: true 
             }
           )
+
+          await processorToken.generate(db, user, metadata.account_id, institution.name);
 
           response = RESPONSE_TYPE.SUCCESS;
 
