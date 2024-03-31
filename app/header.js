@@ -4,16 +4,31 @@ import { usePathname } from "next/navigation";
 import Search from "./components/search";
 import "./globals.css";
 import "./../output.css";
+import { useEffect, useState } from "react";
 
 export default function Header({ user }) {
   const pathname = usePathname();
+  const [ eventList, setEventList ] = useState([]);
 
-  const socket = new WebSocket("ws://localhost:3000/ws-demo");
+  useEffect(() => {
+    const events = new EventSource("https://compute.arkhaios.io/api/events", { withCredentials: true });
+    
+    events.onmessage = (event) => {
+      const message = event.data;
+      eventList.push(message);
+      setEventList(eventList);
+    };
 
-  socket.addEventListener("open", (event) => {
-    console.log("Opened socket");
-    socket.send("Hello");
-  });
+    return () => {
+      events.close();
+    }
+  }, []);
+  // const socket = new WebSocket("ws://localhost:3000/ws-demo");
+
+  // socket.addEventListener("open", (event) => {
+  //   console.log("Opened socket");
+  //   socket.send("Hello");
+  // });
 
   // let [theme, setTheme] = useState("dark");
 
@@ -101,7 +116,7 @@ export default function Header({ user }) {
     return (
       <Link
         href={path}
-        className={`w-20 h-9 ${textClass} ${fontClass} no-underline px-5`}
+        className={`w-20 ${textClass} ${fontClass} no-underline px-5`}
       >
         {text}
       </Link>
@@ -116,10 +131,9 @@ export default function Header({ user }) {
     
     <div className="flex justify-items-center bg-color-black">
       {/*  Left Side  */}
-      <div className="m-2 flex grow items-center px-10">
+      <div className="m-2 flex grow items-center pr-10">
+        {<img src="/noBackgroundArkhaiosLogo.png" width={50} height={70}/>}
         <div className = "josefinFont">{headerLink("/home", "ARKHAIOS")}</div>
-
-        {/*<img src="/noBackgroundArkhaiosLogo.png" width={50} height={70}/>*/}
       </div>
 
       {/*  Center  */}
@@ -140,26 +154,33 @@ export default function Header({ user }) {
           <button className="flex justify-center">
             <div className="dropdown dropdown-end dropdown-hover text-md">
             <div tabIndex={0} role="button">
-              {headerLink("/inbox", "INBOX")}
-            <div className="badge">+99</div>
+              <div className="flex items-center">  
+                {headerLink("/inbox", "INBOX")}
+                {
+                  eventList.length == 0 ? <></> : <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-3 h-3 p-0"></div>
+                }
+              </div>
             </div>
 
             <ul
               tabIndex={0}
               className="dropdown-content z-[50] menu p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <li className="flex flex-row items-center">
-                <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-4 h-4 p-0"></div>
-                <p>Order has been filled</p>
-              </li>
-              <li className="flex flex-row items-center">
-                <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-4 h-4 p-0"></div>
-                <p>New statement is available</p>
-              </li>
-              <li className="flex flex-row items-center">
-                <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-4 h-4 p-0"></div>
-                <p>Account action required</p>
-              </li>
+              {
+                eventList.length > 0 ?
+                eventList.map(event => {
+                  return (
+                  <li className="flex flex-row items-center w-full">
+                  <p className="w-full">{event} 
+                  <div className="bg-rose-500 hover:bg-rose-500 rounded-full w-3 h-3 p-0 absolute right-px mr-1"></div></p>
+                  </li>
+                  );
+                })
+                :
+                <li className="flex flex-row items-center">
+                <p className="w-full">No new messages</p>
+                </li>
+              }
             </ul>
           </div>
 
