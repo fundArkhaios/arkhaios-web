@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import Link from "next/link";
+import { NewspaperIcon } from "@heroicons/react/24/outline";
 
 export default function MarketNews() {
   const { isError, isLoading, responseJSON } = useFetch(
@@ -57,12 +58,18 @@ export default function MarketNews() {
                 </p>
               </div>
 
+              { article.image?.length ?
               <img
                 className="justify-self-end rounded-md border border-white"
                 src={article.image}
                 width={170}
                 height={100}
               ></img>
+              :
+              <div className="w-[170px] flex justify-center items-center h-[100px] justify-self-end rounded-md border border-white">
+                <NewspaperIcon className="w-8 h-8"/>
+              </div>
+              }
             </Link>
 
             <div className="divider"></div>

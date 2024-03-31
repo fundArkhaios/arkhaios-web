@@ -1,6 +1,6 @@
 const { RESPONSE_TYPE, SERVER_ERROR } = require("../response_type");
 
-async function get_News(symbol, startDate, endDate) {
+async function getNews(symbol, startDate, endDate) {
   const response = await fetch(
     "https://finnhub.io/api/v1/company-news?symbol=" +
       symbol +
@@ -23,7 +23,7 @@ module.exports = {
     let endDate = req.query.endDate;
     
     try {
-        const responseJSON = await get_News(symbol, startDate, endDate);
+        const responseJSON = await getNews(symbol, startDate, endDate);
         
         if (responseJSON && responseJSON.length > 0) {
             res.status(200).send({
