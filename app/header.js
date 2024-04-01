@@ -66,9 +66,12 @@ export default function Header({ user }) {
     const events = new EventSource("https://compute.arkhaios.io/api/events", { withCredentials: true });
 
     events.onmessage = (event) => {
-      const message = event.data;
+      try {
+        const message = JSON.parse(event.data);
 
-      setEventList((eventList) => [...eventList, message])
+        setUnread((unread) => unread + 1);
+        setEventList((eventList) => [message, ...eventList])
+      } catch(e) {}
     };
 
     return () => {
