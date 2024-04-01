@@ -14,7 +14,7 @@ module.exports = {
         try {
             await db.connect(async (db) => {
                 try {
-                    await db.collection('Notifications').updateOne({ _id: new ObjectId(req.body.id) }, { $set: { read: true } })
+                    await db.collection('Notifications').updateOne({ event_id: req.body.id }, { $set: { read: true } })
 
                     return res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "", data: {}});
                 } catch(e) {
