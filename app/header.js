@@ -223,7 +223,8 @@ export default function Header({ user }) {
                 >
                   {
                     eventList.length > 0 ?
-                      eventList.map(event => {
+                    (
+                      eventList.slice(0, 5).map(event => {
                         return (
                           <li className="flex flex-row items-center w-full" onClick={() => readNotification(event.id)}>
                             <p className="w-full">{event.message}
@@ -231,10 +232,20 @@ export default function Header({ user }) {
                           </li>
                         );
                       })
+                    )
                       :
                       <li className="flex flex-row items-center">
                         <p className="w-full">No new messages</p>
                       </li>
+                  }
+
+                  {
+                    eventList.length > 5 ? 
+                    
+                    <li className="flex flex-row items-center">
+                    <Link href={"/inbox"} className="bold text-center w-full">Read all notifications</Link>
+                    </li>
+                    : <></>
                   }
                 </ul>
               </div>
