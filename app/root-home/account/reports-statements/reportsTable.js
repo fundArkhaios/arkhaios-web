@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-
-import { RESPONSE_TYPE } from "../../../api/response_type";
+import { RESPONSE_TYPE } from "../../../../api/response_type";
 
 export default function ReportsTable() {
   const [retrievingError, setRetrievingError] = useState(false);

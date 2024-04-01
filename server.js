@@ -154,7 +154,7 @@ nextApp.prepare()
   route(server);
 
   // Custom route for the subdomain 'funds'
-  server.get('/', (req, res) => {
+  /* server.get('/', (req, res) => {s
     console.log("Wow: " + req.subdomains);
     if (req.subdomains.includes('funds')) {
       return nextApp.render(req, res, '/funds-home', req.query);
@@ -162,7 +162,7 @@ nextApp.prepare()
       // Render the root domain homepage
       return nextApp.render(req, res, '/', req.query);
     }
-  });
+  }); */
 
   server.get('*', async (req, res) => {
     const parsed = url.parse(req.url, true);

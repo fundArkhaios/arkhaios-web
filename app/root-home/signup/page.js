@@ -3,7 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { useState } from "react";
-import { RESPONSE_TYPE } from "../../api/response_type";
+import { RESPONSE_TYPE } from "../../../api/response_type";
+
 
 export default function Page( {renderScreen} ) {
   const [isLoading, setIsLoading] = useState();

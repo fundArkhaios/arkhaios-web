@@ -2,7 +2,7 @@ import { useKYCFlowContext } from "../KYCFlowContext";
 import { useContext } from "react";
 import "./../kycFlow.css";
 import UserContext from "../../../../../UserContext";
-import "../../../../../../output.css";
+import "../../../../../../../output.css";
 
 export default function Account() {
   const { userData, setUserData } = useKYCFlowContext();

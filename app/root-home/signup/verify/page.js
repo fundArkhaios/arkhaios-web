@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from "next/link";
 
-import { RESPONSE_TYPE } from '../../../api/response_type';
+import { RESPONSE_TYPE } from '../../../../api/response_type';
+
 
 export default function Page() {
   

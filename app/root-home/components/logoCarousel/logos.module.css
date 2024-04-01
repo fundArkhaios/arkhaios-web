@@ -1,0 +1,58 @@
+/* Logos.module.css */
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+.custom {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.custom div, .custom img {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+.logos {
+  overflow: hidden;
+  padding: 10px 0;
+  background: #F4F0ED;
+  white-space: nowrap;
+  position: relative;
+}
+
+.logos:before,
+.logos:after {
+  position: absolute;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  content: "";
+  z-index: 2;
+}
+
+.logos:before {
+  left: 0;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), #F4F0ED);
+}
+
+.logos:after {
+  right: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #F4F0ED);
+}
+
+.logosSlide {
+  display: flex;
+  animation: 40s slide infinite linear;
+}
+
+.logosSlide img {
+  height: 50px;
+  margin: 0 40px;
+}
+

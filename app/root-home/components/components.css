@@ -1,0 +1,35 @@
+.container-input {
+    position: relative;
+  }
+  
+.searchInput {
+    width: 400px;
+    padding: 10px 0px 10px 40px;
+    border-radius: 9999px;
+    outline-style: solid;
+    background-color: rgb(20, 20, 22);
+    outline: none;
+    /*outline-color: rgb(254 243 199);*/
+    opacity: 0.8;   
+}
+  
+  .container-input svg {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translate(0, -50%);
+  }
+  
+  .searchInput:focus {
+    outline: none;
+    /*outline-style: solid;*/
+    /*outline-color: rgb(254 243 199);*/
+    opacity: 1;
+  }
+
+
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }

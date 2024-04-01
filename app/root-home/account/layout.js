@@ -1,5 +1,5 @@
 import { cookies, headers } from 'next/headers';
-import authenticate from '../../util/authenticate';
+import authenticate from '../../../util/authenticate';
 import AccountHeader from './accountHeader';
 
 

@@ -1,0 +1,365 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;200;300;400;500;700&display=swap');
+
+
+/* html, body, div {
+  font-family: "Inter-Bold", "Inter", sans-serif;
+  font-style: normal;
+} */
+
+
+/* https://fonts.google.com/specimen/Josefin+Sans */
+.josefinFont {
+  font-family: 'Josefin Sans', sans-serif;
+  font-style: normal;
+}
+
+
+body {
+  background-color: #141416 !important;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+a:hover {
+	@apply no-underline;
+	text-decoration: none;
+}
+
+.animate {
+	transition: all 250ms;
+}
+
+.landing {
+	background-image: url('/bullvsBearPillar.jpg');
+	background-size: cover;
+  background-attachment: scroll;
+}
+
+.secondBackground {
+  background-image: url('/low-poly-grid-haikei.svg');
+	background-size: cover;
+  background-attachment: scroll;
+}
+
+.thirdBackground {
+  background-image: url('/lowpolygrid2.svg');
+	background-size: cover;
+  background-attachment: scroll;
+}
+
+.loginFlow {
+	background-image: url('/homePagePNG.png');
+	background-size: cover;
+}
+
+.loading {
+	@apply inline-block w-4 h-4 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]
+}
+
+input {
+	@apply block pl-0 p-3 pr-10 w-full text-sm text-gray-900 outline-none border-b-2 border-gray-300 focus:border-gray-500;
+}
+
+input:focus {
+	@apply outline-none;
+}
+
+
+
+.no-underline {
+	text-decoration: none;
+}
+
+
+/* Sliding thing */
+
+/* @font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v3/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa25L7W0Q5n-wU.woff2)
+    format("woff2");
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+ */
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  min-height: 90vh;
+
+}
+
+.body-darkmode {
+ background-color: #00193b;
+}
+
+
+  .interFont {
+    font-family: 'Inter-Bold', "Inter", sans-serif;
+  }
+
+
+.interBold {
+  font-family: "Inter-Bold", "Inter", sans-serif;
+  letter-spacing: -1px;
+}
+
+.slightlyBigger {
+	font-weight: 700;
+	font-family: "Inter-Bold", "Inter", sans-serif;
+	color: rgba(0, 0, 0, 0.9);
+	font-size: 40px;
+	letter-spacing: -1px;
+  }
+
+  .chartColor {
+		color: #bd19c8;
+  }
+
+
+
+/* Sliding thing */
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  min-height: 90vh;
+}
+
+section {
+  box-sizing: border-box;
+  width: 100%;
+  height: 90vh;
+  display: flex;
+  justify-content: flex-start;
+  overflow: hidden;
+  padding-right: 30px;
+  padding-left: 30px;
+}
+
+section:nth-child(2) {
+	background-image: url('/moneygoingtobullfrombear.png');
+	background-size: contain;
+	/* background: #48a5be; */
+  }
+  
+  
+  section:nth-child(3) {
+	background: #bd19c8;
+  }
+
+section span {
+  display: block;
+  transform: translateX(-100px);
+  opacity: 0;
+}
+
+.secondPage {
+	font-weight: 700;
+	font-family: "Inter-Bold", "Inter", sans-serif;
+	color: rgba(0, 0, 0, 0.9);
+	font-size: 64px;
+	letter-spacing: -4px;
+  }
+  
+
+
+.slightlyBigger {
+	font-weight: 700;
+	font-family: "Inter-Bold", "Inter", sans-serif;
+	color: rgba(0, 0, 0, 0.9);
+	font-size: 40px;
+	letter-spacing: -1px;
+  }
+
+.category {
+  font-weight: 700;
+	font-family: "Inter-Bold", "Inter", sans-serif;
+	color: rgba(0, 0, 0, 0.9);
+	font-size: 30px;
+	letter-spacing: -1px;
+}
+
+
+.mdSizeInter {
+	font-weight: 700;
+	font-family: "Inter-Bold", "Inter", sans-serif;
+	font-size: 15px;
+  }
+
+
+.mdSizeInterNoBold {
+  font-weight: 500;
+	font-family: "Inter", sans-serif;
+	font-size: 15px;
+}
+
+  .normalText {
+    font-weight: 700;
+    font-family: "Inter-Bold", "Inter", sans-serif;
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 14px;
+  }
+
+/* 
+  .normalDarkModeText {
+    font-weight: 700;
+    font-family: "Inter-Bold", "Inter", sans-serif;
+    color: rgba(255, 232, 232, 0.9);
+    font-size: 14px;
+  } */
+
+
+  .chartColor {
+	color: #bd19c8;
+  }
+
+.inputNames {
+    width: 110px;
+}
+
+.switcher {
+	display: flex;
+	align-items: center;
+	height: 30px;
+	margin-top: 8px;
+	color: #2196F3;
+}
+
+.switcher-item {
+	cursor: pointer;
+	text-decoration: none;
+	display: inline-block;
+	padding: 6px 8px;
+	font-size: 14px;
+	color: #262b3e;
+	background-color: transparent;
+	margin-right: 8px;
+	border: none;
+	border-radius: 4px;
+	outline: none;
+}
+
+.switcher-item:hover {
+	background-color: #f2f3f5;
+}
+
+.switcher-active-item {
+	text-decoration: none;
+	cursor: default;
+	color: #262b3e;
+}
+
+.switcher-active-item,
+.switcher-active-item:hover {
+	background-color: #e1eff9;
+}
+
+
+.title {
+  background-image: url(https://cdn.pixabay.com/photo/2017/07/03/20/17/abstract-2468874_960_720.jpg);
+  background-attachment: fixed;
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+}
+
+
+
+
+
+
+/* Input Field for Login | Signup | Recovery */
+
+.input-group {
+  position: relative;
+ }
+ 
+ .inputer {
+  border: solid 1.5px #9e9e9e;
+  border-radius: 1rem;
+  background: none;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #f5f5f5;
+  transition: border 150ms cubic-bezier(0.4,0,0.2,1);
+  font-family: 'Inter-Bold', "Inter", sans-serif;
+ }
+ 
+ .user-label {
+  position: absolute;
+  left: 15px;
+  color: #e8e8e8;
+  pointer-events: none;
+  transform: translateY(1rem);
+  transition: 150ms cubic-bezier(0.4,0,0.2,1);
+ }
+ 
+ .inputer:focus, inputer:valid {
+  outline: none;
+  border: 1.5px solid #1a73e8;
+ }
+ 
+ .inputer:focus ~ label, inputer:valid ~ label {
+  transform: translateY(-50%) scale(0.8);
+  background-color: rgb(24 24 27);
+  padding: 0 .2em;
+  color: #2196f3;
+ }
+ /* Input Boxes for Login | Signup | Recovery */
+
+
+ /* Button Loader */
+
+ .buttonLoader svg {
+  width: 3em;
+  transform-origin: center;
+  animation: rotate4 3s linear infinite;
+ }
+ 
+ .buttonLoader circle {
+  fill: none;
+  stroke: rgb(0, 211, 137);
+  stroke-width: 2.2;
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  animation: dash4 2s ease-in-out infinite;
+ }
+ 
+ @keyframes rotate4 {
+  100% {
+   transform: rotate(360deg);
+  }
+ }
+ 
+ @keyframes dash4 {
+  0% {
+   stroke-dasharray: 1, 200;
+   stroke-dashoffset: 0;
+  }
+ 
+  50% {
+   stroke-dasharray: 90, 200;
+   stroke-dashoffset: -35px;
+  }
+ 
+  100% {
+   stroke-dashoffset: -125px;
+  }
+ }
+
+ /* Button Loader */
+
+@layer components {
+  .btn:is(input[type="radio"]:checked) {
+    @apply bg-green-400;
+  }
+}

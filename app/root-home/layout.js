@@ -1,8 +1,8 @@
 import { cookies, headers } from "next/headers";
-import authenticate from "../util/authenticate";
-import Redirect from "./components/redirect";
+import authenticate from "../../util/authenticate";
+import Redirect from './components/redirect'
 import { redirect } from "next/navigation";
-import "./globals.css";
+import "../globals.css";
 import { GeistSans } from "geist/font/sans";
 import { NextResponse} from 'next/server';
 import Header from "./header";
@@ -43,7 +43,8 @@ export default async function RootLayout({ children }) {
   console.log("Path: " + path);
   
   var allowAuthenticated = false;
-  if (!user && !loginPaths.includes(path)) {
+  if (!user && !loginPaths.includes(path) && path) {
+    console.log("Layout.js Redirect!")
     redirect("/login");
   } else if (!user && (path == '/root-home' || path == '/funds-home')) {
     

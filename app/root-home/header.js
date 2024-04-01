@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Search from "./components/search";
+import Search from './components/search'
 import "./globals.css";
-import "./../output.css";
+import "./../../output.css";
 
 export default function Header({ user }) {
   const pathname = usePathname();
