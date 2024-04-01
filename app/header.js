@@ -63,7 +63,7 @@ export default function Header({ user }) {
       setEventList(json.data);
     });
 
-    const events = new EventSource("http://localhost:3030/api/events", { withCredentials: true });
+    const events = new EventSource("https://compute.arkhaios.io/api/events", { withCredentials: true });
 
     events.onmessage = (event) => {
       const message = event.data;
