@@ -15,10 +15,6 @@ export default function Page() {
         {" "}
         {user.kycVerified ? <PlaidLinkComponent /> : <></>}
       </div>
-      <div className="p-10">
-        {" "}
-        {user.plaidAccess ? <PlaidTransfer /> : <>No Bank Account</>}
-      </div>
     </div>
   );
 }

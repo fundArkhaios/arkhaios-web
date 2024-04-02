@@ -16,12 +16,22 @@ import TransferModal from "./transferModal";
 export default function PlaidLinkComponent() {
   const [linkToken, setLinkToken] = useState();
   const [linkedAccounts, setLinkedAccounts] = useState([]);
+  const [transfers, setTransfers] = useState([]);
 
   function fetchBankAccounts() {
     return fetch("/api/plaid/banks", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+      }
+    });
+  }
+
+  function fetchTransfers() {
+    return fetch("/api/account/get-transfers", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
       }
     });
   }
@@ -44,6 +54,11 @@ export default function PlaidLinkComponent() {
       const data = await response.json();
       setLinkedAccounts(data.data.banks.flat());
     });
+
+    fetchTransfers().then(async (response) => {
+      const data = await response.json();
+      setTransfers(data.data);
+    })
 
     async function generateLinkToken() {
       await fetch("/api/plaid/generate-link-token", {
@@ -91,27 +106,51 @@ export default function PlaidLinkComponent() {
           </btn>
           <TransferModal linkedAccounts={linkedAccounts}/>
         </div>
-        <div className="space-y-2">
-          <div className="flex flex-row space-x-4 pb-10">
-            <p className="text-xl">Linked Accounts</p>
-            <btn
-              className="cursor-pointer text-emerald-400 self-center hover:underline underline-offset-4"
-              onClick={open}
-            >
-              Add Account
-            </btn>
-          </div>
-          {linkedAccounts.map((account) => (
-            <div key={account.key} className="space-y-4">
-              <div className="grid grid-cols-2 justify-items-start border p-2 text-white w-1/4">
-                <BuildingLibraryIcon className="h-10 w-10" />
-                <div className="">
-                  <p className="font-light "> {account.institution_name} ({account.name})</p>
-                  <p className="font-thin"> {account.subtype} ({account.mask})</p>
+        <div className="grid grid-cols-3">
+          <div className="col-span-2 space-y-2">
+            <div className="flex flex-row space-x-4 pb-10">
+              <p className="text-xl">Linked Accounts</p>
+              <btn
+                className="cursor-pointer text-emerald-400 self-center hover:underline underline-offset-4"
+                onClick={open}
+              >
+                Add Account
+              </btn>
+            </div>
+            {
+            linkedAccounts?.length ?
+            linkedAccounts.map((account) => (
+              <div key={account.key} className="space-y-4">
+                <div className="grid grid-cols-2 justify-items-start border p-2 text-white w-1/2">
+                  <BuildingLibraryIcon className="h-10 w-10" />
+                  <div className="w-full">
+                    <p className="font-light text-right"> {account.institution_name} ({account.name})</p>
+                    <p className="font-thin text-right"> {account.subtype} ({account.mask})</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+            :
+            <p>No Bank Accounts...</p>
+          }
+          </div>
+
+          <div className="space-x-4 pb-10">
+            <p className="text-xl">Transfers</p>
+            {
+              transfers.map((transfer) => {
+                return (
+                  <div className="flex mb-2 flex-row items-center w-full">
+                    <span>
+                      <p className="text-lg">{transfer.direction == "INCOMING" ? "Deposit" : "Withdrawal"} of ${transfer.amount} {transfer.currency}</p>
+                      <p className="text-sm">Status: {transfer.status.slice(0, 1).toUpperCase()}{transfer.status.slice(1).toLowerCase().replace("_", " ")}</p>
+                      <p className="text-thin text-xs text-slate-300">{new Date(transfer.created_at).toLocaleString()}</p>
+                    </span>
+                  </div>
+                );
+              })
+            }
+          </div>
         </div>
       </div>
     </div>

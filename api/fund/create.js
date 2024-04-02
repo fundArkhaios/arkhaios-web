@@ -57,6 +57,8 @@ module.exports = {
 
                 data["outJournals"] = [];
 
+                let created = false;
+
                 await db.connect(async (db) => {
                     try {
                         let fund = await db.collection('FundPortfolios').findOne({"fundFounder": user.accountID});
@@ -64,7 +66,8 @@ module.exports = {
                             return res.status(200).json({status: RESPONSE_TYPE.FAILED, message: 'cannot create multiple funds', data: {}});
                         } else {
                             await db.collection('FundPortfolios').insertOne(data);
-                            res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'fund successfully created', data: {fundID: data["fundID"]}});
+
+                            created = true;
                         }
                     } catch(e) {
                         logger.log({
@@ -75,6 +78,11 @@ module.exports = {
                         res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
                     }
                 });
+
+                if(created) {
+                    await db.updateUser(user, { fundsManaging: data["fundID"] }, "$push");
+                    res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'fund successfully created', data: {fundID: data["fundID"]}});
+                }
             }
         } catch(e) {
             logger.log({

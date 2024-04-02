@@ -19,7 +19,8 @@ module.exports = {
 
                     let notifications = await db.collection('Notifications').find({ user: user.brokerageID }).sort(sorting).toArray();
                     for(let i in notifications) {
-                        result.push({id: notifications[i]._id, message: notifications[i].message, read: notifications[i].read });
+                        result.push({id: notifications[i].event_id, message: notifications[i].message,
+                            read: notifications[i].read, time: notifications[i].time });
                     }
 
                     return res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "", data: result});
