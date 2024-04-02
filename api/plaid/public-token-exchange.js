@@ -40,7 +40,7 @@ module.exports = {
       accountObject[i] = 
       {
         institution_name: institution.name,
-        institution_id : institution.id,
+        institution_id : institution.institution_id,
         name: accounts[i].name,
         mask: accounts[i].mask,
         subtype: accounts[i].subtype
@@ -58,7 +58,7 @@ module.exports = {
           //particularly sensitive
 
           await database.updateUser(user, {
-            bank_accounts: accountObject,
+            bank_accounts: {$each: accountObject},
           }, "$push");
 
           //create a new collection called Banks if it doesnt exist already
@@ -66,16 +66,14 @@ module.exports = {
           await db.collection('Banks').updateOne(
             { "accountID" : user.accountID },
             { $set: 
-              {
-                access_tokens: { [`${institution.name}`] : access_token }
-              }
+              { [`access_tokens.${institution.institution_id}`] : access_token }
             },
             { 
               upsert: true 
             }
           )
 
-          await processorToken.generate(db, user, metadata.account_id, institution.name);
+          await processorToken.generate(db, user, metadata.account_id, institution.institution_id);
 
           response = RESPONSE_TYPE.SUCCESS;
 

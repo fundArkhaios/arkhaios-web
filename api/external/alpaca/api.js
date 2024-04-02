@@ -36,20 +36,29 @@ async function post(path, body) {
 	return { response: data, status }
 }
 
-async function patch(path, body) {
-	const response = await fetch(endpoint + path, {
-		method: "PATCH",
-		body: JSON.stringify(body),
+
+async function http(path, method, body) {
+	let request = {
+		method: method,
 		headers: {
 			"Accept": "application/json",
 			"Authorization": "Basic " + btoa(process.env.KEY_ID + ":" + process.env.SECRET)
 		}
-	});
+	}
 
-	const status = response.status
+	if(body) request.body = body;
 
-	const data = await response.json();
-	return { response: data, status };
+	const response = await fetch(endpoint + path, request);
+
+	const status = response.status;
+	
+	let data = null;
+
+	try {
+		data = await response.json();
+	} catch(e) {}
+
+	return { response: data, status }
 }
   
 module.exports = {
@@ -90,12 +99,17 @@ module.exports = {
 			]
 		};
 
-		return patch("/v1/accounts/" + id);
+		return http("/v1/accounts/" + id, data, "PATCH");
 	},
 
 	// https://docs.alpaca.markets/reference/createachrelationshipforaccount-1
 	create_ach_relationship: async function(id, data) {
 		return post("/v1/accounts/" + id + "/ach_relationships", data);
+	},
+
+	// https://docs.alpaca.markets/reference/deleteachrelationshipfromaccount-1
+	delete_ach_relationship: async function(id, ach_id) {
+		return http("/v1/accounts/" + id + "/ach_relationships/" + ach_id, "DELETE");
 	},
 
 	// https://docs.alpaca.markets/reference/createjournal-1

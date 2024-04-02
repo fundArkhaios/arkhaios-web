@@ -8,7 +8,7 @@ const { RESPONSE_TYPE, SERVER_ERROR } = require('../response_type');
 module.exports = {
     //pre-condition: in the request body, I need the institution name that the user is connecting
     //post-condition: if the generation is successful, return success message. Return error otherwise
-    generate: async function (db, user, account_id, inst_name) {
+    generate: async function (db, user, account_id, inst_id) {
         var response = "";
 
         //this takes the user's access token and decrypts it
@@ -24,9 +24,9 @@ module.exports = {
                 let banks = await db.collection('Banks').findOne({accountID: user.accountID});
 
                 if(banks) {
-                    if(banks?.access_tokens[inst_name]) {
+                    if(banks?.access_tokens[inst_id]) {
                         //decryption
-                        accessToken = await backward(banks.access_tokens[inst_name]);
+                        accessToken = await backward(banks.access_tokens[inst_id]);
                     }
                 }
             }
@@ -58,20 +58,12 @@ module.exports = {
                         await db.collection('Banks').updateOne(
                             {"accountID": user.accountID},
                             { $set: 
-                                {
-                                    processor_tokens: { [`${inst_name}`] : encryptProcessorToken }
-                                }
+                                { [`processor_tokens.${inst_id}`] : encryptProcessorToken }
                             },
                             {
                                 upsert: true
                             }
                         );
-
-                        const { alpacaResponse, alpacaStatus } = await alpaca.create_ach_relationship(user.brokerageID,
-                            { processor_token: processResponse.data.processor_token });
-
-                        console.log(alpacaResponse);
-                        console.log(alpacaStatus);
 
                         response = RESPONSE_TYPE.SUCCESS;
 

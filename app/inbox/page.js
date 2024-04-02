@@ -62,7 +62,10 @@ export default function Page() {
                     return (
                     <button className="btn flex mb-2 flex-row items-center w-full" onClick={() => readNotification(event.id)}>
                         <div className={`${event.read ? "" : "bg-rose-500"} rounded-full w-3 h-3 p-0 left-px mr-1`}></div>
+                        <span>
                         <p className="text-lg">{event.message}</p>
+                        <p className="text-thin text-xs text-slate-300">{new Date(event.time).toLocaleString()}</p>
+                        </span>
                     </button>);
                 })}
             </div>
