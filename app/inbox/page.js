@@ -35,24 +35,31 @@ export default function Page() {
         }
     }
 
-    useEffect(async () => {
-        await fetch("/api/account/notifications", {
+    useEffect(() => {
+        let isMounted = true; // flag to check if component is still mounted
+      
+        const fetchData = async () => {
+          const response = await fetch("/api/account/notifications", {
             method: "GET",
             mode: "cors",
             headers: {
-                "Content-Type": "application/json",
+              "Content-Type": "application/json",
             }
-        }).then(async response => {
-            let json = await response.json();
-            let unread = 0;
-
-            for (let i = 0; i < json.data.length; ++i) {
-                if (!json.data[i].read) unread++;
-            }
-
+          });
+      
+          if (response.ok && isMounted) {
+            const json = await response.json();
             setEventList(json.data);
-        });
-    }, []);
+          }
+        };
+      
+        fetchData();
+      
+        // Cleanup function to set isMounted to false when component unmounts
+        return () => {
+          isMounted = false;
+        };
+      }, []);
 
     return (
         <main className = "py-6 px-10">
