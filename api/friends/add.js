@@ -6,9 +6,9 @@ module.exports = {
     route: "/api/friends/add",
     authenticate: true,
     post: async function(req, res, user) {
-        let { id } = req.body;
+        let { username } = req.body;
 
-        if (id == user.accountID) {
+        if (username == user.username) {
             res.status(200).json({status: RESPONSE_TYPE.FAILED, message: "cannot add self", data: {}})
             return;
         }
@@ -19,16 +19,17 @@ module.exports = {
                     const self = await db.collection('Friends').findOne({
                         accountID: user.accountID
                     });
-
-                    const target = await db.collection('Friends').findOne({
-                        accountID: id
+                    
+                    const targetFriend = await db.collection('Users').findOne({
+                        username: username
                     });
 
-                    const userExists = await db.collection('Users').findOne({
-                        accountID: id
-                    });
+                    if (targetFriend) {
+                        const id = targetFriend.accountID;
+                        const target = await db.collection('Friends').findOne({
+                            accountID: id
+                        });
 
-                    if (userExists) {
                         // Check if either user is in the other's blocked list
                         if (self?.blocked?.includes(id) || target?.blocked?.includes(user.accountID)) {
                             res.status(200).json({status: RESPONSE_TYPE.FAILED, message: "cannot add a blocked user", data: {}})
