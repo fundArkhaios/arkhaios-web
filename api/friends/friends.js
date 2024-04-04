@@ -53,6 +53,8 @@ module.exports = {
                                 if(receivedRequests[j] == users[i].accountID) {
                                     results.receivedRequests.push({
                                         username: users[i].username,
+                                        firstName: users[i].firstName,
+                                        lastName: users[i].lastName,
                                         id: users[i].accountID
                                     });
                                 }
@@ -62,6 +64,8 @@ module.exports = {
                                 if(sentRequests[j] == users[i].accountID) {
                                     results.sentRequests.push({
                                         username: users[i].username,
+                                        firstName: users[i].firstName,
+                                        lastName: users[i].lastName,
                                         id: users[i].accountID
                                     });
                                 }
@@ -71,6 +75,8 @@ module.exports = {
                                 if(friends[j] == users[i].accountID) {
                                     results.friends.push({
                                         username: users[i].username,
+                                        firstName: users[i].firstName,
+                                        lastName: users[i].lastName,
                                         id: users[i].accountID
                                     });
                                 }
@@ -80,6 +86,8 @@ module.exports = {
                                 if(blocked[j] == users[i].accountID) {
                                     results.blocked.push({
                                         username: users[i].username,
+                                        firstName: users[i].firstName,
+                                        lastName: users[i].lastName,
                                         id: users[i].accountID
                                     });
                                 }
