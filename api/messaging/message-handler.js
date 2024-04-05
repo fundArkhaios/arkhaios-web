@@ -82,8 +82,7 @@ module.exports = {
                 
                 case 'joinConversation':
                     try {
-                        const { userID1, userID2 } = parsedMessage.data;
-                        getChatHistory
+                        const { userID2 } = parsedMessage.data;
                         const chatHistory = await getChatHistory(db, userID1, userID2);
                         ws.send(JSON.stringify({ type: 'joinConversationResponse', data: chatHistory }));
                     } catch (error) {
