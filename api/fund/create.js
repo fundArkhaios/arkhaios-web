@@ -14,21 +14,28 @@ module.exports = {
         try {
             // Required parameters: name, description, disbursement period, disbursement type, public (y/n)
             // Valid disbursement periods and types can be seen within fund/exports.js
-            const { name, description, disbursementPeriod, disbursementType, public } = req.body;
+            const { name, symbol, description, disbursementPeriod, disbursementType, public } = req.body;
 
             if(name.length <= 2) {
                 res.status(401).json({status: RESPONSE_TYPE.ERROR, message: "Fund name must be at least 2 characters"});
             } else {
                 if(!disbursementPeriod || !fundPeriods.includes(disbursementPeriod)) {
-                    return res.status(401).json({status: RESPONSE_TYPE.ERROR, message: "Invalid fund disbursement period"});
+                    return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "Invalid fund disbursement period"});
                 } else if(!disbursementType || !fundType.includes(disbursementType)) {
-                    return res.status(401).json({status: RESPONSE_TYPE.ERROR, message: "Invalid fund disbursement type"});
+                    return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "Invalid fund disbursement type"});
+                } else if(public != true && public != false) {
+                    return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "Invalid visibility setting"});
+                } else if(!symbol || symbol?.length > 8 || symbol?.length < 2) {
+                    return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "Symbol limited to 2-8 characters"});
+                } else if(!(/^[A-Z]+$/).test(symbol)) {
+                    return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "Symbol limited to upper case characters"});
                 }
 
                 let data = {};
                 
                 data["fundName"] = name;
                 data["fundID"] = uuidv4();
+                data["fundSymbol"] = symbol;
                 data["fundDescription"] = description;
                 data["portfolioManagers"] = [user.accountID];
                 data["fundFounder"] = user.accountID;
@@ -56,6 +63,8 @@ module.exports = {
                 data["inJournals"] = [];
 
                 data["outJournals"] = [];
+
+                data["completedJournals"] = [];
 
                 let created = false;
 
