@@ -8,8 +8,7 @@ import {
   LineStyle,
 } from "lightweight-charts";
 
-import { BookMarkIcon} from "@heroicons/react/24/solid"
-import { BookMarkOutlineIcon} from "@heroicons/react/24/outline"
+import { BookmarkIcon } from "@heroicons/react/24/solid";
 
 export default function StockChart({ symbol }) {
   const chartContainerRef = useRef();
@@ -21,9 +20,37 @@ export default function StockChart({ symbol }) {
   });
   const [payload, setPayload] = useState({ range: "1mo", interval: "5m" });
 
-  const [stockBookMarked, setStockBookMarked] = useState();
-  
+  const [stockBookMarked, setStockBookMarked] = useState(false);
+
+  useEffect( () => {
+    console.log("hello");
+    async function getStockBookmark() {
+      try {
+        const response = await fetch("/api/account/watchlist?symbol=" + symbol, {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then(async response => {
+          console.log("hii")
+          const data = await response.json()
+          console.log(data)
+          if (data.message == "Bookmarked") {
+            setStockBookMarked(true);
+          } else {
+            setStockBookMarked(false);
+          }
+        })
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    getStockBookmark()
+  }, [])
+
   async function handleBookmark() {
+    setStockBookMarked(!stockBookMarked);
     try {
       const response = await fetch("/api/account/watchlist", {
         method: "POST",
@@ -35,10 +62,9 @@ export default function StockChart({ symbol }) {
           symbol,
         }),
       });
-
       const data = await response.json();
     } catch (error) {
-      console.error("Error handling bookmar request:", error);
+      console.error("Error handling bookmark request:", error);
     }
   }
 
@@ -291,7 +317,23 @@ export default function StockChart({ symbol }) {
 
   return (
     <>
-      <div>
+      <div className="flex self-center">
+        <button className="py-1" onClick={handleBookmark}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill={stockBookMarked ? "#fde047" : "none"}
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke={stockBookMarked ? "#fde047" : "currentColor"}
+            className="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+            />
+          </svg>
+        </button>
         <div className="text-5xl font-light text-white">
           {symbol.toUpperCase()}
         </div>
