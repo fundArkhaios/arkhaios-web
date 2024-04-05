@@ -6,7 +6,10 @@ import NotVerifiedAlert from "../../components/notVerifiedAlert.js";
 import DisplayProfile from "./displayProfile.js";
 
 export default function Page() {
+
   const { user } = useContext(UserContext);
+
+
     
   return (
     <div className = "py-5 grid">

@@ -12,7 +12,6 @@ export default async function Page({ params }) {
     <div className="pl-12 grid grid-cols-2 pt-12">
       <div className="justify-self-center max-w-5xl pl-10">
 
-        <div className = "text-5xl font-light text-white">{params.id.toUpperCase()}</div>
         <StockChart symbol={params.id} />
       </div>
       <div className="justify-self-end pr-10 max-w-2xl">
