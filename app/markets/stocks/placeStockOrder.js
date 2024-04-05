@@ -14,6 +14,7 @@ export default function PlaceStockOrder({ symbol }) {
   const [marketPrice, setMarketPrice] = useState();
   const [orderPlacedSuccess, setOrderPlacedSuccess] = useState();
   const [orderFailed, setOrderFailed] = useState();
+  const [failedMessage, setFailedMessage] = useState();
   const [symbolPrice, setSymbolPrice] = useState();
   const [loading, setLoading] = useState();
   const [side, setSide] = useState("buy");
@@ -35,7 +36,8 @@ export default function PlaceStockOrder({ symbol }) {
     event.preventDefault();
 
     const type = orderType === "Limit Order" ? "limit" : "market";
-    var transaction;
+
+    let transaction = ""
     if (buyIn == "Shares") {
       transaction = "shares";
     }
@@ -44,19 +46,13 @@ export default function PlaceStockOrder({ symbol }) {
       symbol: symbol,
       type: type,
       side: side, // use the side state directly
-      qty: shares, // assuming qty should be set to shares
-      transaction: transaction
+      qty: (buyIn == "Shares") ? shares : dollars, // assuming qty should be set to shares
+      transaction: (buyIn == "Shares") ? "shares" : "dollars"
     };
 
     // Add price only for limit orders
     if (type === "limit") {
       payload.price = limitPrice;
-    }
-
-    if (buyIn === "Shares") {
-      payload.transaction = "shares";
-    } else {
-      payload.notional = shares; // assuming notional should be set when 'Dollar' is selected
     }
 
     await fetch("/api/place-order", {
@@ -70,9 +66,13 @@ export default function PlaceStockOrder({ symbol }) {
       .then(async (response) => {
         const data = await response.json();
         if (data.status == "success") {
+          setFailedMessage("");
+          setOrderFailed(false);
           setOrderPlacedSuccess(true);
         } else {
           setOrderFailed(true);
+          setOrderPlacedSuccess(false);
+          setFailedMessage(data.message);
         }
         setLoading(false);
       })
@@ -358,9 +358,15 @@ export default function PlaceStockOrder({ symbol }) {
         </button>
 
         {orderFailed && (
+          <>
           <p className="text-red-500">
-            Failed to place order. Please try again.
+            Failed to place order: {failedMessage}
           </p>
+
+          <p className="text-red-500">
+            Please try again.
+          </p>
+          </>
         )}
       </div>
     </div>
