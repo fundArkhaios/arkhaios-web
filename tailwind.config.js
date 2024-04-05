@@ -2,7 +2,12 @@
 module.exports = {
   content: ["./app/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        // Custom two-column layout where the first column is 1/4 and the second is 3/4
+        'custom-two-col': '1fr 3fr',
+      },
+    },
   },
   daisyui: {
     themes: [
