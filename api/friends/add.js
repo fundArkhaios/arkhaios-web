@@ -29,10 +29,16 @@ module.exports = {
                         const target = await db.collection('Friends').findOne({
                             accountID: id
                         });
+                        
+                        // Check if either user is already befriended
+                        if (self?.friends?.includes(id)) {
+                            res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "user already befriended", data: {}})
+                            return;
+                        }
 
                         // Check if either user is in the other's blocked list
                         if (self?.blocked?.includes(id) || target?.blocked?.includes(user.accountID)) {
-                            res.status(200).json({status: RESPONSE_TYPE.FAILED, message: "cannot add a blocked user", data: {}})
+                            res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "cannot add a blocked user", data: {}})
                             return;
                         }
 

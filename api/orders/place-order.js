@@ -31,6 +31,11 @@ module.exports = {
 
                 return SERVER_ERROR(res);
             }
+            
+            if(data.type != "limit") {
+                return res.status(401).json({ status: RESPONSE_TYPE.FAILED,
+                    message: "funds may only place limit orders", data: {}});
+            }
         }
         
         if(!fundID || fundAuthorized) {

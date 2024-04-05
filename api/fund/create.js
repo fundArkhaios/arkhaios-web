@@ -49,9 +49,9 @@ module.exports = {
                 
                 data["dateCreated"] = Date.now();
 
-                data["availableBalance"] = 0;
+                data["availableBalance"] = "0";
 
-                data["withdrawableFunds"] = 0;
+                data["withdrawableFunds"] = "0";
 
                 data["inJournals"] = [];
 
