@@ -20,7 +20,7 @@ module.exports = {
 
                         results = results.map(result => {
                             return {
-                                symbol: result.fundName,
+                                symbol: result.fundSymbol,
                                 name: result.fundName,
                                 exchange: "FUNDS"
                             }

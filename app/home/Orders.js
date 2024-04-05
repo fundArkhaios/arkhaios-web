@@ -1,14 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { ColorType, createChart, CrosshairMode } from "lightweight-charts";
-import SmallDayChart from "./smallDayChart";
+import { useEffect, useState } from "react";
+
 export default function AssetView({ user }) {
   const [orders, setOrders] = useState([]);
-  
-
-  function changeToCrypto(symbol) {
-    return symbol.replace(/USD$/, '-usd').toLowerCase();
-  }
-
 
   useEffect(() => {
     async function getOrders() {
@@ -31,23 +24,6 @@ export default function AssetView({ user }) {
     getOrders();
   }, []);
 
-  // Dependencies should include anything that's used in this effect and can change.
-  // Function to format percentage
-  const formatPercentage = (value) => {
-    return `${(parseFloat(value) * 100).toFixed(2)}%`;
-  };
-
-  // Function to get the appropriate image URL for the symbol
-  // Might need this function later
-  /* const getImageUrl = (symbol, exchange) => {
-    if (exchange === "CRYPTO") {
-      const cryptoSymbol = symbol.replace("USD", "").toLowerCase();
-      return `https://assets.coincap.io/assets/icons/${cryptoSymbol}@2x.png`;
-    } else {
-      return `https://logos.stockanalysis.com/${symbol.toLowerCase()}.svg`;
-    }
-  };
- */
   return (
     <div className="rounded-sm max-w-5xl mx-auto backdrop-blur-xl">
       <div className="relative rounded-sm">
@@ -78,7 +54,7 @@ export default function AssetView({ user }) {
 
                 <div className="px-2 pl-2 pt-1 ">
                   <p className="text-right font-sm text-white">
-                    {order.order_type == "market" ? (`$${order.filled_avg_price}` || "Market Price") : `$${order.limit_price}`}
+                    {order.order_type == "market" ? (order.filled_avg_price ? `$${order.filled_avg_price}` : "Market Price") : `$${order.limit_price}`}
                   </p>
 
                   <p className="text-right text-xs text-slate-300">

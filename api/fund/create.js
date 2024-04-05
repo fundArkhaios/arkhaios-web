@@ -16,7 +16,7 @@ module.exports = {
             // Valid disbursement periods and types can be seen within fund/exports.js
             const { name, symbol, description, disbursementPeriod, disbursementType, public } = req.body;
 
-            if(name.length <= 2) {
+            if(name.length < 2) {
                 res.status(401).json({status: RESPONSE_TYPE.ERROR, message: "Fund name must be at least 2 characters"});
             } else {
                 if(!disbursementPeriod || !fundPeriods.includes(disbursementPeriod)) {
@@ -72,7 +72,7 @@ module.exports = {
                     try {
                         let fund = await db.collection('FundPortfolios').findOne({"fundFounder": user.accountID});
                         if(fund) {
-                            return res.status(200).json({status: RESPONSE_TYPE.FAILED, message: 'cannot create multiple funds', data: {}});
+                            return res.status(200).json({status: RESPONSE_TYPE.FAILED, message: 'Cannot create multiple funds', data: {}});
                         } else {
                             await db.collection('FundPortfolios').insertOne(data);
 
