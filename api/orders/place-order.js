@@ -80,7 +80,7 @@ module.exports = {
 
                 return SERVER_ERROR(res);
             }
-
+            
             const { response, status } = await alpaca.create_order(
                 !fundID ? user.brokerageID : process.env.FIRM_ACCOUNT, data);
       
@@ -110,7 +110,11 @@ module.exports = {
 
                 res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "", data: response});
             } else {
-                SERVER_ERROR(res)
+                if(response.message) {
+                    res.status(500).json({ status: RESPONSE_TYPE.ERROR, message: response.message, data: response});
+                } else {
+                    SERVER_ERROR(res)
+                }
             }
         }
     }
