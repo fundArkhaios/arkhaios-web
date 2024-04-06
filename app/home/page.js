@@ -35,7 +35,7 @@ export default function Page() {
             )}
           </div>
           <div className="justify-self-end pl-5 rounded-sm">
-            {!user.kycVerified ? <UnverifiedWatchlist/> : <UnverifiedWatchlist/>}
+            {user.kycVerified ? <Watchlist/> : <UnverifiedWatchlist/>}
           </div>
         </div>
       </main>
