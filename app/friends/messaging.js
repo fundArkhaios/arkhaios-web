@@ -4,7 +4,25 @@ import useFetch from "../hooks/useFetch";
 import "../components/components.css";
 import MessageChat from "./messageChat";
 
-export default function Messaging() {
+export default function Messaging( { websocket }) {
+
+  const [messages, setMessages] = useState([]);
+
+
+  useEffect(() => {
+    // Listen for messages
+    websocket.onmessage = (event) => {
+      const message = event.data;
+      setMessages((prevMessages) => [...prevMessages, message]);
+    };
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      websocket.onmessage = null;
+    };
+  }, [websocket]);
+
+
   const [friendsInfo, setFriendsInfo] = useState({
     receivedRequests: [],
     sentRequests: [],
@@ -82,8 +100,8 @@ export default function Messaging() {
       </div>
       <div className="w-full">
         <p>Messaging</p>
-        {userSelected && <MessageChat friendSelected={userSelected} />}
-        
+        {userSelected && <MessageChat friendSelected={userSelected} websocket={websocket} />}
+
       </div>
     </div>
   );
