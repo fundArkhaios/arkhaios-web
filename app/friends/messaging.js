@@ -6,10 +6,11 @@ import MessageChat from "./messageChat";
 
 export default function Messaging( { websocket }) {
 
+  const [socket, setSocker] = useState(websocket);
   const [messages, setMessages] = useState([]);
 
 
-  useEffect(() => {
+  /* useEffect(() => {
     // Listen for messages
     websocket.onmessage = (event) => {
       const message = event.data;
@@ -20,7 +21,7 @@ export default function Messaging( { websocket }) {
     return () => {
       websocket.onmessage = null;
     };
-  }, [websocket]);
+  }, [websocket]); */
 
 
   const [friendsInfo, setFriendsInfo] = useState({
@@ -100,7 +101,7 @@ export default function Messaging( { websocket }) {
       </div>
       <div className="w-full">
         <p>Messaging</p>
-        {userSelected && <MessageChat friendSelected={userSelected} websocket={websocket} />}
+        {userSelected && <MessageChat friendSelected={userSelected} websocket={socket} />}
 
       </div>
     </div>

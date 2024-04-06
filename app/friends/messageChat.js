@@ -38,7 +38,7 @@ export default function MessageChat({ friendSelected, websocket }) {
 
 
   // Function to send a message
-  const sendMessage = (message) => {
+  const sendMessage = () => {
     if (message) {
       websocket.send(JSON.stringify({
         type: 'sendMessage',
@@ -49,6 +49,7 @@ export default function MessageChat({ friendSelected, websocket }) {
         }
       })
     );
+      console.log("Message Sent")
       setMessage('');
     }
   };
