@@ -5,6 +5,7 @@ import {
   ColorType,
   createChart,
 } from "lightweight-charts";
+import response_type from "../../../api/response_type";
 
 export default function StockChart({ symbol }) {
   const chartContainerRef = useRef();
@@ -17,7 +18,7 @@ export default function StockChart({ symbol }) {
   const [payload, setPayload] = useState({ interval: "1d" });
 
   const { error, isLoading, responseJSON } = useFetch(
-    "localhost:3030/api/portfolio/" + payload.interval + "/" + symbol
+    "/api/fund/history?symbol=" + symbol + "&period=" + payload.interval
   );
 
   const [chartData, setChartData] = useState([
@@ -32,40 +33,47 @@ export default function StockChart({ symbol }) {
   async function processChartData(timestamps, closes) {
     let lastValidClose = closes[0] !== null ? closes[0] : 0; // Initialize with the first value or 0 if the first value is null
 
-    const response = (timestamps || []).map((timestamp, index) => {
+    let lastTime = 0;
+    const response = (timestamps || []).filter((timestamp) => {
+      if(timestamp != lastTime) {
+        lastTime = timestamp;
+        return true;
+      }
+
+      return false;
+    });
+    
+    return response.map((timestamp, index) => {
       if (closes[index] === null) {
         closes[index] = lastValidClose;
       } else {
         lastValidClose = closes[index];
       }
 
-      // Convert UNIX timestamp to a Date object, then to the required format
-      const date = new Date(timestamp * 1000);
-      const formattedDate = date.toISOString().split("T")[0]; // Example formatting, adjust if needed
+      const time = Math.floor(new Date(timestamp).getTime() / 1000);
+
       if (index == timestamps.length - 1) {
         setCurrentPrice(closes[index]);
       }
-      return { time: timestamp, value: closes[index] };
+      return { time: time, value: closes[index] };
     });
-
-    return response;
   }
 
   useEffect(() => {
     async function getChartData() {
-      if (responseJSON && !isLoading && responseJSON.data) {
+      if (responseJSON && !isLoading) {
         setChartLoaded(false);
         setChartData(
           await processChartData(
-            responseJSON.data.timestamps,
-            responseJSON.data.value
+            responseJSON.timestamps,
+            responseJSON.value
           )
         );
         setChartLoaded(true);
 
         const isPriceIncreasing =
-          responseJSON.data.closes[0] <=
-          responseJSON.data.closes[responseJSON.data.closes.length - 1];
+          responseJSON.value[0] <=
+          responseJSON.value[responseJSON.value.length - 1];
 
         setChartColor({
           topColor: !isPriceIncreasing
@@ -87,7 +95,7 @@ export default function StockChart({ symbol }) {
       height: 350,
       localization: {
         timeFormatter: (businessDayOrTimestamp) => {
-          const date = new Date(businessDayOrTimestamp * 1000);
+          const date = new Date(businessDayOrTimestamp);
           // When the range is 'max' show day, month, and year
           if (payload.range === "max") {
             return `${date.getUTCDate()}-${
@@ -129,7 +137,7 @@ export default function StockChart({ symbol }) {
         tickMarkFormatter: (() => {
           let lastDisplayedDay = null;
           return (time, tickMarkType, locale) => {
-            const date = new Date(time * 1000);
+            const date = new Date(time);
             const dayOfWeek = date.getUTCDay();
             const dayOfMonth = date.getDate();
             if (payload.range === "max") {
@@ -219,38 +227,26 @@ export default function StockChart({ symbol }) {
     "All Time": "max",
   };
   const handleRadioChange = (buttonRange) => {
-    console.log("buttonRange: " + buttonRange);
     let payloadRange;
-    let interval = "1D"; // Default interval
+    let interval = "1d"; // Default interval
 
     // Use the mapping to set the payload range and interval
     payloadRange = rangeMapping[buttonRange];
     switch (buttonRange) {
       case "1D":
-        interval = "1m";
+        interval = "1d";
         break;
       case "1W":
-        payloadRange = "5d";
-        interval = "5m";
+        interval = "1w";
         break;
       case "1M":
-        interval = "5m";
-        break;
-      case "6M":
-        interval = "1D";
-        break;
-      // Add more cases if there are more ranges with different intervals
-      case "All Time":
-        interval = "1d";
-        // Set the appropriate interval for "All Time" if needed
+        interval = "1m";
         break;
       default:
-        interval = "1D"; // Fallback interval if none of the above matches
+        interval = "1d"; // Fallback interval if none of the above matches
     }
 
     setPayload({ range: payloadRange, interval });
-    console.log("Payload: " + JSON.stringify(payload));
-    //setHistoryPayload({ ...historyPayload, range: payloadRange, interval });
   };
 
   return (
