@@ -2,6 +2,8 @@ require('dotenv').config()
 
 const cors = require('cors');
 const https = require('https');
+const http = require('http');
+const WebSocket = require('ws')
 const express = require('express');
 const next = require('next');
 const url = require('url');
@@ -84,14 +86,15 @@ function route(server) {
 
       if(path.websocket) {
         server.ws(path.route, async function(ws, req) {
-          console.log(req);
-          console.log(req.cookies.email);
-          console.log(req.cookies.password);
           const [forbidden, user] = await getUser(req);
 
-          if(user) {
-            return path.websocket(ws, req, user);
-          } else return path.websocket(ws, req);
+          try {
+            if(user) {
+              return path.websocket(ws, req, user);
+            } else return path.websocket(ws, req);
+          } catch(e) {
+            console.log(e);
+          }
         });
       }
     }
@@ -122,7 +125,6 @@ nextApp.prepare()
   // await redis.connect();
 
   const server = express();
-  require('express-ws')(server)
 
   server.use(cookieParser());
   server.use(express.json());
@@ -141,21 +143,81 @@ nextApp.prepare()
  */
   // Subdomain parsing middleware
   server.use((req, res, nextApp) => {
-    console.log('Full URL:', req.protocol + '://' + req.get('host') + req.originalUrl);
-    console.log('Subdomains:', req.subdomains)
     const host = req.headers.host;
     const hostParts = host.split('.');
     req.subdomains = hostParts.slice(0, -2); // Adjust depending on your TLD length
-    console.log('Subdomains:', req.subdomains)
     nextApp();
   });
 
+  // Check for the existence of the SSL certificate files
+  const keyPath = './certs/local.test.key';
+  const certPath = './certs/local.test.crt';
+
+  let httpServer;
+
+  // Instantiate https server or http server
+  if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+    const privateKey = fs.readFileSync(keyPath, 'utf8');
+    const certificate = fs.readFileSync(certPath, 'utf8');
+
+    const credentials = { key: privateKey, cert: certificate };
+
+    httpServer = https.createServer(credentials, server);
+  } else {
+    httpServer = http.createServer(server);
+  }
+
+  // Create new web socket server
+  const wss = new WebSocket.Server({ noServer: true })
+  const socketRoutes = {};
+
+  server.ws = function(route, callback) {
+    socketRoutes[route] = callback;
+  }
+
+  wss.on("connection", async function connection(ws, req) {
+    const { pathname } = url.parse(req.url, true);
+    const callback = socketRoutes[pathname];
+
+    // Manually parse cookies...
+    req.cookies = {};
+    req.headers.cookie?.split(';').forEach((cookie) => {
+      const keyval = cookie?.split('=');
+      req.cookies[keyval.shift().trim()] = decodeURIComponent(keyval.join('='));
+    });
+
+    if(callback) callback(ws, req);
+  });
+
+  const upgrade = function(req, socket, head) {
+    try {
+      const { pathname } = url.parse(req.url, true);
+
+      if(pathname !== '/_next/webpack-hmr') {
+        if(socketRoutes[pathname]) {
+          wss.handleUpgrade(req, socket, head, function done(ws) {
+            wss.emit('connection', ws, req);
+          });
+        }
+      } else {
+        nextApp.upgradeHandler(req, socket, head);
+      }
+    } catch(e) {}
+  }
+
+  const originalOn = httpServer.on.bind(httpServer);
+  httpServer.on = function(event, listener) {
+    if(event == 'upgrade') {
+      return originalOn(event, upgrade);
+    } else {
+      return originalOn(event, listener);
+    }
+  }
 
   route(server);
 
   // Custom route for the subdomain 'funds'
   server.get('/', (req, res) => {
-    console.log("Wow: " + req.subdomains);
     if (req.subdomains.includes('funds')) {
       return nextApp.render(req, res, '/funds-home', req.query);
     } else {
@@ -169,41 +231,16 @@ nextApp.prepare()
     await nextHandler(req, res);
   });
 
-  
+  // Fall back to HTTP if SSL certificate files are not found
+  httpServer.listen(port, (err) => {
+    if (err) throw err;
 
-  // Check for the existence of the SSL certificate files
-  const keyPath = './certs/local.test.key';
-  const certPath = './certs/local.test.crt';
-
-  if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
-    const privateKey = fs.readFileSync(keyPath, 'utf8');
-    const certificate = fs.readFileSync(certPath, 'utf8');
-
-    const credentials = { key: privateKey, cert: certificate };
-
-    https.createServer(credentials, server).listen(port, (err) => {
-      if (err) throw err;
-
-      if (dev) {
-        console.log(`Listening on https://localhost:${port}`);
-        
-        logger.add(new winston.transports.Console({
-          format: winston.format.simple()
-        }));
-      }
-    });
-  } else {
-    // Fall back to HTTP if SSL certificate files are not found
-    server.listen(port, (err) => {
-      if (err) throw err;
-
-      if (dev) {
-        console.log(`Listening on http://localhost:${port}`);
-        
-        logger.add(new winston.transports.Console({
-          format: winston.format.simple()
-        }));
-      }
-    });
-  }
+    if (dev) {
+      console.log(`Listening on http://localhost:${port}`);
+      
+      logger.add(new winston.transports.Console({
+        format: winston.format.simple()
+      }));
+    }
+  });
 });
