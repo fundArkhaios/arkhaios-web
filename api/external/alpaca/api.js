@@ -46,7 +46,7 @@ async function http(path, method, body) {
 		}
 	}
 
-	if(body) request.body = body;
+	if(body) request.body = JSON.stringify(body);
 
 	const response = await fetch(endpoint + path, request);
 
@@ -99,7 +99,7 @@ module.exports = {
 			]
 		};
 
-		return http("/v1/accounts/" + id, data, "PATCH");
+		return http("/v1/accounts/" + id, "PATCH", data);
 	},
 
 	// https://docs.alpaca.markets/reference/createachrelationshipforaccount-1
