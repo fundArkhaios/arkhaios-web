@@ -121,7 +121,7 @@ export default function MessageChat({ friendSelected, websocket }) {
 
   return (
     <div className="relative h-full">
-      <p>Message Chat History with {friendSelected.firstName}</p>
+      <p className = "border-b border-gray-600 font-bold px-2 py-2">{friendSelected.firstName + " " + friendSelected.lastName}</p>
       {/* Render the chat history */}
       <div  className="overflow-auto h-[33rem] snap-y">
         {chatHistory.map((msg) => (
@@ -166,10 +166,10 @@ export default function MessageChat({ friendSelected, websocket }) {
         ))}
         <div ref={chatEndRef}/>
       </div>
-      <div className="absolute inset-x-0 left-0 bottom-0 h-16 p-2 border-t-2 border-slate-500">
+      <div className="absolute inset-x-0 left-0 bottom-0 h-16 p-2 border-t border-gray-600">
         <form className="flex" onSubmit={handleSubmit}>
           <input
-            className="focus:outline-none w-11/12 px-1 text-white bg-[#121212]"
+            className="focus:outline-none w-11/12 px-1 text-white bg-[#101012]"
             placeholder="Send a message..."
             value={message}
             onChange={handleChange}
