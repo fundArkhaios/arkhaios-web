@@ -71,7 +71,7 @@ export default function MessageChat({ friendSelected, websocket }) {
     const handleMessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "receiveMessage" && friendSelected) {
-        setChatHistory((prevHistory) => [...prevHistory, {id: Math.random().toString(16).slice(2), senderId: data.senderId, message: data.message}]);
+        setChatHistory((prevHistory) => [...prevHistory, {id: Math.random().toString(16).slice(2), senderId: data.senderId, message: data.message, timestamp: data.timestamp}]);
       } else if (data.type === "") {
         
       }
