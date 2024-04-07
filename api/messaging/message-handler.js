@@ -100,7 +100,7 @@ module.exports = {
                                     sendMessage(conversationId, messageContent);
                                 } else {
                                     const receiverSocket = getUserWebSocket(receiverId);
-                                    receiverSocket?.send(JSON.stringify({ type: 'receiveMessage', sender: senderId, message: message })); 
+                                    receiverSocket?.send(JSON.stringify({ type: 'receiveMessage', senderId: senderId, message: message })); 
                                 }
                             
                                 // Respond to the WebSocket client
