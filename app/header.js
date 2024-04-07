@@ -229,7 +229,9 @@ export default function Header({ user }) {
                   {
                     eventList.length > 0 ?
                     (
-                      eventList.slice(0, 5).map(event => {
+                      eventList.filter(event => {
+                        return event.read == false;
+                      }).slice(0, 5).map(event => {
                         return (
                           <li className="flex flex-row items-center w-full" onClick={() => readNotification(event.id)}>
                             <p className="w-full">{event.message}

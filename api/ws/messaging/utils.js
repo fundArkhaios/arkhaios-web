@@ -99,18 +99,29 @@ async function createNewConversation(db, userIds) {
 }
 
 async function getExistingConversation(db, userIds) {
-    userIds.sort();
-    return await db.collection('Conversations').findOne({
-        users: { $all: userIds }
-    });
+    try {
+        userIds.sort();
+        return await db.collection('Conversations').findOne({
+            users: { $all: userIds }
+        });
+    } catch (e) {
+        console.error(e);
+    }
+    
 }
 
 async function findOrCreateConversation(db, userIds) {
+    console.log("db: " + db);
+    console.log('ids')
+    console.log(userIds);
     const existingConversation = await getExistingConversation(db, userIds);
+    console.log("Existing conversation: " + existingConversation)
+    console.log("existing convo: " + existingConversation);
     if (existingConversation) {
         return existingConversation._id;
     } else {
-        return await createNewConversation(db, userIds);
+        console.log("should be creating a new convo")
+        return createNewConversation(db, userIds);
     }
 }
 

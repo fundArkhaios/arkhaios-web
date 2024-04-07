@@ -13,6 +13,7 @@ import UnverifiedAssetView from "./unverifiedAssetView.js";
 import Watchlist from "./watchlist.js";
 import UnverifiedWatchlist from "./unverifiedWatchlist.js";
 import MarketNews from "./marketNews.js";
+import Orders from "./Orders.js";
 
 export default function Page() {
   const { user } = useContext(UserContext);
@@ -34,13 +35,16 @@ export default function Page() {
             )}
           </div>
           <div className="justify-self-end pl-5 rounded-sm">
-            {!user.kycVerified ? <UnverifiedWatchlist/> : <UnverifiedWatchlist/>}
+            {user.kycVerified ? <Watchlist/> : <UnverifiedWatchlist/>}
           </div>
         </div>
       </main>
       <main>
         <h1 className ="pl-10 pt-10 interBold text-3xl text-white">NEWS</h1>
-        <div><MarketNews/></div>
+        <div className="flex space-between">
+          <MarketNews/>
+          <Orders/>
+        </div>
       </main>
     </>
   );

@@ -5,7 +5,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
 
-export default function TransferModal({ linkedAccounts }) {
+export default function TransferModal({ linkedAccounts, setAlert }) {
   const [selectedBank, setSelectedBank] = useState(-1);
   const [transferAmount, setTransferAmount] = useState(null);
 
@@ -32,12 +32,28 @@ export default function TransferModal({ linkedAccounts }) {
       })
         .then(async (response) => {
           if (response.status === 200) {
+            document.getElementById("transferModal").close()
+            setAlert(["Transfer initiated", "success"]);
+            setTimeout(() => setAlert([]), 3000);
+
             window.location.reload();
+          } else {
+            document.getElementById("transferModal").close()
+            setAlert(["Transfer failed!", "error"]);
+            setTimeout(() => setAlert([]), 3000);
           }
         })
         .catch((error) => {
           console.log(error);
         });
+    } else {
+      if(selectedBank == -1) {
+        setAlert(["Select a bank!", "error"]);
+        setTimeout(() => setAlert([]), 3000);
+      } else if(!transferAmount) {
+        setAlert(["Specify an amount to transfer!", "error"]);
+        setTimeout(() => setAlert([]), 3000);
+      }
     }
   }
 
