@@ -30,9 +30,6 @@ export default function unverifiedHomeChart({ user }) {
 
   */
 
-
-
-
   function generateData(initialTimestamp, period, timeframe) {
     // Define the increments in milliseconds
     const increments = {
@@ -120,7 +117,6 @@ export default function unverifiedHomeChart({ user }) {
     const chart = createChart(chartContainerRef.current, {
       width: 600,
       height: 300,
-      autoSize: true,
       localization: {
         timeFormatter: (businessDayOrTimestamp) => {
           const date = new Date(businessDayOrTimestamp * 1000);
@@ -250,13 +246,6 @@ export default function unverifiedHomeChart({ user }) {
     chart.timeScale().fitContent();
 
     // chart.timeScale().lockVisibleTimeRangeOnResize = true;
-
-    // Make Chart Responsive with screen resize
-    new ResizeObserver(entries => {
-      if (entries.length === 0 || entries[0].target !== chartContainer) { return; }
-      const newRect = entries[0].contentRect;
-      chart.applyOptions({ height: newRect.height, width: newRect.width });
-    }).observe(document.getElementById("unverifiedChart"));
 
 
 
