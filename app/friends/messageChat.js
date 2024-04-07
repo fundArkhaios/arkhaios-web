@@ -42,6 +42,28 @@ export default function MessageChat({ friendSelected, websocket }) {
 
   const { user } = useContext(UserContext);
 
+  function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+    const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+    const dateTimeOptions = { day: 'numeric', month: 'short', year: 'numeric', ...timeOptions };
+  
+    // Check the difference in time between now and the timestamp
+    const timeDifference = now - date;
+  
+    // If the timestamp is within the last 24 hours
+    if (timeDifference < oneDayInMs && date.getDate() === now.getDate()) {
+      // Format as time only
+      return new Intl.DateTimeFormat('en-US', timeOptions).format(date);
+    } else {
+      // Format as date and time
+      return new Intl.DateTimeFormat('en-US', dateTimeOptions).format(date);
+    }
+  }
+
+
+
   useEffect(() => {
     if (!websocket) return; // Guard against undefined websocket
 
@@ -50,6 +72,8 @@ export default function MessageChat({ friendSelected, websocket }) {
       const data = JSON.parse(event.data);
       if (data.type === "receiveMessage" && friendSelected) {
         setChatHistory((prevHistory) => [...prevHistory, {id: Math.random().toString(16).slice(2), senderId: data.senderId, message: data.message}]);
+      } else if (data.type === "") {
+        
       }
     };
 
@@ -66,6 +90,7 @@ export default function MessageChat({ friendSelected, websocket }) {
 
   // Function to send a message
   const sendMessage = () => {
+    const date = new Date();
     if (message) {
       websocket.send(
         JSON.stringify({
@@ -77,7 +102,7 @@ export default function MessageChat({ friendSelected, websocket }) {
           },
         })
       );
-      setChatHistory((prevHistory) => [...prevHistory, {id: Math.random().toString(16).slice(2), senderId: user.accountID, receiverId: friendSelected.id, message: message}]);
+      setChatHistory((prevHistory) => [...prevHistory, {id: Math.random().toString(16).slice(2), senderId: user.accountID, receiverId: friendSelected.id, timestamp: date.toISOString(), message: message}]);
       console.log("Message Sent");
       setMessage("");
     }
@@ -107,16 +132,16 @@ export default function MessageChat({ friendSelected, websocket }) {
                   <div className="w-10 rounded-full">
                     <img
                       alt="Tailwind CSS chat bubble component"
-                      src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                      src="https://img.freepik.com/free-photo/handsome-bearded-guy-posing-against-white-wall_273609-20597.jpg?size=626&ext=jpg&ga=GA1.1.1700460183.1712361600&semt=sph"
                     />
                   </div>
                 </div>
                 <div className="chat-header">
                   You
-                  <time className="text-xs opacity-50">12:46</time>
+                  <time className="text-xs opacity-50 px-1">{formatTimestamp(msg.timestamp)}</time>
                 </div>
                 <div className="chat-bubble">{msg.message}</div>
-                <div className="chat-footer opacity-50">Seen at 12:46</div>
+                <div className="chat-footer opacity-50">Delivered</div>
               </div>
             ) : (
               <div className="chat chat-start px-2">
@@ -130,10 +155,9 @@ export default function MessageChat({ friendSelected, websocket }) {
                 </div>
                 <div className="chat-header">
                   {friendSelected.firstName}
-                  <time className="text-xs opacity-50">12:45</time>
+                  <time className="text-xs opacity-50 px-1">{formatTimestamp(msg.timestamp)}</time>
                 </div>
                 <div className="chat-bubble">{msg.message}</div>
-                <div className="chat-footer opacity-50">Delivered</div>
               </div>
             )}
           </div>
