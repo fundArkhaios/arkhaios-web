@@ -8,9 +8,23 @@ import Messaging from "./messaging";
 export default function Page() {
 
 
-  const [websocket, setWebsocket] = useState(new WebSocket("wss://local.test:3000/message-handler"));
+  const [websocket, setWebsocket] = useState();
+
+  useEffect(() => {
+    // Initialize the websocket connection here
+    const ws = new WebSocket("wss://local.test:3000/message-handler");
+    setWebsocket(ws); // Store the websocket instance in state
+
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, []);
 
 
+
+  
   return (
     <div className="flex p-10">
       <Messaging websocket={websocket}/>

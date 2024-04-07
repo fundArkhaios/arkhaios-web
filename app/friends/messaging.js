@@ -6,7 +6,7 @@ import MessageChat from "./messageChat";
 
 export default function Messaging( { websocket }) {
 
-  const [socket, setSocker] = useState(websocket);
+  
   const [messages, setMessages] = useState([]);
 
 
@@ -101,7 +101,7 @@ export default function Messaging( { websocket }) {
       </div>
       <div className="w-full">
         <p>Messaging</p>
-        {userSelected && <MessageChat friendSelected={userSelected} websocket={socket} />}
+        {userSelected && <MessageChat friendSelected={userSelected} websocket={websocket} />}
 
       </div>
     </div>

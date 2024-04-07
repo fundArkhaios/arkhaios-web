@@ -1,15 +1,17 @@
-'use client'
-import { useEffect, useState, useContext } from 'react';
+"use client";
+import { useEffect, useState, useContext } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
-import UserContext from '../UserContext';
+import UserContext from "../UserContext";
 export default function MessageChat({ friendSelected, websocket }) {
-
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
 
+  if (websocket.readyState !== WebSocket.OPEN) {
+    console.error("WebSocket is not open. readyState:", websocket.readyState);
+    // return;
+  }
 
   const { user } = useContext(UserContext);
-
 
   useEffect(() => {
     if (!websocket) return; // Guard against undefined websocket
@@ -17,40 +19,39 @@ export default function MessageChat({ friendSelected, websocket }) {
     // Listen for incoming messages
     const handleMessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === 'joinConversationResponse' && friendSelected) {
+      if (data.type === "joinConversationResponse" && friendSelected) {
         setChatHistory(data.data);
-      } else if (data.type === 'sendMessageResponse' && friendSelected) {
+      } else if (data.type === "sendMessageResponse" && friendSelected) {
         setChatHistory((prevHistory) => [...prevHistory, data.message]);
       }
     };
 
     // Add the event listener
-    websocket.addEventListener('message', handleMessage);
+    websocket.addEventListener("message", handleMessage);
 
     // Clean up the listener when the component unmounts
     return () => {
       if (websocket) {
-        websocket.removeEventListener('message', handleMessage);
+        websocket.removeEventListener("message", handleMessage);
       }
     };
   }, [websocket, friendSelected]);
 
-
-
   // Function to send a message
   const sendMessage = () => {
     if (message) {
-      websocket.send(JSON.stringify({
-        type: 'sendMessage',
-        data: {
-          senderId: user.accountID,
-          receiverId: friendSelected.id,
-          message: message
-        }
-      })
-    );
-      console.log("Message Sent")
-      setMessage('');
+      websocket.send(
+        JSON.stringify({
+          type: "sendMessage",
+          data: {
+            senderId: user.accountID,
+            receiverId: friendSelected.id,
+            message: message,
+          },
+        })
+      );
+      console.log("Message Sent");
+      setMessage("");
     }
   };
 
@@ -64,7 +65,6 @@ export default function MessageChat({ friendSelected, websocket }) {
     e.preventDefault();
     sendMessage();
   };
-  
 
   return (
     <div className="relative h-full">
@@ -72,13 +72,48 @@ export default function MessageChat({ friendSelected, websocket }) {
       {/* Render the chat history */}
       <div className="chat-history">
         {chatHistory.map((msg, index) => (
-          <div key={index}>{msg.senderId === user.accountID ? 'You' : friendSelected.firstName}: {msg.message}</div>
+          <div key={index}>
+            {msg.senderId === user.accountID ? "You" : friendSelected.firstName}
+            : {msg.message}
+          </div>
         ))}
+        <div className="chat chat-start">
+          <div className="chat-image avatar">
+            <div className="w-10 rounded-full">
+              <img
+                alt="Tailwind CSS chat bubble component"
+                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+              />
+            </div>
+          </div>
+          <div className="chat-header">
+            Obi-Wan Kenobi
+            <time className="text-xs opacity-50">12:45</time>
+          </div>
+          <div className="chat-bubble">You were the Chosen One!</div>
+          <div className="chat-footer opacity-50">Delivered</div>
+        </div>
+        <div className="chat chat-end">
+          <div className="chat-image avatar">
+            <div className="w-10 rounded-full">
+              <img
+                alt="Tailwind CSS chat bubble component"
+                src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+              />
+            </div>
+          </div>
+          <div className="chat-header">
+            Anakin
+            <time className="text-xs opacity-50">12:46</time>
+          </div>
+          <div className="chat-bubble">I hate you!</div>
+          <div className="chat-footer opacity-50">Seen at 12:46</div>
+        </div>
       </div>
       <div className="absolute inset-x-0 left-0 bottom-0 h-16 p-2 border-t-2 border-slate-500">
         <form className="flex" onSubmit={handleSubmit}>
           <input
-            className="focus:outline-none w-11/12 px-1 text-white bg-[#121212]"
+            className="focuss:outline-none w-11/12 px-1 text-white bg-[#121212]"
             placeholder="Send a message..."
             value={message}
             onChange={handleChange}
