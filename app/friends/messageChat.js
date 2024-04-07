@@ -140,7 +140,8 @@ export default function MessageChat({ friendSelected, websocket }) {
                   You
                   <time className="text-xs opacity-50 px-1">{formatTimestamp(msg.timestamp)}</time>
                 </div>
-                <div className="chat-bubble">{msg.message}</div>
+                {/* Chat should wrap around and inside of the bubble it should not get out. */}
+                <div className="chat-bubble break-words max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">{msg.message}</div>
                 <div className="chat-footer opacity-50">Delivered</div>
               </div>
             ) : (
@@ -157,7 +158,8 @@ export default function MessageChat({ friendSelected, websocket }) {
                   {friendSelected.firstName}
                   <time className="text-xs opacity-50 px-1">{formatTimestamp(msg.timestamp)}</time>
                 </div>
-                <div className="chat-bubble">{msg.message}</div>
+                {/* Chat should wrap around and inside of the bubble it should not get out. */}
+                <div className="chat-bubble break-words max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">{msg.message}</div>
               </div>
             )}
           </div>
@@ -167,7 +169,7 @@ export default function MessageChat({ friendSelected, websocket }) {
       <div className="absolute inset-x-0 left-0 bottom-0 h-16 p-2 border-t-2 border-slate-500">
         <form className="flex" onSubmit={handleSubmit}>
           <input
-            className="focuss:outline-none w-11/12 px-1 text-white bg-[#121212]"
+            className="focus:outline-none w-11/12 px-1 text-white bg-[#121212]"
             placeholder="Send a message..."
             value={message}
             onChange={handleChange}

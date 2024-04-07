@@ -100,7 +100,6 @@ export default function Messaging( { websocket }) {
         {renderFriendList()}
       </div>
       <div className="w-full">
-        <p>Messaging</p>
         {userSelected && <MessageChat friendSelected={userSelected} websocket={websocket} />}
 
       </div>
