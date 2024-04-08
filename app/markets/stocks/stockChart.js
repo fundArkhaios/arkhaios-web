@@ -22,11 +22,16 @@ export default function StockChart({ symbol }) {
 
   const [stockBookMarked, setStockBookMarked] = useState(false);
 
+
+  function replacePeriodsWithDashes(inputString) {
+    return inputString.replace(/\./g, '-');
+  }
+
   useEffect( () => {
     console.log("hello");
     async function getStockBookmark() {
       try {
-        const response = await fetch("/api/account/watchlist?symbol=" + symbol, {
+        const response = await fetch("/api/account/watchlist?symbol=" + replacePeriodsWithDashes(symbol), {
           method: "GET",
           mode: "cors",
           headers: {
@@ -51,6 +56,7 @@ export default function StockChart({ symbol }) {
 
   async function handleBookmark() {
     setStockBookMarked(!stockBookMarked);
+    let noPeriodSymbol = replacePeriodsWithDashes(symbol)
     try {
       const response = await fetch("/api/account/watchlist", {
         method: "POST",
@@ -59,7 +65,7 @@ export default function StockChart({ symbol }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          symbol,
+          noPeriodSymbol,
         }),
       });
       const data = await response.json();
@@ -70,7 +76,7 @@ export default function StockChart({ symbol }) {
 
   const { error, isLoading, responseJSON } = useFetch(
     "/api/chart?symbol=" +
-      symbol +
+      replacePeriodsWithDashes(symbol) +
       "&range=" +
       payload.range +
       "&interval=" +
