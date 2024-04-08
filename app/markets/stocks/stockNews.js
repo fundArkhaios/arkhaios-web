@@ -56,7 +56,7 @@ export default function StockNews( { symbol} ) {
 
   return (
     <>
-      <div className="lg:max-w-7xl py-5">
+      <div className="max-w-7xl py-5">
         {response?.map((article) => (
           <div key={article.id} className="py-1">
             <Link
