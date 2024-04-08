@@ -78,20 +78,17 @@ async function startConsumerForUserTopics(userId, topics) {
   return consumer;
 }
 
-const producer = kafka.producer();
-const consumer = kafka.consumer({ groupId: 'messaging-group'})
-
-producer.connect().then(() => {
-    console.log('Producer is ready');
-});
+const kafkaProducer = kafka.producer();
+const kafkaConsumer = kafka.consumer({ groupId: "messaging-group" });
 
 (async () => {
     try {
-        await consumer.connect();
+        await kafkaProducer.connect();
+        await kafkaConsumer.connect();
 
-        consumer.subscribe({ topics: [/conversation-.*/i] })
+        kafkaConsumer.subscribe({ topics: [/conversation-.*/i] })
         
-        await consumer.run({
+        await kafkaConsumer.run({
             eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
                 const msg = JSON.parse(message.value.toString());
                 
@@ -104,18 +101,16 @@ producer.connect().then(() => {
             }
         })
     } catch(e) {
-        console.error(`Connection error for user ${userId}:`, e);
+        console.error(e);
     }
 })()
 
-// Ideally, above connect() sets some indicator so sendMessage() knows he can actually send
-
 // Function to send a message to the topic corresponding to the conversationId
-function sendMessage(conversationId, messageContent) {
+async function sendMessage(conversationId, messageContent) {
     const message = JSON.stringify(messageContent);
     const topic = `conversation-${conversationId}`;  // Create topic name dynamically based on conversationId
 
-    producer.send({
+    await kafkaProducer.send({
         topic: topic,
         messages: [
             message

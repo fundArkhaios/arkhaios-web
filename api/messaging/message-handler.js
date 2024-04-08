@@ -28,7 +28,6 @@ module.exports = {
                 switch (parsedMessage.type) {
                         case 'sendMessage':
                         try {
-                            const kafkaConsumer = await startConsumerForUserTopics(userID, conversationTopics);
                             const { senderId, receiverId, message } = parsedMessage.data;
 
                             if(senderId != user.accountID) {
@@ -74,7 +73,7 @@ module.exports = {
                                     // Unable to connect to Kafka on dev
                                     if(process.env.NODE_ENV == 'production') {
                                         // Send the message via Kafka
-                                        sendMessage(conversationId, { type: 'receiveMessage', senderId: senderId, receiverId: receiverId,
+                                        await sendMessage(conversationId, { type: 'receiveMessage', senderId: senderId, receiverId: receiverId,
                                         message: message, timestamp: timestamp });
                                     } else {
                                         const receiverSocket = getUserWebSocket(receiverId);
