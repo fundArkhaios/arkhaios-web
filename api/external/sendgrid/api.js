@@ -8,7 +8,7 @@ const { logger } = require('../../../util/logger')
 
 module.exports = {
     // Signup Function
-    sendCode: async function(email, subject) {
+    sendCode: async function(email, subject, header) {
         try {
             let key = Array.from({length: 6},
                 () => randomInt(10)).join('');
@@ -32,6 +32,7 @@ module.exports = {
                                 to: { email: email },
                                 dynamicTemplateData: {
                                     subject: subject,
+                                    Header: header,
                                     Sender_Name: user.firstName,
                                     Code: key
                                 }
