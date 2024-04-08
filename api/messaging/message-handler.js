@@ -13,117 +13,87 @@ module.exports = {
             ws.close()
         }
 
-        console.log("MESSAGE-HANDLER API");
         registerWebSocketForUser(user.accountID, ws);
+
         try {
-                ws.on('message', async (message) => {
-                    console.log("receiving message");
-                    let parsedMessage;
-                    try {
-                        parsedMessage = JSON.parse(message);
-                    } catch (error) {
-                        ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON message format' }));
-                        return;
-                    }
-            
-                    switch (parsedMessage.type) {
-                        case 'openMessagesTab':
-                            console.log("openmessages");
-                            try {
-                                const { userID } = parsedMessage.data;
-                                //console.log(`Opening messages tab for user ${userID}`);
-                                const conversationTopics = await getUserConversationIds(db, userID);
-                                //console.log(`Topics to subscribe for user ${userID}:`, conversationTopics);
-                                const kafkaConsumer = await startConsumerForUserTopics(userID, conversationTopics);
-                                // No need to call subscribeToConversationT opics here as it's handled in startConsumerForUserTopics
-                                ws.send(JSON.stringify({ type: 'openMessagesTabResponse', message: 'Subscribed to all conversation topics' }));
-                            } catch (error) {
-                                console.error(`Error in openMessagesTab:`, error);
-                                ws.send(JSON.stringify({ type: 'error', message: error.message }));
+            ws.on('message', async (message) => {
+                let parsedMessage;
+                try {
+                    parsedMessage = JSON.parse(message);
+                } catch (error) {
+                    ws.send(JSON.stringify({ type: 'error', message: 'Invalid JSON message format' }));
+                    return;
+                }
+        
+                switch (parsedMessage.type) {
+                        case 'sendMessage':
+                        try {
+                            const kafkaConsumer = await startConsumerForUserTopics(userID, conversationTopics);
+                            const { senderId, receiverId, message } = parsedMessage.data;
+
+                            if(senderId != user.accountID) {
+                                // Technically senderId shouldn't be passed from the client, but just checking here
+                                // so the frontend doesn't need to be changed
+                                ws.send(JSON.stringify({ type: 'error', message: 'Invalid sender' }));
+                                return
                             }
-                            break;
-            
-            
-                            case 'sendMessage':
-                                console.log("send message");
+
+                            if (!senderId || !receiverId || !message) {
+                                ws.send(JSON.stringify({ type: 'error', message: 'Missing required fields' }));
+                                return;
+                            }
+                            let timestamp = new Date().toISOString()
                             try {
-                                console.log("sendsdkfjsdnjf");
-                                const { senderId, receiverId, message } = parsedMessage.data;
+                                let conversationId = null;
+                                await db.connect(async (db) => {
+                                    conversationId = await findOrCreateConversation(db, [senderId, receiverId]);
 
-                                if(senderId != user.accountID) {
-                                    // Technically senderId shouldn't be passed from the client, but just checking here
-                                    // so the frontend doesn't need to be changed
-                                    ws.send(JSON.stringify({ type: 'error', message: 'Invalid sender' }));
-                                    return
-                                }
-
-                                if (!senderId || !receiverId || !message) {
-                                    ws.send(JSON.stringify({ type: 'error', message: 'Missing required fields' }));
-                                    return;
-                                }
-                                let timestamp = new Date().toISOString()
-                                try {
-                                    await db.connect(async (db) => {
-                                        // should only be opened for duration we need db
-                                        const conversationId = await findOrCreateConversation(db, [senderId, receiverId]);
-                                        // Looks like it's not returning anything.. 
-                                        console.log("ConversationID: " + conversationId);
-                                        const messageContent = {
-                                            senderId,
-                                            receiverId,
-                                            message,
-                                            timestamp: timestamp,
-                                            status: "sent",
-                                            conversationId
-                                        };
-                                    
-                                        // Insert the new message into the Messages collection
-                                        const mrMessage = await db.collection('Messages').insertOne(messageContent);
-                                        console.log(mrMessage)
-                                    
-                                        if(mrMessage.acknowledged) {
-                                            // Update the corresponding conversation in the Conversations collection
-                                            await db.collection('Conversations').updateOne(
-                                                { _id: conversationId },
-                                                { $push: { messageIDs: mrMessage.insertedId } }
-                                            );
-                                        }
-                                    }) 
-                                } catch (e) {
-                                    console.error(e);
-                                };
+                                    const messageContent = {
+                                        senderId,
+                                        receiverId,
+                                        message,
+                                        timestamp: timestamp,
+                                        status: "sent",
+                                        conversationId
+                                    };
                                 
-                            
-                                // Unable to connect to Kafka on dev
-                                if(process.env.NODE_ENV == 'production') {
-                                    // Send the message via Kafka
-                                    sendMessage(conversationId, messageContent);
-                                } else {
-                                    const receiverSocket = getUserWebSocket(receiverId);
-                                    receiverSocket?.send(JSON.stringify({ type: 'receiveMessage', senderId: senderId, message: message, timestamp: timestamp})); 
+                                    // Insert the new message into the Messages collection
+                                    const mrMessage = await db.collection('Messages').insertOne(messageContent);
+                                    console.log(mrMessage)
+                                
+                                    if(mrMessage.acknowledged) {
+                                        // Update the corresponding conversation in the Conversations collection
+                                        await db.collection('Conversations').updateOne(
+                                            { _id: conversationId },
+                                            { $push: { messageIDs: mrMessage.insertedId } }
+                                        );
+                                    }
+                                })
+
+                                if(conversationId) {
+                                    // Unable to connect to Kafka on dev
+                                    if(process.env.NODE_ENV == 'production') {
+                                        // Send the message via Kafka
+                                        sendMessage(conversationId, { type: 'receiveMessage', senderId: senderId, receiverId: receiverId,
+                                        message: message, timestamp: timestamp });
+                                    } else {
+                                        const receiverSocket = getUserWebSocket(receiverId);
+                                        receiverSocket?.send(JSON.stringify({ type: 'receiveMessage', senderId: senderId, message: message, timestamp: timestamp})); 
+                                    }
                                 }
-                            
-                                // Respond to the WebSocket client
-                                ws.send(JSON.stringify({ type: 'sendMessageResponse', message: 'Message sent and stored successfully' }));
-                            } catch (error) {
-                                console.log("error being thrown")
-                                ws.send(JSON.stringify({ type: 'error', message: error.message }));
-                            }
-                            break;
-                            
+                            } catch (e) {
+                                console.error(e);
+                            };
                         
-                        case 'joinConversation':
-                            try {
-                                const { userID2 } = parsedMessage.data;
-                                const chatHistory = await getChatHistory(db, userID1, userID2);
-                                ws.send(JSON.stringify({ type: 'joinConversationResponse', data: chatHistory }));
-                            } catch (error) {
-                                ws.send(JSON.stringify({ type: 'error', message: error.message }));
-                            }
-                            break;
-            
-                        default:
-                            ws.send(JSON.stringify({ type: 'error', message: 'Unrecognized message type' }));
+                            // Respond to the WebSocket client
+                            ws.send(JSON.stringify({ type: 'sendMessageResponse', message: 'Message sent and stored successfully' }));
+                        } catch (error) {
+                            console.log("error being thrown")
+                            ws.send(JSON.stringify({ type: 'error', message: error.message }));
+                        }
+                        break;
+                    default:
+                        ws.send(JSON.stringify({ type: 'error', message: 'Unrecognized message type' }));
                     }
                 });
         } catch (e) {

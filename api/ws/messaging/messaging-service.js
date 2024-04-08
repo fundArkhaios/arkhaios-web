@@ -78,13 +78,33 @@ async function startConsumerForUserTopics(userId, topics) {
   return consumer;
 }
 
-/*
 const producer = kafka.producer();
+const consumer = kafka.consumer({ groupId: 'messaging-group'})
 
 producer.connect().then(() => {
     console.log('Producer is ready');
 });
-*/
+
+try {
+    await consumer.connect();
+
+    consumer.subscribe({ topics: [/conversation-.*/i] })
+    
+    await consumer.run({
+        eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
+            const msg = JSON.parse(message.value.toString());
+            
+            const userWebSocket = getUserWebSocket(msg.receiverId);
+            if (userWebSocket && userWebSocket.readyState === userWebSocket.OPEN) {  // Check if WebSocket is open
+                userWebSocket.send(JSON.stringify({ type: 'receiveMessage', data: msg }));
+            } else {
+                console.error(`WebSocket not open or not found for user: ${message.receiverId}`);
+            }
+        }
+    })
+} catch(e) {
+    console.error(`Connection error for user ${userId}:`, e);
+}
 
 // Ideally, above connect() sets some indicator so sendMessage() knows he can actually send
 
@@ -92,8 +112,7 @@ producer.connect().then(() => {
 function sendMessage(conversationId, messageContent) {
     const message = JSON.stringify(messageContent);
     const topic = `conversation-${conversationId}`;  // Create topic name dynamically based on conversationId
-    console.log(topic);
-    console.log("Sending message to topic:", topic);
+
     producer.send({
         topic: topic,
         messages: [
