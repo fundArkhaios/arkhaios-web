@@ -30,7 +30,7 @@ export const RecoveryContextProvider = ({ children }) => {
   async function sendRecoveryCode(event) {
     setIsLoading(true);
     event.preventDefault();
-    await fetch("/api/sendRecoveryCode", {
+    await fetch("/api/account/send-recovery-code", {
       method: "POST",
       mode: "cors",
       headers: {
