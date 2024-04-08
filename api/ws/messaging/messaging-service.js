@@ -85,26 +85,28 @@ producer.connect().then(() => {
     console.log('Producer is ready');
 });
 
-try {
-    await consumer.connect();
+(async () => {
+    try {
+        await consumer.connect();
 
-    consumer.subscribe({ topics: [/conversation-.*/i] })
-    
-    await consumer.run({
-        eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
-            const msg = JSON.parse(message.value.toString());
-            
-            const userWebSocket = getUserWebSocket(msg.receiverId);
-            if (userWebSocket && userWebSocket.readyState === userWebSocket.OPEN) {  // Check if WebSocket is open
-                userWebSocket.send(JSON.stringify({ type: 'receiveMessage', data: msg }));
-            } else {
-                console.error(`WebSocket not open or not found for user: ${message.receiverId}`);
+        consumer.subscribe({ topics: [/conversation-.*/i] })
+        
+        await consumer.run({
+            eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
+                const msg = JSON.parse(message.value.toString());
+                
+                const userWebSocket = getUserWebSocket(msg.receiverId);
+                if (userWebSocket && userWebSocket.readyState === userWebSocket.OPEN) {  // Check if WebSocket is open
+                    userWebSocket.send(JSON.stringify({ type: 'receiveMessage', data: msg }));
+                } else {
+                    console.error(`WebSocket not open or not found for user: ${message.receiverId}`);
+                }
             }
-        }
-    })
-} catch(e) {
-    console.error(`Connection error for user ${userId}:`, e);
-}
+        })
+    } catch(e) {
+        console.error(`Connection error for user ${userId}:`, e);
+    }
+})()
 
 // Ideally, above connect() sets some indicator so sendMessage() knows he can actually send
 
