@@ -65,7 +65,7 @@ export default function StockChart({ symbol }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          noPeriodSymbol,
+          symbol: noPeriodSymbol
         }),
       });
       const data = await response.json();
