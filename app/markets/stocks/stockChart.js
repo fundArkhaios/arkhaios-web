@@ -69,7 +69,7 @@ export default function StockChart({ symbol }) {
         }),
       });
       const data = await response.json();
-    } catch (error) {
+    } catch (error) {s
       console.error("Error handling bookmark request:", error);
     }
   }
