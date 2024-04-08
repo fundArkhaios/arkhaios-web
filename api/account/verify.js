@@ -15,8 +15,8 @@ module.exports = {
                 data: {}
             });
         } else if (req.body.resend == true) {
-            sendgrid.sendCode(user.email, 
-                "Account Recovery");
+            sendgrid.sendCode(user.email,
+                "Account Recovery", "We see you requested a new verification code!");
 
             res.status(200).json({
                 status: RESPONSE_TYPE.SUCCESS,

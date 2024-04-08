@@ -61,7 +61,7 @@ module.exports = {
                                     ws.send(JSON.stringify({ type: 'error', message: 'Missing required fields' }));
                                     return;
                                 }
-
+                                let timestamp = new Date().toISOString()
                                 try {
                                     await db.connect(async (db) => {
                                         // should only be opened for duration we need db
@@ -72,7 +72,7 @@ module.exports = {
                                             senderId,
                                             receiverId,
                                             message,
-                                            timestamp: new Date().toISOString(),
+                                            timestamp: timestamp,
                                             status: "sent",
                                             conversationId
                                         };
@@ -100,7 +100,7 @@ module.exports = {
                                     sendMessage(conversationId, messageContent);
                                 } else {
                                     const receiverSocket = getUserWebSocket(receiverId);
-                                    receiverSocket?.send(JSON.stringify({ type: 'receiveMessage', senderId: senderId, message: message })); 
+                                    receiverSocket?.send(JSON.stringify({ type: 'receiveMessage', senderId: senderId, message: message, timestamp: timestamp})); 
                                 }
                             
                                 // Respond to the WebSocket client

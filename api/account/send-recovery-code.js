@@ -17,7 +17,7 @@ module.exports = {
                     
                     if (result != null) {
                         sendgrid.sendCode(email,
-                            "Account Recovery");
+                            "Account Recovery", "We see you requested a password reset!");
 
                         res.status(200);
                         

@@ -72,7 +72,7 @@ export default function Messaging( { websocket }) {
   const renderFriendList = () => {
     return filteredFriends.map((friend) => (
       <div
-        className="font-light p-2 text-white cursor-pointer"
+        className="font-light p-2 text-white cursor-pointer "
         key={friend.id}
         onClick={() => handleFriendClick(friend)}
       >
@@ -87,11 +87,11 @@ export default function Messaging( { websocket }) {
   }
 
   return (
-    <div className="w-4/5 flex border-2 border-slate-500 rounded-md h-[40rem]">
-      <div className="w-2/6 border-r-2 border-slate-500">
-        <p className="text-center border-b-2 border-slate-500 w-full">
+    <div className="w-4/5 flex border border-gray-600 rounded-md h-[40rem] bg-[#101012]">
+      <div className="w-2/6 border-r border-gray-600">
+        <p className="text-center border-b border-gray-600 w-full">
           <input
-            className="focus:outline-none w-full text-white p-2 bg-[#121212]"
+            className="focus:outline-none w-full text-white p-2 rounded-md bg-[#101012] font-thin "
             placeholder="Search for a friend..."
             value={searchTerm}
             onChange={handleSearchChange}
@@ -100,7 +100,6 @@ export default function Messaging( { websocket }) {
         {renderFriendList()}
       </div>
       <div className="w-full">
-        <p>Messaging</p>
         {userSelected && <MessageChat friendSelected={userSelected} websocket={websocket} />}
 
       </div>

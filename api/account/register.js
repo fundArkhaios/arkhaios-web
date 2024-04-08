@@ -112,7 +112,7 @@ module.exports = {
 
             if(response === RESPONSE_TYPE.SUCCESS) {
                 sendgrid.sendCode(email,
-                    "Your Verification Code");
+                    "Your Verification Code", "Thank you for joining Arkhaios!");
 
                 res.cookie('email', email, { maxAge: sessionExpiry, httpOnly: true, sameSite: 'none', domain: hostname, secure: true});
                 res.cookie('session', session, { maxAge: sessionExpiry, httpOnly: true, sameSite: 'none', domain: hostname, secure: true});
@@ -129,7 +129,7 @@ module.exports = {
             }
         } catch (e) {
             logger.log({
-                level: 'e   rror',
+                level: 'error',
                 message: e
             })
 
