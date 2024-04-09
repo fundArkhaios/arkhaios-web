@@ -1,6 +1,6 @@
 const db = require('../../util/db.js');
 const logger = require('../../util/logger.js');
-const RESPONSE_TYPE = require('../response_type.js')
+const { RESPONSE_TYPE } = require('../response_type.js')
 
 module.exports = {
     route: '/api/fund/join',
