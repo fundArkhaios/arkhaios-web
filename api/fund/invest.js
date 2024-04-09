@@ -24,6 +24,10 @@ module.exports = {
             });
 
             if(fund) {
+                if(!fund.fundRecruiting || Math.floor(Date.now() / 1000) > fund.recruitEnd) {
+                    return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'Fund is not recruiting!'});
+                }
+
                 const { response, status } = await alpaca.get_trading_details(user.brokerageID);
                 if(status == 200) {
                     const equity = response.buying_power;

@@ -1,3 +1,4 @@
+"use client"
 import "./components.css";
 import SearchModal from "./searchModal";
 import { useEffect, useState } from "react";
@@ -60,7 +61,7 @@ export default function Search() {
 
       <dialog id="searchModal" className="modal">
         <div className="modal-box">
-          <SearchModal onClose={closeModal} />
+          <SearchModal onClose={closeModal} isOpen={isModalOpen}/>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button type="button" onClick={closeModal}>
