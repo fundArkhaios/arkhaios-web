@@ -33,7 +33,7 @@ module.exports = {
                     }
 
                     for(let i = 0; i < fund.memberRequests?.length; ++i) {
-                        user.push({accountID: fund.memberRequests[i]});
+                        users.push({accountID: fund.memberRequests[i]});
                     }
 
                     const list = await db.collection('Users').find({$or: users}).toArray();
