@@ -19,14 +19,7 @@ export default function WatchlistSmallDayChart({ symbol }) {
 
   const [currentPrice, setCurrentPrice] = useState(0);
 
-  useEffect(() => {
-    if (priceResponseJSON && priceResponseJSON.data) {
-      setOriginalPrice(priceResponseJSON.data.price);
-    }
-  }, [priceIsLoading]);
-
-
-
+  
 
 
   const miniChartContainerRef = useRef();
@@ -43,6 +36,12 @@ export default function WatchlistSmallDayChart({ symbol }) {
   ]);
 
   useEffect(() => {
+    if (priceResponseJSON && priceResponseJSON.data) {
+      setOriginalPrice(priceResponseJSON.data.price);
+    }
+  }, [priceIsLoading]);
+
+  useEffect(() => {
     // This function will process the responseJSON data
     function processData(data) {
       let result = [];
@@ -52,7 +51,10 @@ export default function WatchlistSmallDayChart({ symbol }) {
         if (!isNaN(value)) {
           // Check if the value is a number
 
-          if (i == data.timestamps.length - 1) setCurrentPrice(value);
+          if (i == data.timestamps.length - 1) {
+            setOriginalPrice(value)
+            setCurrentPrice(value);
+          }
           result.push({
             time: data.timestamps[i] * 1000,
             value: value,
