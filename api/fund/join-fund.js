@@ -23,6 +23,11 @@ module.exports = {
 
                 if(fund) {
                     if(type == 'request') {
+                        if(fund.members.includes(user.accountID)) {
+                            res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'you are already in this fund'})
+                            return
+                        }
+
                         if(fund.memberRequests.includes(user.accountID)) {
                             res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'you have already requested to join this fund'})
                             return
