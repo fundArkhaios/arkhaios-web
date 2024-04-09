@@ -56,7 +56,7 @@ module.exports = {
                     const requester = req.body.requester;
                     const action = req.body.action;
 
-                    if(fund.memberRequests.contains(requester)) {
+                    if(fund.memberRequests.includes(requester)) {
                         if(action == 'accept') {
                             try { 
                                 await db.collection('FundPortfolios').updateOne({fundID},
