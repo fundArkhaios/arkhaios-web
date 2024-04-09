@@ -47,9 +47,8 @@ export default function Page() {
             setEmail(email);
             setPassword(password);
             setMfaRequired(true);
-            setLoginError(false);
-          }
-          setLoginError(true);
+            setloginSuccess(true)
+          } else setLoginError(true);
           // throw new Error("Invalid username or password.");
         }
         setIsLoading(false);
@@ -208,7 +207,7 @@ export default function Page() {
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>Login Successful.</span>
+            <span>{mfaRequired ? "MFA code required." : "Login Successful."}</span>
           </div>
         </div>
       ) : (

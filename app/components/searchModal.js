@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import useFetch from "../hooks/useFetch";
 import Link from "next/link";
 import useDebounce from "../hooks/useDebounce";
-export default function SearchModal({ onClose }) {
+export default function SearchModal({ onClose, isOpen }) {
 
   const [searchInput, setSearchInput] = useState();
   const router = useRouter();
@@ -51,8 +51,8 @@ export default function SearchModal({ onClose }) {
   useEffect(() => {
     const handleKeyDown = (event) => {
       // Only respond to key events when the modal is visible
-      const modal = document.getElementById("searchModal");
-      if (modal && modal.open) {
+      const modal = document?.getElementById("searchModal");
+      if (modal && isOpen) {
         if (event.key === "ArrowDown") {
           event.preventDefault();
           setHighlightedIndex((prevIndex) =>
@@ -76,7 +76,10 @@ export default function SearchModal({ onClose }) {
     const route =
       asset.exchange === "CRYPTO"
         ? `/markets/crypto/${changeToCrypto(asset.symbol)}`
-        : `/markets/stocks/${asset.symbol}`;
+        : (
+      asset.exchange == "FUNDS"
+        ? `/markets/funds/${asset.symbol}`
+        : `/markets/stocks/${asset.symbol}`);
 
     router.push(route);
     onClose();
@@ -114,7 +117,7 @@ export default function SearchModal({ onClose }) {
           placeholder="Search Stocks, Futures, Funds, Crypto"
           name="text"
           className="text-white searchInput px-10 interFont text-sm"
-          readOnly={!document.getElementById("searchModal")?.open}
+          readOnly={!(isOpen)}
           value={searchInput}
           autoComplete="off"
           onChange={handleInputChange}
