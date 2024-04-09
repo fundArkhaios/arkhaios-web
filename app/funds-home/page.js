@@ -32,7 +32,7 @@ export default async function Page() {
         ) : <ManageFund fund={{
             fundID: fund.fundID,
             fundSymbol: fund.fundSymbol,
-            fundName: fund.fundName
+            fundName: fund.fundName,
             fundBalance: fund.availableBalance
         }}/>;
 }
