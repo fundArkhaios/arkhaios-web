@@ -90,12 +90,15 @@ const kafkaConsumer = kafka.consumer({ groupId: "messaging-group" });
         
         await kafkaConsumer.run({
             eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
-                const userWebSocket = getUserWebSocket(msg.receiverId);
-                if (userWebSocket && userWebSocket.readyState === userWebSocket.OPEN) {  // Check if WebSocket is open
-                    userWebSocket.send(JSON.stringify({ type: 'receiveMessage', data: message.value.toString() }));
-                } else {
-                    console.error(`WebSocket not open or not found for user: ${message.receiverId}`);
-                }
+                try {
+                    const msg = JSON.parse(message.value.toString());
+                    const userWebSocket = getUserWebSocket(msg.receiverId);
+                    if (userWebSocket && userWebSocket.readyState === userWebSocket.OPEN) {  // Check if WebSocket is open
+                        userWebSocket.send(message.value.toString());
+                    } else {
+                        console.error(`WebSocket not open or not found for user: ${message.receiverId}`);
+                    }
+                } catch(e) {}
             }
         })
     } catch(e) {
