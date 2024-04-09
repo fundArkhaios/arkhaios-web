@@ -59,8 +59,8 @@ module.exports = {
                             if(action == 'accept') {
                                 try { 
                                     await db.collection('FundPortfolios').updateOne({fundID},
-                                        { $pull: { memberRequests: {requester}},
-                                        $push: { members: {requester}}
+                                        { $pull: { memberRequests: requester},
+                                        $push: { members: requester}
                                     })
 
                                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user accepted into fund'});
@@ -71,7 +71,7 @@ module.exports = {
                             } else if(action == 'reject') {
                                 try {
                                     await db.collection('FundPortfolios').updateOne({fundID},
-                                        { $pull: { memberRequests: {requester}}})
+                                        { $pull: { memberRequests: requester}})
 
                                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user rejected'});
                                 } catch(e) {
