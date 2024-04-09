@@ -86,7 +86,7 @@ const kafkaConsumer = kafka.consumer({ groupId: "messaging-group" });
         await kafkaProducer.connect();
         await kafkaConsumer.connect();
 
-        kafkaConsumer.subscribe({ topics: [/conversation-.*/i] })
+        kafkaConsumer.subscribe({ topics: ["chat"] })
         
         await kafkaConsumer.run({
             eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
@@ -105,15 +105,26 @@ const kafkaConsumer = kafka.consumer({ groupId: "messaging-group" });
     }
 })()
 
+let topics = [];
 // Function to send a message to the topic corresponding to the conversationId
 async function sendMessage(conversationId, messageContent) {
     const message = JSON.stringify(messageContent);
-    const topic = `conversation-${conversationId}`;  // Create topic name dynamically based on conversationId
+    const topic = `chat`;  // Create topic name dynamically based on conversationId
+
+    if(!topics.includes(topic)) {
+        const admin = kafka.admin();
+
+        await admin.connect();
+        topics = await admin.listTopics();
+        await admin.createTopics({topics: [{topic: topic, replicationFactor: 2}]});
+        topics = await admin.listTopics();
+        await admin.disconnect();
+    }
 
     await kafkaProducer.send({
         topic: topic,
         messages: [
-            message
+            { value: message }
         ]
     })
 }

@@ -12,7 +12,7 @@ export default function Page() {
 
   useEffect(() => {
     // Initialize the websocket connection here
-    const ws = new WebSocket("wss://local.test:3000/message-handler");
+    const ws = new WebSocket("wss://arkhaios.io/message-handler");
     setWebsocket(ws); // Store the websocket instance in state
 
     return () => {
