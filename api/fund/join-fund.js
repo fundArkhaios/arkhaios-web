@@ -47,40 +47,43 @@ module.exports = {
                             res.status(200).json({status: RESPONSE_TYPE.FAILED, message: 'request sent'})
                         }
                         
-                    } else error = 'invalid fund';
-                } else if(type == 'response') {
-                    if(!fund.portfolioManagers.includes(user.accountID)) {
-                        return res.status(401).json({ status: RESPONSE_TYPE.FAILED, message: 'unauthorized', data: {}});
-                    }
+                    } else if(type == 'response') {
+                        if(!fund.portfolioManagers.includes(user.accountID)) {
+                            return res.status(401).json({ status: RESPONSE_TYPE.FAILED, message: 'unauthorized', data: {}});
+                        }
 
-                    const requester = req.body.requester;
-                    const action = req.body.action;
+                        const requester = req.body.requester;
+                        const action = req.body.action;
 
-                    if(fund.memberRequests.includes(requester)) {
-                        if(action == 'accept') {
-                            try { 
-                                await db.collection('FundPortfolios').updateOne({fundID},
-                                    { $pull: { memberRequests: {requester}},
-                                    $push: { members: {requester}}
-                                })
+                        if(fund.memberRequests.includes(requester)) {
+                            if(action == 'accept') {
+                                try { 
+                                    await db.collection('FundPortfolios').updateOne({fundID},
+                                        { $pull: { memberRequests: {requester}},
+                                        $push: { members: {requester}}
+                                    })
 
-                                res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user accepted into fund'});
-                            } catch(e) {
-                                res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
+                                    res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user accepted into fund'});
+                                } catch(e) {
+                                    res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
+                                    return
+                                }
+                            } else if(action == 'reject') {
+                                try {
+                                    await db.collection('FundPortfolios').updateOne({fundID},
+                                        { $pull: { memberRequests: {requester}}})
+
+                                    res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user rejected'});
+                                } catch(e) {
+                                    res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
+                                    return
+                                }  
+                            } else {
+                                res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'valid actions are either accept/reject'});
                                 return
                             }
-                        } else if(action == 'reject') {
-                            try {
-                                await db.collection('FundPortfolios').updateOne({fundID},
-                                    { $pull: { memberRequests: {requester}}})
-
-                                res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user rejected'});
-                            } catch(e) {
-                                res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
-                                return
-                            }  
                         } else {
-                            res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'valid actions are either accept/reject'});
+                            res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'invalid user'});
                             return
                         }
                     }
