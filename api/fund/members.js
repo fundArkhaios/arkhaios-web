@@ -23,12 +23,17 @@ module.exports = {
                     let users = [];
                     let members = [];
                     let managers = [];
+                    let requests = [];
                     for(let i = 0; i < fund.members?.length; ++i) {
                         users.push({accountID: fund.members[i]});
                     }
 
                     for(let i = 0; i < fund.portfolioManagers?.length; ++i) {
                         users.push({accountID: fund.portfolioManagers[i]});
+                    }
+
+                    for(let i = 0; i < fund.memberRequests?.length; ++i) {
+                        user.push({accountID: fund.memberRequests[i]});
                     }
 
                     const list = await db.collection('Users').find({$or: users}).toArray();
@@ -47,11 +52,19 @@ module.exports = {
                                 id: list[i].accountID,
                             })
                         }
+
+                        if(fund.memberRequests?.includes(list[i].accountID)) {
+                            requests.push({
+                                name: list[i].firstName + " " + list[i].lastName,
+                                id: list[i].accountID,
+                            })
+                        }
                     }
 
                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "", data: {
                         members: members,
-                        managers: managers
+                        managers: managers,
+                        requests: requests
                     }});
                 } catch(e) {
                     logger.log({
