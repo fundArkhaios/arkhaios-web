@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import authenticate from "../../util/authenticate";
 import db from "../../util/db";
 import BottomLeft from './bottomLeft';
+import BottomRight from './bottomRight';
 import MappedUsers from './mappedUsers';
 
 export default async function Page() {
@@ -40,7 +41,7 @@ export default async function Page() {
                         <div className ="w-full divider divider-primary"></div>
                     </div>
                 <div className = "col-span-1 w-full"><BottomLeft fundID={fund.fundID}/></div>
-                <div className = "col-span-1">Bottom Right Section</div>
+                <div className = "col-span-1"><BottomRight/></div>
                 </div>
                 
             </div>
