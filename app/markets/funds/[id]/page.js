@@ -3,30 +3,19 @@ import FundChart from "../fundChart";
 import JoinFund from "../joinFund";
 import db from "../../../../util/db";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import FundStats from "../fundStats";
-import FundDeposit from "../fundDeposit";
 
 export default async function Page({ params }) {
   let fund = null;
-  let announcements = [];
 
   try {
     await db.connect(async (db) => {
       fund = await db.collection('FundPortfolios').findOne({
-        "fundSymbol": params.id.toUpperCase()
+        "fundSymbol": params.id.toUpperCase() 
       });
-
-      if(fund && fund.fundID) {
-        console.log("get announcements")
-        announcements = await db.collection('FundAnnouncements').findOne({
-          "fundID": fund.fundID
-        });
-
-        if(announcements?.announcements) announcements = announcements.announcements;
-      }
     });
   } catch(e) {}
- 
+
+  console.log(fund);
   if(!fund) {
     return (
     <div className="pl-12 grid grid-cols-2 pt-12">
@@ -45,17 +34,19 @@ export default async function Page({ params }) {
         <div className="justify-self-center max-w-5xl pl-10">
           <div className = "text-5xl font-light text-white">{fund.fundName}</div>
           <div className = "text-3xl font-light text-slate-200">{fund.fundSymbol}</div>
-          <div className = "text-2xl font-light text-slate-200">Stage: {fund.fundRecruiting ? "Recruiting" : "Trading"}</div>
           <FundChart symbol={params.id} />
         </div>
         <div className="justify-self-end pr-10 max-w-2xl">
-          <JoinFund symbol={params.id} fundID={fund.fundID}/>
+          <JoinFund symbol={params.id}/>
         </div>
       </div>
 
     <div className="pl-12 grid grid-cols-2 pt-12">
       <div className="">
-        <FundStats announcements={announcements} desc={fund.fundDescription}/>
+        <p className="text-white text-2xl">Summary</p>
+        <div>
+          <p className="font-light text-white text-lg">{fund.fundDescription}</p>
+        </div>
       </div>
     </div>
 
@@ -75,7 +66,10 @@ export default async function Page({ params }) {
           </div>
         </div>
 
-        <div><FundDeposit fundID={fund.fundID}/></div>
+        <div>WITHDRAW WIDGET</div>
+
+        <div>DEPOSIT WIDGET</div>
+
       </div>
     </div>
     </>

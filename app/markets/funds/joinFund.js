@@ -3,37 +3,75 @@ import { useContext, useState, useEffect } from "react";
 import UserContext from "../../UserContext";
 import useFetch from "../../hooks/useFetch";
 
-export default function JoinFund({ symbol, fundID }) {
+export default function PlaceStockOrder({ symbol }) {
+  const { user } = useContext(UserContext);
+
+  const [orderType, setOrderType] = useState("Limit Order");
+  const [buyIn, setBuyIn] = useState("Shares");
+  const [limitPrice, setLimitPrice] = useState();
+  const [shares, setShares] = useState("");
+  const [orderPlacedSuccess, setOrderPlacedSuccess] = useState();
+  const [orderFailed, setOrderFailed] = useState();
+  const [symbolPrice, setSymbolPrice] = useState();
   const [loading, setLoading] = useState();
-  const [alert, setAlert] = useState([]);
+  const [side, setSide] = useState("buy");
 
-  async function requestJoin(event) {
+  const { isLoading, error, responseJSON } = useFetch(
+    "/api/quote?id=" + symbol
+  );
+  console.log("Side: " + side);
+  useEffect(() => {
+    if (responseJSON && responseJSON.data) {
+      setSymbolPrice(responseJSON.data.price);
+    }
+  }, [responseJSON, isLoading]);
+
+  console.log("symbol price: " + symbolPrice);
+
+  async function placeStockOrder(event) {
     setLoading(true);
-    event?.preventDefault();
+    event.preventDefault();
 
-    setAlert(["Sending request", "success"])
+    const type = orderType === "Limit Order" ? "limit" : "market";
+    var transaction;
+    if (buyIn == "Shares") {
+      transaction = "shares";
+    }
 
-    await fetch("/api/fund/join", {
+    let payload = {
+      symbol: symbol,
+      type: type,
+      side: side, // use the side state directly
+      qty: shares, // assuming qty should be set to shares
+      transaction: transaction
+    };
+
+    // Add price only for limit orders
+    if (type === "limit") {
+      payload.price = limitPrice;
+    }
+
+    if (buyIn === "Shares") {
+      payload.transaction = "shares";
+    } else {
+      payload.notional = shares; // assuming notional should be set when 'Dollar' is selected
+    }
+
+    await fetch("/api/place-order", {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        type: "request",
-        fundID: fundID,
-        inquiry: document.getElementById("inquiry").value
-      }),
-    }).then(async (response) => {
+      body: JSON.stringify(payload),
+    })
+      .then(async (response) => {
         const data = await response.json();
         if (data.status == "success") {
-          setAlert(["Request sent!", "success"])
-          setTimeout(() => setAlert([]), 3000);
+          setOrderPlacedSuccess(true);
         } else {
-          setAlert(["Request failed! Try again later...", "error"])
-          setTimeout(() => setAlert([]), 3000);
+          setOrderFailed(true);
         }
-
         setLoading(false);
       })
       .catch((error) => {});
@@ -45,68 +83,27 @@ export default function JoinFund({ symbol, fundID }) {
         <div className="border-b border-amber-200 px-2">
           <div className="grid grid-cols-2 px-1 py-2">
             <p className="text-amber-100 font-light">
-              Request to join {symbol}
+              Send Inquiry
             </p>
           </div>
         </div>
 
-        <textarea id="inquiry" className="block mt-1 m-auto text-center textarea textarea-bordered h-64" placeholder="Enter your inquiry here..."></textarea>
+        <textarea className="block mt-1 m-auto text-center textarea textarea-bordered h-64" placeholder="Enter your inquiry here..."></textarea>
 
         <button
-          onClick={requestJoin}
-          className={`w-full mt-4 mb-2 p-2 text-white btn`}
+          onClick={placeStockOrder}
+          className={`w-full mt-4 p-2 text-white btn`}
           disabled={loading}
         >
-          {loading ? "Sending Request..." : "Request to join"}
+          {loading ? "Sending Inquiry..." : "Send Inquiry"}
         </button>
-        
+
+        {orderFailed && (
+          <p className="text-red-500">
+            Failed to send inquiry. Please try again.
+          </p>
+        )}
       </div>
-
-      {alert?.[1] == 'error' ? (
-          <div className="toast toast-center rounded-sm pb-20 top-toast">
-            <div className="alert alert-error">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current shrink-0 h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{alert?.[0]}</span>
-            </div>
-          </div>
-        ) : (
-          <></>
-        )}
-
-        {alert?.[1] == 'success' ? (
-          <div className="toast toast-center rounded-sm pb-20 top-toast">
-            <div className="alert alert-success">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current shrink-0 h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span>{alert?.[0]}</span>
-            </div>
-          </div>
-        ) : (
-          <></>
-        )}
     </div>
   );
 }

@@ -33,7 +33,7 @@ module.exports = {
                     }
 
                     for(let i = 0; i < fund.memberRequests?.length; ++i) {
-                        users.push({accountID: fund.memberRequests[i].user});
+                        users.push({accountID: fund.memberRequests[i]});
                     }
 
                     const list = await db.collection('Users').find({$or: users}).toArray();
@@ -53,14 +53,11 @@ module.exports = {
                             })
                         }
 
-                        for(let j = 0; j < fund.memberRequests.length; ++j) {
-                            if(fund.memberRequests[j].user == list[i].accountID) {
-                                requests.push({
-                                    name: list[i].firstName + " " + list[i].lastName,
-                                    id: list[i].accountID,
-                                    inquiry: fund.memberRequests[j].inquiry
-                                })
-                            }
+                        if(fund.memberRequests?.includes(list[i].accountID)) {
+                            requests.push({
+                                name: list[i].firstName + " " + list[i].lastName,
+                                id: list[i].accountID,
+                            })
                         }
                     }
 

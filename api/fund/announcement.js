@@ -24,7 +24,7 @@ module.exports = {
 
             await db.connect(async (db) => {
                 try {
-                    let response = await db.collection('FundAnnouncements').updateOne({"fundID": id},
+                    let response = await db.collection('FundAnnouncements').updateOne({"fundID": user.accountID},
                         { $addToSet: { announcements: announcement } }, {upsert: true});
 
                     if(response.acknowledged) {

@@ -16,7 +16,6 @@ module.exports = {
             await db.connect(async (db) => {
                 try {
                     fund = await db.collection('FundPortfolios').findOne({fundID: fundID});
-                    console.log(fund);
                     if(!fund) error = 'invalid fund';
                 } catch(e) {
                     res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
@@ -25,18 +24,12 @@ module.exports = {
             });
 
             if(fund) {
-                if(!fund.members?.includes(user.accountID)) {
-                    return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'You are not a member of this fund!'});
-                }
-
                 if(!fund.fundRecruiting || Math.floor(Date.now() / 1000) > fund.recruitEnd) {
                     return res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'Fund is not recruiting!'});
                 }
 
                 const { response, status } = await alpaca.get_trading_details(user.brokerageID);
-                console.log("get trade details");
                 if(status == 200) {
-                    console.log("got buyin gpower");
                     const equity = response.buying_power;
 
                     const validInvestment = parseFloat(equity) >= amount;
@@ -48,9 +41,6 @@ module.exports = {
                                 from: user.brokerageID,
                                 amount: amount,
                             };
-
-                            console.log("firm: ");
-                            console.log(data);
                     
                             const { response, status } = await alpaca.create_journal(data);
 
@@ -67,7 +57,7 @@ module.exports = {
 
                                                 res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'investment transfer initiated'});
                                             } catch(e) {
-                                                res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
+                                                res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'server error'});
                                             }
                                         });
 
@@ -78,8 +68,6 @@ module.exports = {
                                         res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'transfer failed'});
                                         break;
                                 }
-                            } else {
-                                res.status(401).json({status: RESPONSE_TYPE.ERROR, message: ""});
                             }
                         } else {
                             res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
@@ -89,13 +77,11 @@ module.exports = {
                             })
                         }
                     } else {
-                        res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'Insufficient funds to invest'});
+                        res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'insufficient funds to invest'});
                     }
                 } else {
-                    res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
+                    res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'server error'});
                 }
-            } else {
-                res.status(401).json({status: RESPONSE_TYPE.FAILED, message: "Invalid fund"})
             }
         } catch(e) {
             res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
