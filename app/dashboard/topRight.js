@@ -52,11 +52,18 @@ export default function TopRight({ fundSymbol, fundAvailableBalance, fundID }) {
     if (responseJSON && responseJSON.value) {
       const lastValue = responseJSON.value[responseJSON.value.length - 1];
       setEverythingBalance(lastValue);
-      setEquity(lastValue - fundAvailableBalance);
+
+      if (lastValue - fundAvailableBalance < 0) {
+        setEquity(0)
+      } else {
+        setEquity(lastValue - fundAvailableBalance);
+      }
+      
     }
   }, [isLoading]);
 
   ChartJS.register(ArcElement, Tooltip, Legend);
+  
   const data = {
     labels: ["Equity", "Cash"],
     datasets: [

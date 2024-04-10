@@ -37,7 +37,13 @@ module.exports = {
                                                   .toArray();
     
                 res.setHeader('Content-Type', 'application/json');
-                res.status(200).json({status: RESPONSE_TYPE.SUCCESS, data: history });
+
+                if (history.length < 50) {
+                    res.status(200).json({status: RESPONSE_TYPE.SUCCESS, data: history, last: true });
+                } else {
+                    res.status(200).json({status: RESPONSE_TYPE.SUCCESS, data: history, last: false });
+                }
+                
             });
         } catch (error) {
             console.error('Error retrieving chat history:', error);

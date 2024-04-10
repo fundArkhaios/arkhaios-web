@@ -16,7 +16,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
 
-  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home", "/funds-home"];
+  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home"];
 
   const path = headers().get("x-url");
   const cookieStore = cookies();

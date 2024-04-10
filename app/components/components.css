@@ -67,5 +67,11 @@
   }
 
 
+  .highlight-keywords {
+    background-color: blue;
+    border-radius: 4px; /* Adjust as needed for rounded corners */
+    padding: 2px; /* Very small padding */
+    color: white; /* Text color, if needed */
+  }
 
   
