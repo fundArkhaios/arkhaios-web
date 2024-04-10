@@ -109,7 +109,7 @@ export default function BottomLeft({ fundID }) {
 
   return (
     <>
-      <div className="w-full border-2 rounded-md">
+      <div className=" border-2 rounded-md">
         <p className="text-center text-lg  rounded-tl-sm rounded-tr-sm border-b bg-gray-200 text-black">
           {" "}
           Requests to join

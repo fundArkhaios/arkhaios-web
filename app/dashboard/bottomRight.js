@@ -85,7 +85,7 @@ export default function BottomRight({ fundID }) {
 
     return (
         <>
-          <div className="flex items-center justify-center gap-2 p-8">
+          <div className="flex items-center justify-center gap-2">
             <h1 className="text-lg font-bold">Make an announcement</h1>
           </div>
 
@@ -93,7 +93,7 @@ export default function BottomRight({ fundID }) {
             <form
               id="announcementForm"
               onSubmit={makeAnnouncement}
-              className="flex flex-col justify-center gap-4 px-10 py-10 lg:px-16"
+              className="flex flex-col justify-center gap-2 px-10 py-5 lg:px-16"
             >
                     <div className="form-control m-2">
                         <label className="label" htmlFor="name">

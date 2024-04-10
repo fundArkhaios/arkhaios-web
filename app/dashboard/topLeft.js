@@ -12,6 +12,8 @@ export default function TopLeft({ fund }) {
     "/api/fund/history?symbol=" + fund.fundSymbol + "&period=1m"
   );
 
+  const [totalTimeUntilDistribution, setTotalTimeUntilDistribution] = useState();
+
   // This function updates the countdown.
   const updateCountdown = () => {
     const now = Date.now();
@@ -61,18 +63,33 @@ export default function TopLeft({ fund }) {
       }
       
       if (fund.fundRecruiting === false) {
-
-          if (fund.disbursementPeriod == "quarterly") {
-            // totalTimeUntilDistribution = Add 91 days to fund.recruitmentEnd
-          } else if (fund.disbursementPeriod == "monthly") {
-            // totalTimeUntilDistribution = Add 30 days to fund.recruitmentEnd
-          } else if (fund.disbursementPeriod == "daily") {
-            // totalTimeUntilDistribution = Add 24 hours to fund.recruitmentEnd
-          } else if (fund.disbursementPeriod == "hourly") {
-            // totalTimeUntilDistribution = Add 1 hour to fund.recruitmentEnd
-          } else if (fund.disbursementPeriod == "5min") {
-            // totalTimeUntilDistribution = Add 5 minutes to fund.recruitmentEnd
-          }
+        const recruitmentEndDate = new Date(fund.recruitmentEnd * 1000); // Convert Unix timestamp to JavaScript date
+        switch (fund.disbursementPeriod) {
+          case "quarterly":
+            recruitmentEndDate.setDate(recruitmentEndDate.getDate() + 91);
+            setTotalTimeUntilDistribution(recruitmentEndDate);
+            break;
+          case "monthly":
+            recruitmentEndDate.setDate(recruitmentEndDate.getDate() + 30);
+            setTotalTimeUntilDistribution(recruitmentEndDate);
+            break;
+          case "daily":
+            recruitmentEndDate.setDate(recruitmentEndDate.getDate() + 1);
+            setTotalTimeUntilDistribution(recruitmentEndDate);
+            break;
+          case "hourly":
+            recruitmentEndDate.setHours(recruitmentEndDate.getHours() + 1);
+            setTotalTimeUntilDistribution(recruitmentEndDate);
+            break;
+          case "5min":
+            recruitmentEndDate.setMinutes(recruitmentEndDate.getMinutes() + 5);
+            setTotalTimeUntilDistribution(recruitmentEndDate);
+            break;
+          default:
+            // Handle unexpected disbursementPeriod values or set a default
+            console.error('Invalid disbursement period');
+            break;
+        }
       }
   
     }
@@ -80,10 +97,40 @@ export default function TopLeft({ fund }) {
 
   console.log(fund);
 
-  // Time until distribution = recruitEnd -
+  const DistributionCountDownTimer = () => {
+    const { days, hours, minutes, seconds } = formatTime(totalTimeUntilDistribution);
 
-  
-
+    return (
+      <div className="flex gap-5">
+        <div>
+          <span className="text-4xl">
+            <span className="font-bold">{days}</span>
+            <p className="font-thin text-sm">days</p>
+          </span>
+          
+        </div>
+        <div>
+          <span className=" text-4xl">
+            <span className="font-bold">{hours}</span>
+            <p className="font-thin text-sm">hours</p>
+          </span>
+        </div>
+        <div>
+          <span className=" text-4xl">
+            <span className="font-bold">{minutes}</span>
+            <p className="font-thin text-sm">minutes</p>
+          </span>
+        </div>
+        <div>
+          <span className=" text-4xl">
+            <span className="font-bold">{seconds}</span>
+            <p className="font-thin text-sm">seconds</p>
+          </span>
+          
+        </div>
+      </div>
+    );
+  }
 
 
   const CountDownTimer = () => {
@@ -141,7 +188,7 @@ export default function TopLeft({ fund }) {
           <p className="text-xs font-thin"># of Portfolio Managers</p>
         </div>
         <div className="col-span-1">
-          <CountDownTimer/>
+          {fund.fundRecruiting === true ? <CountDownTimer/> : <DistributionCountDownTimer/>}
           <p className="text-xs font-thin">Time until distribution.</p>
         </div>
         <div className="col-span-1">
