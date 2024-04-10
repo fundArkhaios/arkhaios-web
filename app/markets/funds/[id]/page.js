@@ -49,7 +49,9 @@ export default async function Page({ params }) {
           <FundChart symbol={params.id} />
         </div>
         <div className="justify-self-end pr-10 max-w-2xl">
-          <JoinFund symbol={params.id} fundID={fund.fundID}/>
+          <JoinFund symbol={params.id} members={fund.members}
+          inJournals={fund.inJournals} completedJournals={fund.completedJournals}
+          requests={fund.memberRequests} fundID={fund.fundID}/>
         </div>
       </div>
 

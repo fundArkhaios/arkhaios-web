@@ -3,9 +3,26 @@ import { useContext, useState, useEffect } from "react";
 import UserContext from "../../UserContext";
 import useFetch from "../../hooks/useFetch";
 
-export default function JoinFund({ symbol, fundID }) {
+export default function JoinFund({ symbol, members, requests, fundID, inJournals, completedJournals }) {
+  const { user } = useContext(UserContext);
+
   const [loading, setLoading] = useState();
   const [alert, setAlert] = useState([]);
+  const [memberState, setMemberState] = useState(0);
+  const [transfers, setTransfers] = useState([]);
+
+  useEffect(() => {
+    setTransfers(completedJournals.filter((journal) => journal.user == user?.accountID));
+
+    if(members?.includes(user?.accountID)) {
+      setMemberState(1);
+    } else {
+      let requested = requests.filter((request) => request.user == user?.accountID).length;
+      if(requested) {
+        setMemberState(2);
+      }
+    }
+  }, []);
 
   async function requestJoin(event) {
     setLoading(true);
@@ -38,6 +55,41 @@ export default function JoinFund({ symbol, fundID }) {
       })
       .catch((error) => {});
   }
+  
+  console.log(requests);
+
+  let header = "Request to join " + symbol;
+  if(memberState == 1) {
+    header = "Your investments for " + symbol;
+  } else if(memberState == 2) {
+    header = "Join request";
+  }
+
+  let body = <></>;
+
+  if(memberState == 0) {
+    body = <>
+      <textarea id="inquiry" className="block mt-1 m-auto text-center textarea textarea-bordered h-64" placeholder="Enter your inquiry here..."></textarea>
+      <button
+        onClick={requestJoin}
+        className={`w-full mt-4 mb-2 p-2 text-white btn`}
+        disabled={loading}
+      >
+      {loading ? "Sending Request..." : "Request to join"}
+      </button>
+    </>
+  } else if(memberState == 1) {
+    body = (<p>{
+      transfers.map((transfer) => {
+        return (<div>
+          <p className="text-lg text-white">{transfer.amount}</p>
+          <p className="font-thin">{(new Date(transfer.time).toLocaleString())}</p>
+        </div>);
+      })
+    }</p>);
+  } else if(memberState == 2) {
+    body = (<p className="m-2">Your request to join {symbol} is pending.</p>);
+  }
 
   return (
     <div>
@@ -45,20 +97,12 @@ export default function JoinFund({ symbol, fundID }) {
         <div className="border-b border-amber-200 px-2">
           <div className="grid grid-cols-2 px-1 py-2">
             <p className="text-amber-100 font-light">
-              Request to join {symbol}
+              {header}
             </p>
           </div>
         </div>
 
-        <textarea id="inquiry" className="block mt-1 m-auto text-center textarea textarea-bordered h-64" placeholder="Enter your inquiry here..."></textarea>
-
-        <button
-          onClick={requestJoin}
-          className={`w-full mt-4 mb-2 p-2 text-white btn`}
-          disabled={loading}
-        >
-          {loading ? "Sending Request..." : "Request to join"}
-        </button>
+        {body}
         
       </div>
 
