@@ -33,7 +33,7 @@ export default function VerifiedHomeChart({ user }) {
     { time: "2018-12-22", value: 0 },
   ]);
 
-  const payload = { period: "1M", timeframe: "1D" };
+  const payload = { period: "1D", timeframe: "1Min" };
 
   const [historyPayload, setHistoryPayload] = useState(payload);
 
