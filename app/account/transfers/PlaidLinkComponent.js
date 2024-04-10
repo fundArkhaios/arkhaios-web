@@ -53,12 +53,14 @@ export default function PlaidLinkComponent() {
   useEffect(() => {
     fetchBankAccounts().then(async (response) => {
       const data = await response.json();
-      setLinkedAccounts(data.data.banks.flat());
+      if(data && data.data && data.data.banks) {
+        setLinkedAccounts(data?.data?.banks.flat());
+      }
     });
 
     fetchTransfers().then(async (response) => {
       const data = await response.json();
-      setTransfers(data.data);
+      setTransfers(data?.data);
     })
 
     async function generateLinkToken() {

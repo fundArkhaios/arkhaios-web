@@ -1,4 +1,4 @@
-export default function Final() {
+export default function Final({creationStatus}) {
     return (
       <div className="container md:mt-10">
         <div className="flex flex-col items-center">
@@ -24,10 +24,11 @@ export default function Final() {
           </div>
   
           <div className="mt-3 text-xl font-semibold uppercase text-green-500">
-            Congratulations!
+            {creationStatus.status == "success" ? "Congratulations!" : (creation.status != "" ? "Oops!" : "")}
           </div>
           <div className="text-lg font-semibold text-white">
-            Your Account has been sent to be reviewed!
+            {creationStatus.status == "success" ? "Your Account has been sent to be reviewed!"
+            : creationStatus.data.message}
           </div>
           <a className="mt-10" href="/home">
             <button className="h-10 px-5 text-green-500 transition-colors duration-150 border border-gray-300 rounded-lg focus:shadow-outline hover:bg-green-500 hover:text-green-100">

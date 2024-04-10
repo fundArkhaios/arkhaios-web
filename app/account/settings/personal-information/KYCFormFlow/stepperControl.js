@@ -1,7 +1,7 @@
 import { useKYCFlowContext } from "./KYCFlowContext";
 import "./kycFlow.css";
 
-export default function StepperControl({ handleClick, currentStep, steps }) {
+export default function StepperControl({ handleClick, currentStep, steps, setCreationStatus }) {
   const { userData, setUserData } = useKYCFlowContext();
 
   console.log("StepperControl Refresh UserData: " + JSON.stringify(userData));
@@ -57,7 +57,7 @@ export default function StepperControl({ handleClick, currentStep, steps }) {
       body: JSON.stringify(updatedUserData)
     }).then(async (response) => {
       const data = await response.json();
-      
+      setCreationStatus(data);
     }).catch( (error) => {
       console.log(error);
       throw new Error("Server Error has occured.")
@@ -80,10 +80,10 @@ export default function StepperControl({ handleClick, currentStep, steps }) {
 
       {currentStep === steps.length - 1 ? (
         <button
-          onClick={() => {handleClick("next"); createAccount()}}
+          onClick={() => {createAccount(); handleClick("next");}}
           className="cursor-pointer rounded-lg bg-green-500 py-2 px-4 font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-slate-700 hover:text-white"
           disabled={shouldDisableConfirmButton(userData)}
-        >
+        > 
           Confirm
         </button>
       ) : (
