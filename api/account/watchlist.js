@@ -63,21 +63,45 @@ module.exports = {
     get: async function(req, res, user) {
         try {
             await db.connect(async (db) => {
-                try {
-                    const result = await db.collection('Watchlist').findOne({user: user.accountID})
-                    if(result?.watchlist) {
-                        res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "", data: result.watchlist})
-                    } else {
-                        // Watchlist does not yet exist (nothing added yet)
-                        res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "", data: []})
-                    }
-                } catch(e) {
-                    logger.log({
-                        level: 'error',
-                        message: e
-                    })
 
-                    SERVER_ERROR(res)
+                const symbol = req.query?.symbol;
+
+            
+                if (symbol) {
+                    try {
+                        const result = await db.collection('Watchlist').findOne({user: user.accountID, watchlist: symbol})
+                        console.log(result);
+                        if(result) {
+                            res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "Bookmarked", data: "true"})
+                        } else {
+                            // Watchlist does not yet exist (nothing added yet)
+                            res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "Not Bookmarked", data: "false"})
+                        }
+                    } catch(e) {
+                        logger.log({
+                            level: 'error',
+                            message: e
+                        })
+
+                        SERVER_ERROR(res)
+                    }
+                } else {
+                    try {
+                        const result = await db.collection('Watchlist').findOne({user: user.accountID})
+                        if(result?.watchlist) {
+                            res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "", data: result.watchlist})
+                        } else {
+                            // Watchlist does not yet exist (nothing added yet)
+                            res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: "", data: []})
+                        }
+                    } catch(e) {
+                        logger.log({
+                            level: 'error',
+                            message: e
+                        })
+
+                        SERVER_ERROR(res)
+                    }
                 }
             })
         } catch(e) {

@@ -44,24 +44,29 @@ export default function Header({ user }) {
     }
   }
 
-  useEffect(async () => {
-    await fetch("/api/account/notifications", {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      }
-    }).then(async response => {
-      let json = await response.json();
-      let unread = 0;
+  useEffect(() => {
 
-      for(let i = 0; i < json.data.length; ++i) {
-        if(!json.data[i].read) unread++;
-      }
+    async function fetchData() {
+      await fetch("/api/account/notifications", {
+        method: "GET",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      }).then(async response => {
+        let json = await response.json();
+        let unread = 0;
+  
+        for(let i = 0; i < json.data.length; ++i) {
+          if(!json.data[i].read) unread++;
+        }
+  
+        setUnread(unread);
+        setEventList(json.data);
+      });
+    }
 
-      setUnread(unread);
-      setEventList(json.data);
-    });
+    fetchData();
 
     const events = new EventSource("https://compute.arkhaios.io/api/events", { withCredentials: true });
 
@@ -182,8 +187,7 @@ export default function Header({ user }) {
   
   */
   return (
-    <>
-
+  
       <div className="flex justify-items-center bg-color-black">
         {/*  Left Side  */}
         <div className="m-2 flex grow items-center pr-10">
@@ -316,6 +320,6 @@ export default function Header({ user }) {
           </div>
         </div>
       </div>
-    </>
+    
   );
 }

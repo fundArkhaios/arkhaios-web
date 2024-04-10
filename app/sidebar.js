@@ -2,7 +2,7 @@ import { HomeIcon, UserGroupIcon, CalendarDaysIcon } from "@heroicons/react/24/s
 
 export default function SideBar() {
   return (
-    <div className="h-screen h-dvh flex overflow-hidden relative">
+    <div className="bg-black pt-16 fixed h-screen h-dvh flex overflow-hidden">
       {/* Sidebar */}
       <aside className="sticky top-0 flex flex-col overflow-y-auto gap-2 py-6 px-2 bg-base-200">
         

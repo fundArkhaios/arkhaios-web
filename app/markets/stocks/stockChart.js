@@ -8,6 +8,8 @@ import {
   LineStyle,
 } from "lightweight-charts";
 
+import { BookmarkIcon } from "@heroicons/react/24/solid";
+
 export default function StockChart({ symbol }) {
   const chartContainerRef = useRef();
 
@@ -18,9 +20,63 @@ export default function StockChart({ symbol }) {
   });
   const [payload, setPayload] = useState({ range: "1mo", interval: "5m" });
 
+  const [stockBookMarked, setStockBookMarked] = useState(false);
+
+
+  function replacePeriodsWithDashes(inputString) {
+    return inputString.replace(/\./g, '-');
+  }
+
+  useEffect( () => {
+    console.log("hello");
+    async function getStockBookmark() {
+      try {
+        const response = await fetch("/api/account/watchlist?symbol=" + replacePeriodsWithDashes(symbol), {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then(async response => {
+          console.log("hii")
+          const data = await response.json()
+          console.log(data)
+          if (data.message == "Bookmarked") {
+            setStockBookMarked(true);
+          } else {
+            setStockBookMarked(false);
+          }
+        })
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    getStockBookmark()
+  }, [])
+
+  async function handleBookmark() {
+    setStockBookMarked(!stockBookMarked);
+    let noPeriodSymbol = replacePeriodsWithDashes(symbol)
+    try {
+      const response = await fetch("/api/account/watchlist", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          symbol: noPeriodSymbol
+        }),
+      });
+      const data = await response.json();
+    } catch (error) {s
+      console.error("Error handling bookmark request:", error);
+    }
+  }
+
   const { error, isLoading, responseJSON } = useFetch(
     "/api/chart?symbol=" +
-      symbol +
+      replacePeriodsWithDashes(symbol) +
       "&range=" +
       payload.range +
       "&interval=" +
@@ -185,33 +241,36 @@ export default function StockChart({ symbol }) {
     newSeries.setData(chartData);
     chart.timeScale().fitContent();
 
-
     function onCrosshairMove(param) {
       if (param === undefined || !param.time || !param.seriesData.size) {
         setCurrentPrice(chartData[chartData.length - 1].value); // Revert to original value if crosshair is not on the chart
         // setPercentChange(response.profit_loss_pct[response.profit_loss_pct.length - 1] == null ? 0 : response.profit_loss_pct[response.profit_loss_pct.length - 1]); // Assuming you want to revert to the first pct change
         return;
       }
-    
+
       const seriesData = param.seriesData.get(newSeries);
       if (seriesData) {
         const { time, value: price } = seriesData;
-        const chartIndex = chartData.findIndex(data => data.time === time && data.value === price);
-    
+        const chartIndex = chartData.findIndex(
+          (data) => data.time === time && data.value === price
+        );
+
         if (chartIndex !== -1) {
           // Check if the values are null.
           // setPercentChange(response.profit_loss_pct[chartIndex] == null ? 0 : response.profit_loss_pct[chartIndex]);
           setCurrentPrice(price == null ? 0 : price);
         } else {
           // This means that the mouse is not on the screen and we can go back and display the last index in the array.
-          setCurrentPrice(chartData[chartData.length - 1].value == null ? 0 : chartData[chartData.length - 1].value)
+          setCurrentPrice(
+            chartData[chartData.length - 1].value == null
+              ? 0
+              : chartData[chartData.length - 1].value
+          );
           // setPercentChange(response.profit_loss_pct[response.profit_loss_pct.length - 1] == null ? 0 : response.profit_loss_pct[response.profit_loss_pct.length - 1]); // Revert to some default if not found
         }
       }
     }
     chart.subscribeCrosshairMove(onCrosshairMove);
-
-
 
     return () => {
       setChartLoaded(false);
@@ -264,6 +323,27 @@ export default function StockChart({ symbol }) {
 
   return (
     <>
+      <div className="flex self-center">
+        <button className="py-1" onClick={handleBookmark}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill={stockBookMarked ? "#fde047" : "none"}
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke={stockBookMarked ? "#fde047" : "currentColor"}
+            className="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+            />
+          </svg>
+        </button>
+        <div className="text-5xl font-light text-white">
+          {symbol.toUpperCase()}
+        </div>
+      </div>
       <div className="interBold text-2xl text-white">
         {"$" + Number(currentPrice).toLocaleString("en-US")}
       </div>

@@ -81,6 +81,10 @@ module.exports = {
         }
 
         //otherwise everything was successful
-        res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: 'user deleted', data: ""});
+        if(success)
+            res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: 'user deleted', data: ""});
+        //maybe add an else branch here in case of failure
+        else
+            res.status(501).json({ status: RESPONSE_TYPE.FAILED, message: 'something went wrong', data:""});
       }
 }

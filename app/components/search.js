@@ -54,7 +54,7 @@ export default function Search() {
             type="text"
             placeholder="Search Stocks, Futures, Funds, Crypto"
             name="text"
-            className="text-white searchInput px-10 interFont text-sm"
+            className="text-white searchInput bg-black px-10 interFont text-sm"
           />
         </div>
       </button>

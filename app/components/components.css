@@ -33,3 +33,45 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+
+
+  .addFriendInput {
+    
+    outline-style: solid;
+    background-color: rgb(20, 20, 22);
+    outline: none;
+    /*outline-color: rgb(254 243 199);*/
+    opacity: 0.8; 
+  }
+
+  .addFriendInput:focus {
+    outline: none;
+    
+    /*outline-style: solid;*/
+    /*outline-color: rgb(254 243 199);*/
+    opacity: 1;
+  }
+
+
+  .searchFriendInput {
+    background-color: rgb(20, 20, 22);
+    outline: none;
+    
+  }
+
+  .searchFriendInput:focus {
+    /*outline-style: solid;*/
+    /*outline-color: rgb(254 243 199);*/
+    opacity: 1;
+  }
+
+
+  .highlight-keywords {
+    background-color: blue;
+    border-radius: 4px; /* Adjust as needed for rounded corners */
+    padding: 2px; /* Very small padding */
+    color: white; /* Text color, if needed */
+  }
+
+  

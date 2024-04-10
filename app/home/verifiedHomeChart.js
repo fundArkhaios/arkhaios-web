@@ -33,7 +33,7 @@ export default function VerifiedHomeChart({ user }) {
     { time: "2018-12-22", value: 0 },
   ]);
 
-  const payload = { period: "1M", timeframe: "1D" };
+  const payload = { period: "1D", timeframe: "1Min" };
 
   const [historyPayload, setHistoryPayload] = useState(payload);
 
@@ -113,7 +113,7 @@ export default function VerifiedHomeChart({ user }) {
           const date = new Date(businessDayOrTimestamp * 1000);
           console.log("BusinessDayOrTimeStamp: " + businessDayOrTimestamp);
           console.log("Date: " + date);
-          if (["1M", "6M"].includes(historyPayload.period)) {
+          if (["1M", "6M", "1A"].includes(historyPayload.period)) {
             // For '1M' and '6M', show only month and day
             return `${date.getMonth() + 1}-${date.getDate()}`;
           } else {
@@ -182,7 +182,7 @@ export default function VerifiedHomeChart({ user }) {
         timeVisible: true,
         tickMarkFormatter: (time, tickMarkType, locale) => {
           const date = new Date(time * 1000);
-          if (["1M", "6M"].includes(historyPayload.period)) {
+          if (["1M", "6M", "1A"].includes(historyPayload.period)) {
             // For '1M' and '6M', show only month and day
             return `${date.getMonth() + 1}-${date.getDate()}`;
           } else if (historyPayload.period === "1W") {
@@ -286,6 +286,9 @@ export default function VerifiedHomeChart({ user }) {
       case "6M":
         timeframe = "1D";
         break;
+      case "All Time":
+        timeframe = "1D"
+        period = "1A";
       // Add more cases if there are more periods with different timeframes
       default:
         timeframe = "1D"; // Fallback timeframe if none of the above matches
@@ -303,7 +306,7 @@ export default function VerifiedHomeChart({ user }) {
       </div>
       {percentChange.toFixed(2) >= 0 ? (
         <div className="text-sm text-[#18CCCC]">
-          {historyPayload.period}{" "}
+          {historyPayload.period != "1A" ? historyPayload.period : "1Y"}{" "}
           {percentChange.toFixed(2)}%
         </div>
       ) : (
@@ -322,7 +325,7 @@ export default function VerifiedHomeChart({ user }) {
               name="options"
               aria-label={period}
               className="btn join-item btn-sm"
-              checked={historyPayload.period === period}
+              checked={historyPayload.period === period || (historyPayload.period == "1A" && period === "All Time")} 
               onChange={() => handleRadioChange(period)}
             />
           ))}

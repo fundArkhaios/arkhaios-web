@@ -78,26 +78,58 @@ async function startConsumerForUserTopics(userId, topics) {
   return consumer;
 }
 
-/*
-const producer = kafka.producer();
+const kafkaProducer = kafka.producer();
+const kafkaConsumer = kafka.consumer({ groupId: "messaging-group" });
 
-producer.connect().then(() => {
-    console.log('Producer is ready');
-});
-*/
+(async () => {
+    try {
+        await kafkaProducer.connect();
+        await kafkaConsumer.connect();
 
-// Ideally, above connect() sets some indicator so sendMessage() knows he can actually send
+        kafkaConsumer.subscribe({ topics: ["chat"] })
+        
+        await kafkaConsumer.run({
+            eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
+                try {
+                    const msg = JSON.parse(message.value.toString());
+                    const userWebSocket = getUserWebSocket(msg.receiverId);
+                    if (userWebSocket && userWebSocket.readyState === userWebSocket.OPEN) {  // Check if WebSocket is open
+                        userWebSocket.send(message.value.toString());
+                    } else {
+                        console.error(`WebSocket not open or not found for user: ${message.receiverId}`);
+                    }
+                } catch(e) {}
+            }
+        })
+    } catch(e) {
+        console.error(e);
+    }
+})()
 
+let topics = [];
 // Function to send a message to the topic corresponding to the conversationId
-function sendMessage(conversationId, messageContent) {
+async function sendMessage(conversationId, messageContent) {
     const message = JSON.stringify(messageContent);
-    const topic = `conversation-${conversationId}`;  // Create topic name dynamically based on conversationId
-    console.log(topic);
-    console.log("Sending message to topic:", topic);
-    producer.send({
+    const topic = `chat`;  // Create topic name dynamically based on conversationId
+
+    if(!topics.includes(topic)) {
+        const admin = kafka.admin();
+
+        await admin.connect();
+        topics = await admin.listTopics();
+
+        if(!topics.includes(topic)) {
+            await admin.createTopics({topics: [{topic: topic, replicationFactor: 2}]});
+            topics = await admin.listTopics();
+        }
+        
+        await admin.disconnect();
+    }
+
+    await kafkaProducer.send({
         topic: topic,
         messages: [
-            message
+            { value: message }
         ]
     })
 }

@@ -20,14 +20,20 @@ export default function Page() {
 
   return (
     <>
-      <main className="flex p-5 border-b border-amber-100">
-        {/* <MainChart/> */}
-        {!user.kycVerified ? <NotVerifiedAlert /> : <></>}
-        <div className="shrink grid grid-cols-3 px-3 justify-items-center">
-          <div className="justify-self-start rounded-sm">
-            {!user.kycVerified ? <UnverifiedAssetView/> : <AssetView />}
+      <main className="flex flex-wrap justify-center p-5 border-b border-amber-100">
+        {!user.kycVerified ? (
+          <div className="flex justify-center px-64">
+            <NotVerifiedAlert />
           </div>
-          <div className="shrink grid max-w-[3/4] justify-self-center">
+        ) : (
+          <></>
+        )}
+
+        <div className="shrink flex flex-wrap py-4 px-3 justify-items-center">
+          <div className="justify-self-start rounded-sm">
+            {!user.kycVerified ? <UnverifiedAssetView /> : <AssetView />}
+          </div>
+          <div className="shrink grid max-w-[3/4] px-5  justify-self-center">
             {!user.kycVerified ? (
               <UnverfiedHomeChart user={user} />
             ) : (
@@ -35,15 +41,15 @@ export default function Page() {
             )}
           </div>
           <div className="justify-self-end pl-5 rounded-sm">
-            {!user.kycVerified ? <UnverifiedWatchlist/> : <UnverifiedWatchlist/>}
+            {user.kycVerified ? <Watchlist /> : <UnverifiedWatchlist />}
           </div>
         </div>
       </main>
       <main>
-        <h1 className ="pl-10 pt-10 interBold text-3xl text-white">NEWS</h1>
+        <h1 className="pl-10 pt-10 interBold text-3xl text-white">NEWS</h1>
         <div className="flex space-between">
-          <MarketNews/>
-          <Orders/>
+          <MarketNews />
+          <Orders />
         </div>
       </main>
     </>
