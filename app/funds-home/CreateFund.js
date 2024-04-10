@@ -22,7 +22,7 @@ export default function CreateFund() {
             body: JSON.stringify({
                 name: document.getElementById("name").value,
                 symbol: document.getElementById("symbol").value,
-                description: document.getElementById("description").content,
+                description: document.getElementById("description").value,
                 disbursementPeriod: period.options[period.selectedIndex].text.toLowerCase(),
                 disbursementType: type.options[type.selectedIndex].text,
                 public: document.getElementById("public").checked

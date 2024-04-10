@@ -13,6 +13,7 @@ import './kycFlow.css'
 export default function KYCForm() {
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [creationStatus, setCreationStatus] = useState({data: {success: "", message: ""}});
 
   const steps = [
     "Account Information",
@@ -33,7 +34,7 @@ export default function KYCForm() {
       case 4:
         return <Agreements/>;
       case 5:
-        return <Final />;
+        return <Final creationStatus={creationStatus}/>;
       default:
     }
   };
@@ -64,6 +65,7 @@ export default function KYCForm() {
           handleClick={handleClick}
           currentStep={currentStep}
           steps={steps}
+          setCreationStatus={setCreationStatus}
         />
       )}
     </div>

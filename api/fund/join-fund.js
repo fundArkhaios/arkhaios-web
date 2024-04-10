@@ -10,7 +10,7 @@ module.exports = {
 
         try {
             let fund = null;
-            const { fundID, type } = req.body;
+            const { fundID, type, inquiry } = req.body;
 
             await db.connect(async (db) => {
                 try {
@@ -23,7 +23,13 @@ module.exports = {
 
                 if(fund) {
                     if(type == 'request') {
-                        if(fund.memberRequests.includes(user.accountID)) {
+                        if(fund.members.includes(user.accountID)) {
+                            res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'you are already in this fund'})
+                            return
+                        }
+
+                        let requested = fund.memberRequests.filter((request) => request.user == user.accountID).length;
+                        if(requested) {
                             res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'you have already requested to join this fund'})
                             return
                         }
@@ -31,20 +37,20 @@ module.exports = {
                         if(!fund.publiclyAvailable) {
                             if(req.body.accessCode == fund.accessCode) {
                                 await db.collection('FundPortfolios').updateOne({fundID},
-                                    { $addToSet: { memberRequests: user.accountID},
+                                    { $addToSet: { memberRequests: { user: user.accountID, inquiry: inquiry }},
                                 })
 
-                                res.status(200).json({status: RESPONSE_TYPE.FAILED, message: 'request sent'})
+                                res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'request sent'})
                             }
                             else {
                                 res.status(401).json({status: RESPONSE_TYPE.FAILED, message: 'invalid access code'});
                             }
                         } else {
                             await db.collection('FundPortfolios').updateOne({fundID},
-                                { $addToSet: { memberRequests: user.accountID},
+                                { $addToSet: { memberRequests: { user: user.accountID, inquiry: inquiry }},
                             })
 
-                            res.status(200).json({status: RESPONSE_TYPE.FAILED, message: 'request sent'})
+                            res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'request sent'})
                         }
                         
                     } else if(type == 'response') {
@@ -55,12 +61,13 @@ module.exports = {
                         const requester = req.body.requester;
                         const action = req.body.action;
 
-                        if(fund.memberRequests.includes(requester)) {
+                        let requested = fund.memberRequests.filter((request) => request.user == requester).length;
+                        if(requested) {
                             if(action == 'accept') {
                                 try { 
                                     await db.collection('FundPortfolios').updateOne({fundID},
-                                        { $pull: { memberRequests: requester},
-                                        $push: { members: requester}
+                                        { $pull: { memberRequests: { user: requester } },
+                                        $addToSet: { members: requester }
                                     })
 
                                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user accepted into fund'});
@@ -71,7 +78,7 @@ module.exports = {
                             } else if(action == 'reject') {
                                 try {
                                     await db.collection('FundPortfolios').updateOne({fundID},
-                                        { $pull: { memberRequests: requester}})
+                                        { $pull: { memberRequests: { user: requester } } });
 
                                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user rejected'});
                                 } catch(e) {
