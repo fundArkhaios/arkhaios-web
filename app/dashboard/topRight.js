@@ -57,6 +57,7 @@ export default function TopRight({ fundSymbol, fundAvailableBalance, fundID }) {
   }, [isLoading]);
 
   ChartJS.register(ArcElement, Tooltip, Legend);
+  
   const data = {
     labels: ["Equity", "Cash"],
     datasets: [
