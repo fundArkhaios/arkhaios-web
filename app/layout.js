@@ -16,7 +16,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
 
-  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home"];
+  const loginPaths = ["/", "/login", "/signup", "/recovery", "/root-home", "/funds-home"];
 
   const path = headers().get("x-url");
   const cookieStore = cookies();
@@ -68,16 +68,16 @@ export default async function RootLayout({ children }) {
   const renderAuthenticatedContent = () => (
     <UserContextProvider user={user}>
       <div>
-        <nav className="border-b border-amber-100 relative group">
+        <nav className="border-b border-amber-100 w-full fixed bg-black z-[100]">
           {" "}
           {/* <- You can add a border by putting 'border-b-2'*/}
           <Header user={user} />
         </nav>
         <div className="grid grid-cols-[64px_1fr]">
-          <aside className="bg-base-200 w-16">
-            <SideBar className="bg-base-200" />
+          <aside className="bg-black w-16">
+            <SideBar/>
           </aside>
-          <main>{children}</main>
+          <main className= "pt-16">{children}</main>
         </div>
       </div>
     </UserContextProvider>

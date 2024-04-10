@@ -187,8 +187,7 @@ export default function Header({ user }) {
   
   */
   return (
-    <>
-
+  
       <div className="flex justify-items-center bg-color-black">
         {/*  Left Side  */}
         <div className="m-2 flex grow items-center pr-10">
@@ -321,6 +320,6 @@ export default function Header({ user }) {
           </div>
         </div>
       </div>
-    </>
+    
   );
 }

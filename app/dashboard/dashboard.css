@@ -1,0 +1,3 @@
+.scrollable-container {
+    max-width: calc(90vw - 20px); /* Assuming 20px as scrollbar width */
+}
