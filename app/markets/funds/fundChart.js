@@ -26,7 +26,7 @@ export default function StockChart({ symbol }) {
     { time: 1, value: 0 },
   ]);
 
-  const [currentPrice, setCurrentPrice] = useState(chartData[0].value);
+  const [currentPrice, setCurrentPrice] = useState(chartData[0]?.value);
 
   const [chartLoaded, setChartLoaded] = useState(false);
 

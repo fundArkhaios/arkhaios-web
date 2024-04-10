@@ -42,17 +42,21 @@ export default function MappedUsers({ fund }) {
       </div>
     );
   };
-
+  
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="flex flex-row overflow-x-auto gap-4 scrollable-container">
-      {members?.map((member) => (
-        <div key={member.id}>
-          <MemberCard member={member} />
-        </div>
-      ))}
+      {members.length != 0 ? (
+        members?.map((member) => (
+          <div key={member.id}>
+            <MemberCard member={member} />
+          </div>
+        ))
+      ) : (
+        <p className="font-light text-lg">No members in fund.</p>
+      )}
     </div>
   );
 }
