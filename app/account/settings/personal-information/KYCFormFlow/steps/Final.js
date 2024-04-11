@@ -24,7 +24,7 @@ export default function Final({creationStatus}) {
           </div>
   
           <div className="mt-3 text-xl font-semibold uppercase text-green-500">
-            {creationStatus.status == "success" ? "Congratulations!" : (creationStatus != "" ? "Oops!" : "")}
+            {creationStatus.status == "success" ? "Congratulations!" : (creationStatus.status != "" ? "Oops!" : "")}
           </div>
           <div className="text-lg font-semibold text-white">
             {creationStatus.status == "success" ? "Your Account has been sent to be reviewed!"

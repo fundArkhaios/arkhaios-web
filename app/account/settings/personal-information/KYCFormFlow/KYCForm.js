@@ -74,6 +74,8 @@ export default function KYCForm() {
           setCreationStatus={setCreationStatus}
           setBackID={setBackID}
           setFrontID={setFrontID}
+          frontID={frontID}
+          backID={backID}
         />
       )}
     </div>
