@@ -74,9 +74,6 @@ export default async function Page({ params }) {
             
           />
         </div>
-        <div className="justify-self-end pr-10 max-w-2xl pb-14">
-          <FundDeposit fundID={fund.fundID} />
-        </div>
       </div>
     );
   }
