@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function AssetView({ user }) {
+export default function Orders({ user }) {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {

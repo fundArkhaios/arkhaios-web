@@ -58,7 +58,7 @@ export default function Header({ user }) {
         let unread = 0;
   
         for(let i = 0; i < json.data.length; ++i) {
-          if(!json.data[i].read) unread++;
+          if(!json.data[i]?.read) unread++;
         }
   
         setUnread(unread);

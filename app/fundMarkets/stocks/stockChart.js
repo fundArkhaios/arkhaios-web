@@ -1,8 +1,14 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import useFetch from "../../hooks/useFetch";
-import { ColorType, createChart } from "lightweight-charts";
-import response_type from "../../../api/response_type";
+import {
+  ColorType,
+  createChart,
+  CrosshairMode,
+  LineStyle,
+} from "lightweight-charts";
+
+import { BookmarkIcon } from "@heroicons/react/24/solid";
 
 export default function StockChart({ symbol }) {
   const chartContainerRef = useRef();
@@ -12,10 +18,69 @@ export default function StockChart({ symbol }) {
     bottomColor: "rgba(24, 204, 204, 0.00)",
     lineColor: "#18CCCC",
   });
-  const [payload, setPayload] = useState({ interval: "1d" });
+  const [payload, setPayload] = useState({ range: "1mo", interval: "5m" });
+
+  const [stockBookMarked, setStockBookMarked] = useState(false);
+
+
+  function replacePeriodsWithDashes(inputString) {
+    return inputString.replace(/\./g, '-');
+  }
+
+  useEffect( () => {
+    console.log("hello");
+    async function getStockBookmark() {
+      try {
+        const response = await fetch("/api/account/watchlist?symbol=" + replacePeriodsWithDashes(symbol), {
+          method: "GET",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then(async response => {
+          console.log("hii")
+          const data = await response.json()
+          console.log(data)
+          if (data.message == "Bookmarked") {
+            setStockBookMarked(true);
+          } else {
+            setStockBookMarked(false);
+          }
+        })
+      } catch(e) {
+        console.error(e);
+      }
+    }
+    getStockBookmark()
+  }, [])
+
+  async function handleBookmark() {
+    setStockBookMarked(!stockBookMarked);
+    let noPeriodSymbol = replacePeriodsWithDashes(symbol)
+    try {
+      const response = await fetch("/api/account/watchlist", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          symbol: noPeriodSymbol
+        }),
+      });
+      const data = await response.json();
+    } catch (error) {s
+      console.error("Error handling bookmark request:", error);
+    }
+  }
 
   const { error, isLoading, responseJSON } = useFetch(
-    "/api/fund/history?symbol=" + symbol + "&period=" + payload.interval
+    "/api/chart?symbol=" +
+      replacePeriodsWithDashes(symbol) +
+      "&range=" +
+      payload.range +
+      "&interval=" +
+      payload.interval
   );
 
   const [chartData, setChartData] = useState([
@@ -23,45 +88,47 @@ export default function StockChart({ symbol }) {
     { time: 1, value: 0 },
   ]);
 
-  const [currentPrice, setCurrentPrice] = useState(chartData[0]?.value);
+  const [currentPrice, setCurrentPrice] = useState(chartData[0].value);
 
   const [chartLoaded, setChartLoaded] = useState(false);
 
-  const processChartData = (timestamps, closes) => {
-    let lastValidClose = closes[0] !== null ? closes[0] : 0;
-    const uniqueData = new Map();
-  
-    timestamps.forEach((timestamp, index) => {
-      const closeValue = closes[index] !== null ? closes[index] : lastValidClose;
-      if (closes[index] !== null) {
+  async function processChartData(timestamps, closes) {
+    let lastValidClose = closes[0] !== null ? closes[0] : 0; // Initialize with the first value or 0 if the first value is null
+
+    const response = (timestamps || []).map((timestamp, index) => {
+      if (closes[index] === null) {
+        closes[index] = lastValidClose;
+      } else {
         lastValidClose = closes[index];
       }
-      const unixTime = Math.floor(new Date(timestamp).getTime() / 1000);
-      if (!uniqueData.has(unixTime)) { // Only add if not already present
-        uniqueData.set(unixTime, closeValue);
+
+      // Convert UNIX timestamp to a Date object, then to the required format
+      const date = new Date(timestamp * 1000);
+      const formattedDate = date.toISOString().split("T")[0]; // Example formatting, adjust if needed
+      if (index == timestamps.length - 1) {
+        setCurrentPrice(closes[index]);
       }
+      return { time: timestamp, value: closes[index] };
     });
-  
-    const processedData = Array.from(uniqueData).map(([time, value]) => ({ time, value }));
-    if (processedData.length > 0) {
-      setCurrentPrice(processedData[processedData.length - 1].value);
-    }
-    
-    return processedData;
-  };
+
+    return response;
+  }
 
   useEffect(() => {
     async function getChartData() {
-      if (responseJSON && !isLoading) {
+      if (responseJSON && !isLoading && responseJSON.data) {
         setChartLoaded(false);
         setChartData(
-          await processChartData(responseJSON.timestamps, responseJSON.value)
+          await processChartData(
+            responseJSON.data.timestamps,
+            responseJSON.data.closes
+          )
         );
         setChartLoaded(true);
 
         const isPriceIncreasing =
-          responseJSON.value[0] <=
-          responseJSON.value[responseJSON.value.length - 1];
+          responseJSON.data.closes[0] <=
+          responseJSON.data.closes[responseJSON.data.closes.length - 1];
 
         setChartColor({
           topColor: !isPriceIncreasing
@@ -75,7 +142,7 @@ export default function StockChart({ symbol }) {
       }
     }
     getChartData();
-  }, [isLoading, payload]);
+  }, [responseJSON]);
 
   useEffect(() => {
     const chart = createChart(chartContainerRef.current, {
@@ -83,7 +150,7 @@ export default function StockChart({ symbol }) {
       height: 350,
       localization: {
         timeFormatter: (businessDayOrTimestamp) => {
-          const date = new Date(businessDayOrTimestamp);
+          const date = new Date(businessDayOrTimestamp * 1000);
           // When the range is 'max' show day, month, and year
           if (payload.range === "max") {
             return `${date.getUTCDate()}-${
@@ -94,8 +161,8 @@ export default function StockChart({ symbol }) {
             return `${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
           } else {
             // For '1D' and '1W', show time in 12-hour format
-            let hours = date.getUTCHours();
-            const minutes = date.getUTCMinutes();
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
             const ampm = hours >= 12 ? "PM" : "AM";
             hours = hours % 12;
             hours = hours || 12; // the hour '0' should be '12'
@@ -125,7 +192,7 @@ export default function StockChart({ symbol }) {
         tickMarkFormatter: (() => {
           let lastDisplayedDay = null;
           return (time, tickMarkType, locale) => {
-            const date = new Date(time);
+            const date = new Date(time * 1000);
             const dayOfWeek = date.getUTCDay();
             const dayOfMonth = date.getDate();
             if (payload.range === "max") {
@@ -172,7 +239,7 @@ export default function StockChart({ symbol }) {
     });
 
     newSeries.setData(chartData);
-    // chart.timeScale().fitContent();
+    chart.timeScale().fitContent();
 
     function onCrosshairMove(param) {
       if (param === undefined || !param.time || !param.seriesData.size) {
@@ -220,47 +287,77 @@ export default function StockChart({ symbol }) {
     "All Time": "max",
   };
   const handleRadioChange = (buttonRange) => {
+    console.log("buttonRange: " + buttonRange);
     let payloadRange;
-    let interval = "1d"; // Default interval
+    let interval = "1D"; // Default interval
 
     // Use the mapping to set the payload range and interval
     payloadRange = rangeMapping[buttonRange];
     switch (buttonRange) {
       case "1D":
-        interval = "1d";
-        break;
-      case "1W":
-        interval = "1w";
-        break;
-      case "1M":
         interval = "1m";
         break;
+      case "1W":
+        payloadRange = "5d";
+        interval = "5m";
+        break;
+      case "1M":
+        interval = "5m";
+        break;
+      case "6M":
+        interval = "1D";
+        break;
+      // Add more cases if there are more ranges with different intervals
+      case "All Time":
+        interval = "1d";
+        // Set the appropriate interval for "All Time" if needed
+        break;
       default:
-        interval = "1d"; // Fallback interval if none of the above matches
+        interval = "1D"; // Fallback interval if none of the above matches
     }
 
-    setPayload({ interval: interval });
+    setPayload({ range: payloadRange, interval });
+    console.log("Payload: " + JSON.stringify(payload));
+    //setHistoryPayload({ ...historyPayload, range: payloadRange, interval });
   };
 
   return (
     <>
-      <div className="interBold text-2xl text-white py-2">
-        <div className="flex flex-row content-end">
-          <p className="place-self-center text-xs font-thin pr-2 ">AUM </p>
-          <p clsasName ="text-2xl px-2">{"$" + Number(currentPrice).toLocaleString("en-US")}</p>
+      <div className="flex self-center">
+        <button className="py-1" onClick={handleBookmark}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill={stockBookMarked ? "#fde047" : "none"}
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke={stockBookMarked ? "#fde047" : "currentColor"}
+            className="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+            />
+          </svg>
+        </button>
+        <div className="text-5xl font-light text-white">
+          {symbol.toUpperCase()}
         </div>
+      </div>
+      <div className="interBold text-2xl text-white">
+        {"$" + Number(currentPrice).toLocaleString("en-US")}
       </div>
       <div ref={chartContainerRef} className=""></div>
       <div className="text-center">
         <div className="join p-2 self-center">
-          {["1D", "1W", "1M"].map((buttonRange) => (
+          {["1D", "1W", "1M", "6M", "All Time"].map((buttonRange) => (
             <input
               key={buttonRange}
               type="radio"
               name="options"
               aria-label={buttonRange}
               className="btn join-item btn-sm"
-              checked={payload.interval === rangeMapping[buttonRange]}
+              checked={payload.range === rangeMapping[buttonRange]}
               onChange={() => handleRadioChange(buttonRange)}
             />
           ))}
