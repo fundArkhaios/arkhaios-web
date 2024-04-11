@@ -10,7 +10,7 @@ export default function TopLeft({ fund }) {
   const [timeUntilTerm, setTimeUntilTerm] = useState(0);
 
   const { error, isLoading, responseJSON } = useFetch(
-    "/api/fund/history?symbol=" + fund.fundSymbol + "&period=1m"
+    "/api/fund/history?symbol=" + fund.fundSymbol + "&period=1d"
   );
 
   const [totalTimeUntilDistribution, setTotalTimeUntilDistribution] = useState();
@@ -64,6 +64,8 @@ export default function TopLeft({ fund }) {
     console.log(responseJSON);
     if (responseJSON && responseJSON.value) {
 
+      console.log("yo!");
+      console.log(responseJSON.value)
       if(responseJSON.value.length) {
         const finalValue = responseJSON.value[responseJSON.value.length - 1];
 
