@@ -2,11 +2,14 @@
 
 import { useContext, useState, useEffect } from "react";
 import UserContext from "../../UserContext";
+import FundDeposit from "./fundDeposit";
 import useFetch from "../../hooks/useFetch";
 
 
 export default function JoinFund({ symbol, members, requests, fundID, inJournals, completedJournals }) {
   const { user } = useContext(UserContext);
+
+  const [thisFundID, setThisFundID] = useState(fundID);
 
   const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState({ message: '', type: '' });
@@ -70,7 +73,7 @@ export default function JoinFund({ symbol, members, requests, fundID, inJournals
             requestJoin={requestJoin}
           />
         )}
-        {memberStatus === 1 && <InvestmentList transfers={userTransfers} />}
+        {memberStatus === 1 && <InvestmentList fundID={fundID} transfers={userTransfers} />}
         {memberStatus === 2 && <PendingRequest symbol={symbol} />}
 
       </div>
@@ -80,8 +83,9 @@ export default function JoinFund({ symbol, members, requests, fundID, inJournals
   );
 }
 
-function RequestForm({ isLoading, inquiry, setInquiry, requestJoin }) {
+function RequestForm({ isLoading, inquiry, setInquiry, requestJoin, fundID}) {
   return (
+    <>
     <div className = "flex flex-col">
       <textarea
         value={inquiry}
@@ -97,11 +101,18 @@ function RequestForm({ isLoading, inquiry, setInquiry, requestJoin }) {
         {isLoading ? "Sending Request..." : "Request to join"}
       </button>
     </div>
+    </>
   );
 }
 
-function InvestmentList({ transfers }) {
+function InvestmentList({ transfers, fundID }) {
   return (
+    <>
+    
+    <div className="justify-self-end pr-10 max-w-2xl pb-14">
+          <FundDeposit fundID={fundID} />
+        </div>
+
     <div className="investment-list">
       {transfers.map((transfer) => (
         <div key={transfer.id} className = "bg-slate-200 text-black py-2">
@@ -109,7 +120,7 @@ function InvestmentList({ transfers }) {
           <p className="date">{new Date(transfer.time).toLocaleString()}</p>
         </div>
       ))}
-    </div>
+    </div></>
   );
 }
 

@@ -1,6 +1,6 @@
 module.exports = {
     // Utilizing hourly and daily for simple testing purposes
-    fundPeriods: [ "quarterly", "monthly", "hourly", "daily" ],
+    fundPeriods: [ "1min", "5min", "quarterly", "monthly", "hourly", "daily" ],
 
     fundType: ["1/10", "2/20", "3/30"],
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { min } from "lodash";
 import useFetch from "../hooks/useFetch";
 import { useEffect, useState } from "react";
 
@@ -17,9 +18,17 @@ export default function TopLeft({ fund }) {
   // This function updates the countdown.
   const updateCountdown = () => {
     const now = Date.now();
-    const timestamp = fund.recruitEnd * 1000; // Assuming fund.fundRecruiting is a Unix timestamp in seconds
-    const timeLeft = timestamp - now;
-    setTimeUntilTerm(timeLeft > 0 ? timeLeft : 0); // Update the state with the time left until the term
+
+    if(fund.fundRecruiting) {
+      const timestamp = fund.recruitEnd * 1000; // Assuming fund.fundRecruiting is a Unix timestamp in seconds
+      const timeLeft = timestamp - now;
+      setTimeUntilTerm(timeLeft > 0 ? timeLeft : 0); // Update the state with the time left until the term
+    } else {
+      console.log(totalTimeUntilDistribution);
+      const timestamp = Math.floor(totalTimeUntilDistribution / 1000) * 1000; // Assuming fund.fundRecruiting is a Unix timestamp in seconds
+      const timeLeft = timestamp - now;
+      setTimeUntilTerm(timeLeft > 0 ? timeLeft : 0); // Update the state with the time left until the term 
+    }
   };
 
 
@@ -51,20 +60,30 @@ export default function TopLeft({ fund }) {
 
 
   useEffect(() => {
+    console.log("loaded");
+    console.log(responseJSON);
     if (responseJSON && responseJSON.value) {
-      const finalValue = responseJSON.value[responseJSON.value.length - 1];
 
-      setTotalAUM(finalValue);
+      if(responseJSON.value.length) {
+        const finalValue = responseJSON.value[responseJSON.value.length - 1];
 
-      if (fund.startValue) {
-        setDailyPercentChange(
-          (finalValue - fund.startValue - fund.startValue) * 100
-        );
+        setTotalAUM(finalValue);
+
+        if (fund.startValue) {
+          setDailyPercentChange(
+            (finalValue - fund.startValue - fund.startValue) * 100
+          );
+        }
       }
+
+      console.log("yo");
       
       if (fund.fundRecruiting === false) {
-        const recruitmentEndDate = new Date(fund.recruitmentEnd * 1000); // Convert Unix timestamp to JavaScript date
-        switch (fund.disbursementPeriod) {
+        console.log("not recruit");
+        const recruitmentEndDate = new Date(fund.recruitEnd * 1000); // Convert Unix timestamp to JavaScript date
+        console.log("fund time");
+        console.log(recruitmentEndDate);
+        switch (fund.fundDisbursementPeriod) {
           case "quarterly":
             recruitmentEndDate.setDate(recruitmentEndDate.getDate() + 91);
             setTotalTimeUntilDistribution(recruitmentEndDate);
@@ -87,6 +106,8 @@ export default function TopLeft({ fund }) {
             break;
           case "1min":
             recruitmentEndDate.setMinutes(recruitmentEndDate.getMinutes() + 1);
+            console.log("new date");
+            console.log(recruitmentEndDate);
             setTotalTimeUntilDistribution(recruitmentEndDate);
             break;
           default:
@@ -102,85 +123,112 @@ export default function TopLeft({ fund }) {
   console.log(fund);
 
   const DistributionCountDownTimer = () => {
-    const { days, hours, minutes, seconds } = formatTime(totalTimeUntilDistribution);
+    const { days, hours, minutes, seconds } = formatTime(timeUntilTerm);
 
-    return (
-      <div className="flex gap-5">
-        <div>
-          <span className="text-4xl">
-            <span className="font-bold">{days}</span>
-            <p className="font-thin text-sm">days</p>
-          </span>
-          
+    console.log("distro");
+    console.log(days);
+    console.log(hours);
+    console.log(seconds);
+    if(days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
+      return (
+        <div className="flex gap-5">
+          <div>
+            <span className="text-5xl font-bold">
+              Term Ending...
+            </span>
+          </div>
         </div>
-        <div>
-          <span className=" text-4xl">
-            <span className="font-bold">{hours}</span>
-            <p className="font-thin text-sm">hours</p>
-          </span>
+      );
+    } else {
+      return (
+        <div className="flex gap-5">
+          <div>
+            <span className="text-4xl">
+              <span className="font-bold">{days}</span>
+              <p className="font-thin text-sm">days</p>
+            </span>
+            
+          </div>
+          <div>
+            <span className=" text-4xl">
+              <span className="font-bold">{hours}</span>
+              <p className="font-thin text-sm">hours</p>
+            </span>
+          </div>
+          <div>
+            <span className=" text-4xl">
+              <span className="font-bold">{minutes}</span>
+              <p className="font-thin text-sm">minutes</p>
+            </span>
+          </div>
+          <div>
+            <span className=" text-4xl">
+              <span className="font-bold">{seconds}</span>
+              <p className="font-thin text-sm">seconds</p>
+            </span>
+            
+          </div>
         </div>
-        <div>
-          <span className=" text-4xl">
-            <span className="font-bold">{minutes}</span>
-            <p className="font-thin text-sm">minutes</p>
-          </span>
-        </div>
-        <div>
-          <span className=" text-4xl">
-            <span className="font-bold">{seconds}</span>
-            <p className="font-thin text-sm">seconds</p>
-          </span>
-          
-        </div>
-      </div>
-    );
+      );
+    }
   }
 
 
   const CountDownTimer = () => {
     const { days, hours, minutes, seconds } = formatTime(timeUntilTerm);
 
-    return (
-      <div className="flex gap-5">
-        <div>
-          <span className="text-4xl">
-            <span className="font-bold">{days}</span>
-            <p className="font-thin text-sm">days</p>
-          </span>
-          
+    if(days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
+      return (
+        <div className="flex gap-5">
+          <div>
+            <span className="text-5xl font-bold">
+              Term Starting...
+            </span>
+          </div>
         </div>
-        <div>
-          <span className=" text-4xl">
-            <span className="font-bold">{hours}</span>
-            <p className="font-thin text-sm">hours</p>
-          </span>
-        </div>
-        <div>
-          <span className=" text-4xl">
-            <span className="font-bold">{minutes}</span>
-            <p className="font-thin text-sm">minutes</p>
-          </span>
-        </div>
-        <div>
-          <span className=" text-4xl">
-            <span className="font-bold">{seconds}</span>
-            <p className="font-thin text-sm">seconds</p>
-          </span>
-          
-        </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="flex gap-5">
+          <div>
+            <span className="text-4xl">
+              <span className="font-bold">{days}</span>
+              <p className="font-thin text-sm">days</p>
+            </span>
+            
+          </div>
+          <div>
+            <span className=" text-4xl">
+              <span className="font-bold">{hours}</span>
+              <p className="font-thin text-sm">hours</p>
+            </span>
+          </div>
+          <div>
+            <span className=" text-4xl">
+              <span className="font-bold">{minutes}</span>
+              <p className="font-thin text-sm">minutes</p>
+            </span>
+          </div>
+          <div>
+            <span className=" text-4xl">
+              <span className="font-bold">{seconds}</span>
+              <p className="font-thin text-sm">seconds</p>
+            </span>
+            
+          </div>
+        </div>);
+    }
   };
 
   return (
     <div className="self-center">
       <div className=" grid grid-rows-2 grid-cols-3 place-self-center place-content-center gap-16">
         <div className="col-span-1">
-          <p className="text-5xl font-bold">${totalAUM}</p>
+          <p className="text-5xl font-bold">${totalAUM?.toFixed(2) || 0}</p>
           <p className="text-xs font-thin">AUM</p>
         </div>
         <div className="col-span-1">
-          <p className="text-5xl font-bold">{dailyPercentChange.toFixed(2)}%</p>
+          <p className="text-5xl font-bold">{dailyPercentChange?.toFixed(2)}%</p>
           <p className="text-xs font-thin">Percent Change</p>
         </div>
         <div className="col-span-1">

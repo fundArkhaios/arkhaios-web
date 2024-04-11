@@ -8,6 +8,7 @@ import db from "../../util/db";
 import BottomLeft from './bottomLeft';
 import BottomRight from './bottomRight';
 import MappedUsers from './mappedUsers';
+import CreateFund from '../funds-home/CreateFund';
 
 export default async function Page() {
     const cookieStore = cookies();
@@ -26,7 +27,11 @@ export default async function Page() {
     }
 
     if(!fund) {
-        return <div>Unauthorized</div>
+        return (<div className="flex min-h-screen items-center justify-center bg-base-200">
+            <div className="m-4 min-h-[50vh] w-full max-w-sm lg:max-w-4xl">
+                <CreateFund/>
+            </div>
+        </div>);
     }
 
     return (
