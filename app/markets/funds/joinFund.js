@@ -123,7 +123,7 @@ function InvestmentList({ transfers, fundID }) {
     <>
       <div className="investment-list">
         {transfers.map((transfer) => (
-          <div key={transfer.id} className="text-center p-2 rounded-md bg-slate-200 text-black py-2">
+          <div key={transfer.id} className="text-center p-2 rounded-md bg-slate-200 text-black py-2 gap-2">
             <p className="amount">${transfer.amount}</p>
             <p className="date text-xs">{new Date(transfer.time).toLocaleString()}</p>
           </div>

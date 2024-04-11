@@ -27,27 +27,25 @@ export default function StockChart({ symbol }) {
 
   const [chartLoaded, setChartLoaded] = useState(false);
 
-  const processChartData = (timestamps, closes) => {
+  const processChartData = async (timestamps, closes) => {
     let lastValidClose = closes[0] !== null ? closes[0] : 0;
     const uniqueData = new Map();
   
-    timestamps.forEach((timestamp, index) => {
-      const closeValue = closes[index] !== null ? closes[index] : lastValidClose;
-      if (closes[index] !== null) {
+
+    const response = (timestamps || []).map((timestamp, index) => {
+      if (closes[index] === null) {
+        closes[index] = lastValidClose;
+      } else {
         lastValidClose = closes[index];
       }
-      const unixTime = Math.floor(new Date(timestamp).getTime() / 1000);
-      if (!uniqueData.has(unixTime)) { // Only add if not already present
-        uniqueData.set(unixTime, closeValue);
+
+      const unixTime = (Math.floor(new Date(timestamp + " UTC").getTime() / 1000) * 1000);
+      if (index == timestamps.length - 1) {
+        setCurrentPrice(closes[index]);
       }
+      return { time: unixTime, value: closes[index] };
     });
-  
-    const processedData = Array.from(uniqueData).map(([time, value]) => ({ time, value }));
-    if (processedData.length > 0) {
-      setCurrentPrice(processedData[processedData.length - 1].value);
-    }
-    
-    return processedData;
+    return response;
   };
 
   useEffect(() => {
@@ -85,17 +83,17 @@ export default function StockChart({ symbol }) {
         timeFormatter: (businessDayOrTimestamp) => {
           const date = new Date(businessDayOrTimestamp);
           // When the range is 'max' show day, month, and year
-          if (payload.range === "max") {
+          if (payload.interval === "max") {
             return `${date.getUTCDate()}-${
               date.getUTCMonth() + 1
             }-${date.getUTCFullYear()}`;
-          } else if (["6mo"].includes(payload.range)) {
+          } else if (["1m"].includes(payload.interval)) {
             // For '1M' and '6M', show only month and day
             return `${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
           } else {
             // For '1D' and '1W', show time in 12-hour format
-            let hours = date.getUTCHours();
-            const minutes = date.getUTCMinutes();
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
             const ampm = hours >= 12 ? "PM" : "AM";
             hours = hours % 12;
             hours = hours || 12; // the hour '0' should be '12'
@@ -128,12 +126,12 @@ export default function StockChart({ symbol }) {
             const date = new Date(time);
             const dayOfWeek = date.getUTCDay();
             const dayOfMonth = date.getDate();
-            if (payload.range === "max") {
+            if (payload.interval === "max") {
               return date.getUTCFullYear().toString();
-            } else if (["1mo", "6mo", "max"].includes(payload.range)) {
+            } else if (["1m"].includes(payload.interval)) {
               // For '1M' and '6M', show only month and day
               return `${date.getMonth() + 1}-${dayOfMonth}`;
-            } else if (payload.range === "5d") {
+            } else if (payload.interval === "1w") {
               // For '1W', show the day of the week, but only if it hasn't been displayed yet
               if (dayOfMonth !== lastDisplayedDay) {
                 lastDisplayedDay = dayOfMonth; // Update the last displayed day
@@ -214,17 +212,13 @@ export default function StockChart({ symbol }) {
 
   const rangeMapping = {
     "1D": "1d",
-    "1W": "5d",
-    "1M": "1mo",
-    "6M": "6mo",
-    "All Time": "max",
+    "1W": "1w",
+    "1M": "1m",
   };
   const handleRadioChange = (buttonRange) => {
-    let payloadRange;
+  
     let interval = "1d"; // Default interval
-
-    // Use the mapping to set the payload range and interval
-    payloadRange = rangeMapping[buttonRange];
+    
     switch (buttonRange) {
       case "1D":
         interval = "1d";
