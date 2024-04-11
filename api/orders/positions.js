@@ -46,6 +46,9 @@ module.exports = {
                         }
                         console.log("returningArr: " + returningArr)
                         
+                        if (req.query?.custom == "true") returningArr = fund.positions;
+
+
                         res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "", data: returningArr});
                     } else {
                         res.status(401).json({ status: RESPONSE_TYPE.FAILED, message: "server error", data: []});

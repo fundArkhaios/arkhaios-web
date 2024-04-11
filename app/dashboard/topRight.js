@@ -10,7 +10,7 @@ export default function TopRight({ fundSymbol, fundAvailableBalance, fundID }) {
   );
 
   // Assuming 'fund' should be 'fundID' based on your props
-  const { error: positionsError, isLoading: positionsIsLoading, responseJSON: positionsResponseJSON } = useFetch("/api/positions?fund=" + fundID);
+  const { error: positionsError, isLoading: positionsIsLoading, responseJSON: positionsResponseJSON } = useFetch("/api/positions?fund=" + fundID + "&custom=true");
 
   const [positionsData, setPositionsData] = useState({
     labels: [],
