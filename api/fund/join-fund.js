@@ -70,6 +70,20 @@ module.exports = {
                                         $addToSet: { members: requester }
                                     })
 
+                                    await db.collection('Friends').updateOne({
+                                        accountID: fund.fundFounder
+                                    }, {
+                                        $addToSet: accept ? { friends: requester } : {},
+                                        $pull: { sentRequests: requester }
+                                    })
+
+                                    await db.collection('Friends').updateOne({
+                                        accountID: requester
+                                    }, {
+                                        $addToSet: accept ? { friends: user.accountID } : {},
+                                        $pull: { sentRequests: user.accountID }
+                                    })
+
                                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user accepted into fund'});
                                 } catch(e) {
                                     res.status(401).json({status: RESPONSE_TYPE.ERROR, message: 'server error'});
