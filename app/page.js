@@ -92,12 +92,12 @@ export default function Page() {
           </div>
         </div>
       </main>
-      <main className="h-screen">
+      {/* <main className="h-screen">
         <div className="text-5xl text-left px-10 py-10 font-black text-white">
           Businesses
         </div>
         <Cards/>
-      </main>
+      </main> */}
 
       <div className="pt-44">
         <div className="text-white font-light text-xl text-center py-2">
@@ -105,7 +105,7 @@ export default function Page() {
         </div>
         <Carousel />
       </div>
-
+{/* 
       <main className="h-screen">
         <div className="text-5xl text-right px-10 pt-24 py-10 font-black text-white">
           Individuals
@@ -115,7 +115,7 @@ export default function Page() {
             <p>Hi</p>
           </div>
         </div>
-      </main>
+      </main> */}
       <main className ="pt-96">
         <footer className="footer p-10 bg-base-200 text-base-content ">
           <aside>
