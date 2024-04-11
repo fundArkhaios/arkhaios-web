@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import authenticate from "../../util/authenticate";
 import db from "../../util/db";
 import BottomLeft from './bottomLeft';
+import BottomRight from './bottomRight';
 import MappedUsers from './mappedUsers';
 
 export default async function Page() {
@@ -30,7 +31,7 @@ export default async function Page() {
 
     return (
             <div className ="h-screen overflow-x-hidden px-10 py-5">
-                <div className = "grid grid-rows-5 cols-2 justify-items-center w-full gap-4">
+                <div className = "grid grid-rows-3 cols-2 justify-items-center w-full gap-4">
                     <div className = "col-span-1 place-content-center"><TopLeft fund={fund}/></div>
                     <div className = "col-span-1"><TopRight fundSymbol={fund.fundSymbol} fundAvailableBalance={fund.availableBalance} fundID={fund.fundID}/></div>
                     
@@ -39,8 +40,8 @@ export default async function Page() {
                         <MappedUsers fund={fund}/>
                         <div className ="w-full divider divider-primary"></div>
                     </div>
-                <div className = "col-span-1 w-full"><BottomLeft fundID={fund.fundID}/></div>
-                <div className = "col-span-1">Bottom Right Section</div>
+                    <div className = "col-span-1 w-full"><BottomLeft fundID={fund.fundID}/></div>
+                    <div className = "col-span-1 w-full"><BottomRight fundID = {fund.fundID}/></div>
                 </div>
                 
             </div>

@@ -1,10 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import useFetch from "../../hooks/useFetch";
-import {
-  ColorType,
-  createChart,
-} from "lightweight-charts";
+import { ColorType, createChart } from "lightweight-charts";
 import response_type from "../../../api/response_type";
 
 export default function StockChart({ symbol }) {
@@ -35,14 +32,14 @@ export default function StockChart({ symbol }) {
 
     let lastTime = 0;
     const response = (timestamps || []).filter((timestamp) => {
-      if(timestamp != lastTime) {
+      if (timestamp != lastTime) {
         lastTime = timestamp;
         return true;
       }
 
       return false;
     });
-    
+
     return response.map((timestamp, index) => {
       if (closes[index] === null) {
         closes[index] = lastValidClose;
@@ -64,10 +61,7 @@ export default function StockChart({ symbol }) {
       if (responseJSON && !isLoading) {
         setChartLoaded(false);
         setChartData(
-          await processChartData(
-            responseJSON.timestamps,
-            responseJSON.value
-          )
+          await processChartData(responseJSON.timestamps, responseJSON.value)
         );
         setChartLoaded(true);
 
@@ -186,26 +180,31 @@ export default function StockChart({ symbol }) {
     newSeries.setData(chartData);
     chart.timeScale().fitContent();
 
-
     function onCrosshairMove(param) {
       if (param === undefined || !param.time || !param.seriesData.size) {
         setCurrentPrice(chartData[chartData.length - 1].value); // Revert to original value if crosshair is not on the chart
         // setPercentChange(response.profit_loss_pct[response.profit_loss_pct.length - 1] == null ? 0 : response.profit_loss_pct[response.profit_loss_pct.length - 1]); // Assuming you want to revert to the first pct change
         return;
       }
-    
+
       const seriesData = param.seriesData.get(newSeries);
       if (seriesData) {
         const { time, value: price } = seriesData;
-        const chartIndex = chartData.findIndex(data => data.time === time && data.value === price);
-    
+        const chartIndex = chartData.findIndex(
+          (data) => data.time === time && data.value === price
+        );
+
         if (chartIndex !== -1) {
           // Check if the values are null.
           // setPercentChange(response.profit_loss_pct[chartIndex] == null ? 0 : response.profit_loss_pct[chartIndex]);
           setCurrentPrice(price == null ? 0 : price);
         } else {
           // This means that the mouse is not on the screen and we can go back and display the last index in the array.
-          setCurrentPrice(chartData[chartData.length - 1].value == null ? 0 : chartData[chartData.length - 1].value)
+          setCurrentPrice(
+            chartData[chartData.length - 1].value == null
+              ? 0
+              : chartData[chartData.length - 1].value
+          );
           // setPercentChange(response.profit_loss_pct[response.profit_loss_pct.length - 1] == null ? 0 : response.profit_loss_pct[response.profit_loss_pct.length - 1]); // Revert to some default if not found
         }
       }
@@ -251,8 +250,11 @@ export default function StockChart({ symbol }) {
 
   return (
     <>
-      <div className="interBold text-2xl text-white">
-        {"$" + Number(currentPrice).toLocaleString("en-US")}
+      <div className="interBold text-2xl text-white py-2">
+        <div className="flex flex-row content-end">
+          <p className="place-self-center text-xs font-thin pr-2 ">AUM </p>
+          <p clsasName ="text-2xl px-2">{"$" + Number(currentPrice).toLocaleString("en-US")}</p>
+        </div>
       </div>
       <div ref={chartContainerRef} className=""></div>
       <div className="text-center">
