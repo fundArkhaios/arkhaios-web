@@ -73,7 +73,8 @@ export default function SearchModal({ onClose, isOpen }) {
   }, [highlightedIndex, response]);
 
   const handleSelectItem = (asset) => {
-    const route =
+  
+    let route =
       asset.exchange === "CRYPTO"
         ? `/markets/crypto/${changeToCrypto(asset.symbol)}`
         : (
@@ -81,6 +82,10 @@ export default function SearchModal({ onClose, isOpen }) {
         ? `/markets/funds/${asset.symbol}`
         : `/markets/stocks/${asset.symbol}`);
 
+      
+        if (window.location.href.includes('/dashboard') || window.location.href.includes('/fundFinances')) {
+          route = `/fundMarkets/stocks/${asset.symbol}`
+        }
     router.push(route);
     onClose();
   };
