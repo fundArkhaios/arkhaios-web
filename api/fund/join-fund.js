@@ -74,13 +74,13 @@ module.exports = {
                                         accountID: fund.fundFounder
                                     }, {
                                         $addToSet: { friends: requester }
-                                    })
+                                    }, {upsert: true})
 
                                     await db.collection('Friends').updateOne({
                                         accountID: requester
                                     }, {
                                         $addToSet: { friends: fund.fundFounder }
-                                    })
+                                    }, {upsert: true})
 
                                     res.status(200).json({status: RESPONSE_TYPE.SUCCESS, message: 'user accepted into fund'});
                                 } catch(e) {
