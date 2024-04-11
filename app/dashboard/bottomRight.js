@@ -40,45 +40,6 @@ export default function BottomRight({ fundID }) {
           setTimeout(() => setAlert(null), 5000);
       })
   }
-    
-    async function createFund(event) {
-        event.preventDefault();
-        setLoading(true);
-        setAlert(["Creating fund...", "success"]);
-
-        const period = document.getElementById("disbursementPeriod");
-        const type = document.getElementById("disbursementType");
-
-        await fetch("/api/fund/create", {
-            method: "POST",
-            mode: "cors",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name: document.getElementById("name").value,
-                symbol: document.getElementById("symbol").value,
-                description: document.getElementById("description").content,
-                disbursementPeriod: period.options[period.selectedIndex].text.toLowerCase(),
-                disbursementType: type.options[type.selectedIndex].text,
-                public: document.getElementById("public").checked
-            }),
-        })
-        .then(async (response) => {
-            const data = await response.json();
-      
-            if (data.status == "success") {
-                setAlert(["Fund created!", "success"])
-                window.location.reload();
-            } else {
-                setAlert([data.message, "error"]);
-            }
-
-            setLoading(false);
-
-            setTimeout(() => setAlert(null), 5000);
-        })
-    }
 
 
     

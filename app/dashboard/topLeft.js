@@ -85,6 +85,10 @@ export default function TopLeft({ fund }) {
             recruitmentEndDate.setMinutes(recruitmentEndDate.getMinutes() + 5);
             setTotalTimeUntilDistribution(recruitmentEndDate);
             break;
+          case "1min":
+            recruitmentEndDate.setMinutes(recruitmentEndDate.getMinutes() + 1);
+            setTotalTimeUntilDistribution(recruitmentEndDate);
+            break;
           default:
             // Handle unexpected disbursementPeriod values or set a default
             console.error('Invalid disbursement period');
@@ -176,7 +180,7 @@ export default function TopLeft({ fund }) {
           <p className="text-xs font-thin">AUM</p>
         </div>
         <div className="col-span-1">
-          <p className="text-5xl font-bold">{dailyPercentChange}%</p>
+          <p className="text-5xl font-bold">{dailyPercentChange.toFixed(2)}%</p>
           <p className="text-xs font-thin">Percent Change</p>
         </div>
         <div className="col-span-1">
