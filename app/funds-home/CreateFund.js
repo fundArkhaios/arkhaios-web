@@ -97,6 +97,8 @@ export default function CreateFund() {
 
                     <select required id="disbursementPeriod" className="select w-full max-w-xs m-2">
                         <option disabled selected>Disbursement Period</option>
+                        <option>1min</option>
+                        <option>5min</option>
                         <option>Quarterly</option>
                         <option>Monthly</option>
                         <option>Hourly</option>
