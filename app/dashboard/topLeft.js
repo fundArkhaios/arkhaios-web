@@ -176,7 +176,7 @@ export default function TopLeft({ fund }) {
     <div className="self-center">
       <div className=" grid grid-rows-2 grid-cols-3 place-self-center place-content-center gap-16">
         <div className="col-span-1">
-          <p className="text-5xl font-bold">${totalAUM}</p>
+          <p className="text-5xl font-bold">${totalAUM.toFixed(2)}</p>
           <p className="text-xs font-thin">AUM</p>
         </div>
         <div className="col-span-1">
