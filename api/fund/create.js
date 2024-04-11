@@ -48,7 +48,7 @@ module.exports = {
 
                 data["memberRequests"] = [];
                 
-                data["members"] = [];
+                data["members"] = [user.accountID];
                 
                 data["fundDisbursementPeriod"] = disbursementPeriod;
 
