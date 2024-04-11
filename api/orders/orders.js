@@ -10,20 +10,20 @@ module.exports = {
         res.setHeader('Content-Type', 'application/json');
 
         let lookup = user.brokerageID;
-        if(req.body.fund) {
+        if(req.query.fund) {
             lookup = process.env.FIRM_ACCOUNT;
-            if(!user.fundsManaging.includes(req.body.fund)) {
+            if(!user.fundsManaging.includes(req.query.fund)) {
                 res.status(401).json({ status: RESPONSE_TYPE.FAILED, message: "unauthorized", data: []});
             }
         }
 
-        const { response, status } = await alpaca.get_orders(lookup, req.body.status || "all");
+        const { response, status } = await alpaca.get_orders(lookup, req.query.status || "all");
         
         if(status == 200) {
-            if(req.body.fund) {
+            if(req.query.fund) {
                 try {
                     await db.connect(async (db) => {
-                        fund = await db.collection('FundOrders').findOne({"fundID": req.body.fund});
+                        fund = await db.collection('FundOrders').findOne({"fundID": req.query.fund});
                         if(fund) {
                             const list = response.filter((order) => fund.orders.includes(order.id));
                             

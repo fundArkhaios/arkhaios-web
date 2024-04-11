@@ -27,34 +27,28 @@ export default function StockChart({ symbol }) {
 
   const [chartLoaded, setChartLoaded] = useState(false);
 
-  async function processChartData(timestamps, closes) {
-    let lastValidClose = closes[0] !== null ? closes[0] : 0; // Initialize with the first value or 0 if the first value is null
-
-    let lastTime = 0;
-    const response = (timestamps || []).filter((timestamp) => {
-      if (timestamp != lastTime) {
-        lastTime = timestamp;
-        return true;
-      }
-
-      return false;
-    });
-
-    return response.map((timestamp, index) => {
-      if (closes[index] === null) {
-        closes[index] = lastValidClose;
-      } else {
+  const processChartData = (timestamps, closes) => {
+    let lastValidClose = closes[0] !== null ? closes[0] : 0;
+    const uniqueData = new Map();
+  
+    timestamps.forEach((timestamp, index) => {
+      const closeValue = closes[index] !== null ? closes[index] : lastValidClose;
+      if (closes[index] !== null) {
         lastValidClose = closes[index];
       }
-
-      const time = Math.floor(new Date(timestamp).getTime() / 1000);
-
-      if (index == timestamps.length - 1) {
-        setCurrentPrice(closes[index]);
+      const unixTime = Math.floor(new Date(timestamp).getTime() / 1000);
+      if (!uniqueData.has(unixTime)) { // Only add if not already present
+        uniqueData.set(unixTime, closeValue);
       }
-      return { time: time, value: closes[index] };
     });
-  }
+  
+    const processedData = Array.from(uniqueData).map(([time, value]) => ({ time, value }));
+    if (processedData.length > 0) {
+      setCurrentPrice(processedData[processedData.length - 1].value);
+    }
+    
+    return processedData;
+  };
 
   useEffect(() => {
     async function getChartData() {
@@ -81,7 +75,7 @@ export default function StockChart({ symbol }) {
       }
     }
     getChartData();
-  }, [responseJSON]);
+  }, [isLoading, payload]);
 
   useEffect(() => {
     const chart = createChart(chartContainerRef.current, {
@@ -178,7 +172,7 @@ export default function StockChart({ symbol }) {
     });
 
     newSeries.setData(chartData);
-    chart.timeScale().fitContent();
+    // chart.timeScale().fitContent();
 
     function onCrosshairMove(param) {
       if (param === undefined || !param.time || !param.seriesData.size) {
@@ -245,7 +239,7 @@ export default function StockChart({ symbol }) {
         interval = "1d"; // Fallback interval if none of the above matches
     }
 
-    setPayload({ range: payloadRange, interval });
+    setPayload({ interval: interval });
   };
 
   return (
@@ -266,7 +260,7 @@ export default function StockChart({ symbol }) {
               name="options"
               aria-label={buttonRange}
               className="btn join-item btn-sm"
-              checked={payload.range === rangeMapping[buttonRange]}
+              checked={payload.interval === rangeMapping[buttonRange]}
               onChange={() => handleRadioChange(buttonRange)}
             />
           ))}

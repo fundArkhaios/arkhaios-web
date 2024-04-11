@@ -35,7 +35,7 @@ export default function SideBar() {
         </a>
 
         {user.fundsManaging ? (
-          <a className="btn btn-square btn-ghost text-xl" title="Finances">
+          <a className="btn btn-square btn-ghost text-xl" title="Finances" href="/fundFinances">
             <BanknotesIcon className="h-6 w-6" />
           </a>
         ) : (
