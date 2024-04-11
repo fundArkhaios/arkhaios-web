@@ -4,7 +4,7 @@ import useFetch from "../hooks/useFetch";
 import { useEffect, useState } from "react";
 
 export default function TopLeft({ fund }) {
-  const [totalAUM, setTotalAUM] = useState();
+  const [totalAUM, setTotalAUM] = useState(0);
   const [dailyPercentChange, setDailyPercentChange] = useState(0);
   const [timeUntilTerm, setTimeUntilTerm] = useState(0);
 
@@ -189,11 +189,11 @@ export default function TopLeft({ fund }) {
         </div>
         <div className="col-span-1">
           {fund.fundRecruiting === true ? <CountDownTimer/> : <DistributionCountDownTimer/>}
-          <p className="text-xs font-thin">Time until distribution.</p>
+          <p className="text-xs font-thin">{fund.fundRecruiting === true ? "Time until Term Period": "Time until distribution."}</p>
         </div>
         <div className="col-span-1">
-          <p className="text-5xl font-bold">Inactive</p>
-          <p className="text-xs font-thin">Fund Status</p>
+          <p className="text-5xl font-bold">{fund.fundRecruiting === true ? "Recruiting" : "Trading"}</p>
+          <p className="text-xs font-thin">Fund Stage</p>
         </div>
       </div>
     </div>
