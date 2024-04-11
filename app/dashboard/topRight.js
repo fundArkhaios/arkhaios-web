@@ -6,7 +6,7 @@ import useFetch from "../hooks/useFetch";
 
 export default function TopRight({ fundSymbol, fundAvailableBalance, fundID }) {
   const { error, isLoading, responseJSON } = useFetch(
-    "/api/fund/history?symbol=" + fundSymbol + "&period=1m"
+    "/api/fund/history?symbol=" + fundSymbol + "&period=1d"
   );
 
   // Assuming 'fund' should be 'fundID' based on your props
