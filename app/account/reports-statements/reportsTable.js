@@ -42,7 +42,7 @@ export default function ReportsTable() {
           })
           .catch((error) => {
             // Handle any errors here
-            setRetrievingError(true);
+            // setRetrievingError(true);
           });
       }
     }
@@ -66,30 +66,40 @@ export default function ReportsTable() {
           There was an error retrieving the documents.
         </div>
       )}
-      <div className="flex flex-col space-y-2 bg-gray-200">
-        {/* Add a header row here for column titles */}
-        <div className="grid grid-cols-3 text-sm font-semibold p-3 bg-gray-200 rounded-t-md">
-          <div className="text-left">Document ID</div>
-          <div className="text-center">Type</div>
-          <div className="text-right">Date</div>
-        </div>
-        {Object.entries(mappedDocuments)
-          .filter(
-            ([id, document]) => !document.type.toLowerCase().includes("json")
-          )
-          .map(([id, document]) => (
-            <a
-              href={`/api/account/document?id=${id}`}
-              key={id}
-              className="grid grid-cols-3 items-center p-3 py-2 rounded-md hover:bg-gray-300"
-            >
-              <div className="text-left font-medium">{document.id}</div>
-              <div className="text-center font-medium">
-                {formatDocumentType(document.type)}
-              </div>
-              <div className="text-right font-medium">{document.date}</div>
-            </a>
-          ))}
+      {/* Adding the table with daisyUI classes */}
+      <div className="overflow-x-auto">
+        <table className="table w-full">
+          {/* head */}
+          <thead>
+            <tr>
+              <th>Document ID</th>
+              <th>Type</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Dynamic rows from mappedDocuments */}
+            {Object.entries(mappedDocuments)
+              .filter(
+                ([id, document]) =>
+                  !document.type.toLowerCase().includes("json")
+              )
+              .map(([id, document]) => (
+                <tr
+                  key={id}
+                  className="hover"
+                  onClick={() =>
+                    (window.location.href = `/api/account/document?id=${id}`)
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  <th>{document.id}</th>
+                  <td>{formatDocumentType(document.type)}</td>
+                  <td>{document.date}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
