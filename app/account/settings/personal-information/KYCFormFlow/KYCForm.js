@@ -7,6 +7,7 @@ import Account from "./steps/Account";
 import Contact from "./steps/Contact";
 import Agreements from "./steps/Agreements.js";
 import Disclosures from "./steps/Disclosures.js";
+import Documents from "./steps/Documents.js";
 import Final from "./steps/Final";
 import './kycFlow.css'
 
@@ -14,11 +15,14 @@ export default function KYCForm() {
 
   const [currentStep, setCurrentStep] = useState(1);
   const [creationStatus, setCreationStatus] = useState({data: {success: "", message: ""}});
+  const [frontID, setFrontID] = useState("");
+  const [backID, setBackID] = useState("");
 
   const steps = [
     "Account Information",
     "Contact",
     "Disclosures",
+    "Documents",
     "Agreements",
     "Final"
   ];
@@ -32,8 +36,10 @@ export default function KYCForm() {
       case 3:
         return <Disclosures />;
       case 4:
-        return <Agreements/>;
+        return <Documents />;
       case 5:
+        return <Agreements/>;
+      case 6:
         return <Final creationStatus={creationStatus}/>;
       default:
     }
@@ -66,6 +72,8 @@ export default function KYCForm() {
           currentStep={currentStep}
           steps={steps}
           setCreationStatus={setCreationStatus}
+          setBackID={setBackID}
+          setFrontID={setFrontID}
         />
       )}
     </div>
