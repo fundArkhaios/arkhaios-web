@@ -30,8 +30,8 @@ export default async function Page() {
   return (
     <>
       <div className="grid grid-rows-2 self-stretch place-content-center gap-5 p-10">
-        <div className="w-full justify-center justify-self-center text-center bg-red-100">
-          <PMFundChart />
+        <div className="w-full justify-center justify-self-center text-center">
+          <PMFundChart fundSymbol={fund.fundSymbol}/>
         </div>
         <div className="grid grid-cols-2 place-content-center justify-between gap-5">
           <div className="">

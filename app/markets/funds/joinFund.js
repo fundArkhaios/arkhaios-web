@@ -75,8 +75,8 @@ export default function JoinFund({
       <div className="join-fund-card">
         <div className="card-header">
           <p className="card-title borber-b border-cyan-400 py-1">
-            {memberStatus === 0 && `Request to join ${symbol}`}
-            {memberStatus === 1 && `Your investments for ${symbol}`}
+            {memberStatus === 0 && `Request to join $${symbol}`}
+            {memberStatus === 1 && `Your investments for $${symbol}`}
             {memberStatus === 2 && `Join request`}
           </p>
         </div>
