@@ -16,22 +16,37 @@ module.exports = {
                 await db.connect(async (db) => {
                     fund = await db.collection('FundPositions').findOne({"fundID": req.query.fund});
                     if(fund) {
+                        console.log("Fund: " + fund);
+                        
                         let list = fund.positions;
+                        
+                        let returningArr = []
                         if(symbol) {
-                            let res = {};
+                            let res = [];
 
                             const keys = Object.keys(list);
                             for(let i in keys) {
                                 const key = keys[i];
                                 if(key == symbol) {
-                                    res[key] = list[key];
+                                    res.push(list[key]);
                                 }
                             }
 
-                            list = res;
+                            returningArr = res;
+                        } else {
+                            let res = [];
+
+                            const keys = Object.keys(list);
+                            for(let i in keys) {
+                                const key = keys[i];
+                                console.log("Key: " + key);
+                                res.push(list[key]);
+                            }
+                            returningArr = res;
                         }
+                        console.log("returningArr: " + returningArr)
                         
-                        res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "", data: list});
+                        res.status(200).json({ status: RESPONSE_TYPE.SUCCESS, message: "", data: returningArr});
                     } else {
                         res.status(401).json({ status: RESPONSE_TYPE.FAILED, message: "server error", data: []});
                     }
