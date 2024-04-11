@@ -41,7 +41,7 @@ export default async function Page() {
                         <div className ="w-full divider divider-primary"></div>
                     </div>
                     <div className = "col-span-1 w-full"><BottomLeft fundID={fund.fundID}/></div>
-                    <div className = "col-span-1 w-full"><BottomRight/></div>
+                    <div className = "col-span-1 w-full"><BottomRight fundID = {fund.fundID}/></div>
                 </div>
                 
             </div>

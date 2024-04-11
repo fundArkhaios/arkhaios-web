@@ -161,8 +161,8 @@ export default function StockChart({ symbol }) {
             return `${date.getUTCMonth() + 1}-${date.getUTCDate()}`;
           } else {
             // For '1D' and '1W', show time in 12-hour format
-            let hours = date.getUTCHours();
-            const minutes = date.getUTCMinutes();
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
             const ampm = hours >= 12 ? "PM" : "AM";
             hours = hours % 12;
             hours = hours || 12; // the hour '0' should be '12'
