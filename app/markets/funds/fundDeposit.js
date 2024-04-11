@@ -58,8 +58,8 @@ export default function FundDeposit ({fundID}) {
                 id="deposit-amount"
             />
 
-            <button onClick={() => deposit()} className="btn flex flex-row justify-self-center">
-                <p>Deposit</p>
+            <button onClick={() => deposit()} className="btn place-content-center">
+                <p className="self-center">Deposit</p>
                 <PaperAirplaneIcon className="w-3 h-3"/>
             </button>
         </div>

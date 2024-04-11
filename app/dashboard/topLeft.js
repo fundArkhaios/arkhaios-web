@@ -71,7 +71,7 @@ export default function TopLeft({ fund }) {
 
         if (fund.startValue) {
           setDailyPercentChange(
-            (finalValue - fund.startValue - fund.startValue) * 100
+            ((finalValue - fund.startValue) / fund.startValue) * 100
           );
         }
       }
