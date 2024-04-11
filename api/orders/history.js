@@ -25,50 +25,58 @@ module.exports = {
             return -1;
         })(period, timeframe);
 
-        db.redis.get(`portfolio:${user.brokerageID}:${period}:${timeframe}`).then(async (data) => {
+        console.log("loading...");
+
+        let cached = null;
+        db.redis_get(`portfolio:${user.brokerageID}:${period}:${timeframe}`).then(async (data) => {
+            console.log("got here!");
             if(data) {
-                res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: {history: JSON.parse(data) }});
-            } else {
-                const { response, status } = await alpaca.get_portfolio(user.brokerageID, period, timeframe);
-                
-                if(status == 200) {
-                    let equity = response["equity"]
-
-                    data = {}
-
-                    data["timestamp"] = response["timestamp"];
-
-                    data["equity"] = equity;
-
-                    let base_value = 0.0;
-
-                    data["profit_loss"] = [];
-                    data["profit_loss_pct"] = [];
-
-                    for(let i = 0; i < equity.length; ++i) {
-                        if(base_value == 0) {
-                            if(equity[i] != 0) {
-                                base_value = equity[i];
-                            }
-
-                            data["profit_loss"].push(0);
-                            data["profit_loss_pct"].push(0.00);
-                        } else {
-                            data["profit_loss"].push(equity[i] - base_value);
-                            data["profit_loss_pct"].push((equity[i] / base_value - 1.0) * 100);
-                        }
-                    }
-
-                    if(expiration >= 0) {
-                        // Only cache calls relevant for displaying charts
-                        db.redis.setEx(`portfolio:${user.brokerageID}:${period}:${timeframe}`, expiration, JSON.stringify(data));
-                    }
-                    
-                    res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: { history: data }});
-                } else {
-                    SERVER_ERROR(res)
-                }
+                cached = data;
             }
         });
+
+        if(cached) {
+            return res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: {history: JSON.parse(data) }});
+        } else {
+            const { response, status } = await alpaca.get_portfolio(user.brokerageID, period, timeframe);
+            
+            if(status == 200) {
+                let equity = response["equity"]
+
+                data = {}
+
+                data["timestamp"] = response["timestamp"];
+
+                data["equity"] = equity;
+
+                let base_value = 0.0;
+
+                data["profit_loss"] = [];
+                data["profit_loss_pct"] = [];
+
+                for(let i = 0; i < equity.length; ++i) {
+                    if(base_value == 0) {
+                        if(equity[i] != 0) {
+                            base_value = equity[i];
+                        }
+
+                        data["profit_loss"].push(0);
+                        data["profit_loss_pct"].push(0.00);
+                    } else {
+                        data["profit_loss"].push(equity[i] - base_value);
+                        data["profit_loss_pct"].push((equity[i] / base_value - 1.0) * 100);
+                    }
+                }
+
+                if(expiration >= 0) {
+                    // Only cache calls relevant for displaying charts
+                    db.redis_set(`portfolio:${user.brokerageID}:${period}:${timeframe}`, expiration, JSON.stringify(data));
+                }
+                
+                res.status(200).send({status: RESPONSE_TYPE.SUCCESS, data: { history: data }});
+            } else {
+                SERVER_ERROR(res)
+            }
+        }
     }
 }

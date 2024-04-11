@@ -39,10 +39,10 @@ module.exports = {
                         //if the user was deleted successfully, delete from the cache as well
                         if(update.acknowledged){
                             const key = `authenticate:${userEmail}`;
-                            const data = await db.redis.get(key);
+                            const data = await db.redis_get(key);
 
                             if(data){
-                                await db.redis.del(key);
+                                await db.redis_del(key);
                             }
 
                             //log this info

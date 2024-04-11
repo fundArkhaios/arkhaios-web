@@ -6,12 +6,16 @@ module.exports = {
 
         const key = `authenticate:${email}`;
         
-        // Get the Redis client instance from the updated db.js
-        const redis = db.redis;
-        
         // Make sure to use the connected Redis client
-        const data = await redis.get(key);
+        let data = null;
+        
+        console.log("auth");
+        try {
+            // Get the Redis client instance from the updated db.js
+            data = await db.redis_get(key);
+        } catch(e) { data = null; }
 
+        console.log("data: " + data);
         if(data) {
             const authentication = JSON.parse(data);
             if(authentication.sessionToken == session) {
@@ -21,20 +25,30 @@ module.exports = {
             }
         }
 
+        console.log("res:");
+        console.log(result);
+
         if(!result) {
+            console.log("find user");
             await db.connect(async (db) => {
                 result = await db.collection('Users')
                 .findOne({ email: email, sessionToken: session });
 
+                console.log(result);
                 if(result && Date.now() >= result.sessionExpiry) {
+                    console.log("invalid");
                     result = null;
                 }
             });
 
-            if(result) {
-                // Set the session data with an expiration based on the remaining time until the session expiry
-                await redis.setEx(key, Math.trunc((result.sessionExpiry - Date.now()) / 1000), JSON.stringify(result));
-            }
+            console.log("nop");
+
+            try {
+                if(result) {
+                    // Set the session data with an expiration based on the remaining time until the session expiry
+                    await db.redis_set(key, Math.trunc((result.sessionExpiry - Date.now()) / 1000), JSON.stringify(result));
+                }
+            } catch(e) {}
         }
     
         return result;

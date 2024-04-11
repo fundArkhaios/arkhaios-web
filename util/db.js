@@ -5,20 +5,60 @@ const { logger } = require('./logger')
 let redisClient;
 
 function getRedisClient() {
-  if (!redisClient) {
-    redisClient = createClient({
-      url: `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_SERVER}:${process.env.REDIS_PORT}`
-    });
+  try {
+    if (!redisClient) {
+      redisClient = createClient({
+        url: `redis://default:${process.env.REDIS_PASSWORD}@${process.env.REDIS_SERVER}:${process.env.REDIS_PORT}`
+      });
 
-    redisClient.on('error', (err) => console.log('Redis Client Error', err));
-    redisClient.connect().catch(console.error);
-  }
+      console.log("call");
+      redisClient.on('error', (err) => console.log('Redis Client Error', err));
+      redisClient.connect().catch(console.error);
+    }
+  } catch(e) {}
+
   return redisClient;
 }
 
 module.exports = {
   get redis() {
     return getRedisClient();
+  },
+
+  redis_del: async function(key) {
+    let action = getRedisClient().del(key);
+    let timeout = new Promise((resolve, reject) => {
+      let timer = setTimeout(() => {
+        clearTimeout(timer);
+        reject();
+      }, 1000);
+    });
+
+    return Promise.race([action, timeout]);
+  },
+
+  redis_get: async function(key) {
+    let action = getRedisClient().get(key);
+    let timeout = new Promise((resolve, reject) => {
+      let timer = setTimeout(() => {
+        clearTimeout(timer);
+        reject();
+      }, 1000);
+    });
+
+    return Promise.race([action, timeout]);
+  },
+
+  redis_set: async function(key, expiry, data) {
+    let action = getRedisClient().setEx(key, expiry, data);
+    let timeout = new Promise((resolve, reject) => {
+      let timer = setTimeout(() => {
+        clearTimeout(timer);
+        reject();
+      }, 1000);
+    });
+
+    return Promise.race([action, timeout]);
   },
 
   updateUser: async function(user, parameters, option) {
@@ -41,23 +81,23 @@ module.exports = {
             const result = await db.collection('Users').findOne(filter);
 
             const key = `authenticate:${result.email}`
-            const data = await module.exports.redis.get(key);
+            const data = await module.exports.redis_get(key);
 
             const expiry = Math.trunc((result.sessionExpiry - Date.now()) / 1000)
 
             if(data) {
               if(result.sessionExpiry - Date.now() <= 0) {
-                await module.exports.redis.del(key)
+                await module.exports.redis_del(key)
               } else {
-                await module.exports.redis.setEx(key, expiry, JSON.stringify(result));
+                await module.exports.redis_set(key, expiry, JSON.stringify(result));
               }
             }
 
             if(result.email != user.email) {
               // This is the special scenario, in case the user updated their email
               const oldKey = `authenticate:${user.email}`
-              if(await module.exports.redis.get(oldKey)) {
-                await module.exports.redis.del(oldKey)
+              if(await module.exports.redis_get(oldKey)) {
+                await module.exports.redis_del(oldKey)
               }
             }
 

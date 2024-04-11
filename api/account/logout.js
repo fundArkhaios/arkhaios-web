@@ -15,8 +15,8 @@ module.exports = {
             if(!result) return SERVER_ERROR(res)
 
             const key = `authenticate:${user.email}`
-            if(await db.redis.get(key)) {
-                await db.redis.del(key)
+            if(await db.redis_get(key)) {
+                await db.redis_del(key)
             }
 
             const hostname = req.hostname;
