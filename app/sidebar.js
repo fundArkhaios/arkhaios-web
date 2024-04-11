@@ -21,7 +21,7 @@ export default function SideBar() {
         <a
           className="btn btn-square btn-ghost text-xl"
           title="Home"
-          href="https://local.test:3000"
+          href="https://arkhaios.io"
         >
           <HomeIcon className="h-6 w-6" />
         </a>
